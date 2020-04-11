@@ -62,8 +62,9 @@ type map_countainer = <a,b>(f:Fun<a,b>, c:Countainer<a>) => Countainer<b>
 //not working... why?
 // let map_countainer = 
 //   function<a,b>(f:Fun<a,b>) : Fun<Countainer<a>, Countainer<b>> { 
-//   return Fun(c =>{ content:f.f(c.content), counter:c.counter })
+//   return Fun(c =>( {content:f.f(c.content), counter:c.counter} )
 // }
+ 
 //c =>{ content:f.f(c.content), counter:c.counter }
 
 // let map_F<a,a>(id<a>()) = id<F<a>>()
@@ -95,3 +96,7 @@ type List<a> = {
 } | {
   kind: "Empty"
 }
+
+//code from external source
+type F<a> = {} //"placeholder"
+let map_F = <a, b>(f: Fun<a, b>): Fun<F<a>, F<b>> => null! 
