@@ -46,7 +46,7 @@ const Map_fun_n = <a,b>() :
     Fun<Fun<a,b>,Fun<Fun_n<a>,Fun_n<b>>> =>
       Fun((f:Fun<a,b>) =>
         Fun((f_n:Fun<number,a>) : Fun<number,b> =>
-            f_n.then(f) //this becomes b?
+            f_n.then(f) //this becomes b? //you have the value N... but how?
         )
       )
 

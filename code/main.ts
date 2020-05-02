@@ -1,81 +1,75 @@
-//basic stuff
-type Fun<a,b> = { f:(i:a) => b, then:<c>(g:Fun<b,c>) => Fun<a,c> }
+//to do: Fun implementeren met methodes f,then,repeat,repeatUntil
+//to do: ongein van assignment 1.1
 
-let then = function<a,b,c>(f:Fun<a,b>, g:Fun<b,c>) : Fun<a,c> {
-  return Fun<a,c>(a => g.f(f.f(a)))
+let  Identity = <a>(): Fun<a, a> => Fun(x => x)
+
+
+type Fun<a,b> = {
+  f:(i:a)=>b
+  then:<c>(g:Fun<b,c>)=> Fun<a,c>
+  repeat:()=>Fun<number,Fun<a,a>>
+  repeatUntil:()=>Fun<Fun<a,boolean>,Fun<a,a>>
 }
-type Option<a> = { kind:"none" } | { kind:"some", value:a }
-let none = function<a>() : Option<a> { return { kind:"none" } }
-let some = function<a>(x:a) : Option<a> { 
-  return { kind:"some", value:x } }
-  
 
-// type liption<a> = List<Option<a>>
+let then = function<a,b,c>(f:Fun<a,b>,g:Fun<b,c>) : Fun<a,c>{
+  return Fun(x => g.f(f.f(x)))
+}
 
-let Fun = function<a,b>(f:(_:a)=>b) : Fun<a,b> { 
-  return { 
-    f:f,
-    then:function<c>(this:Fun<a,b>, g:Fun<b,c>) : Fun<a,c> { 
-      return then(this,g) }
+let repeat = function<a>(f:Fun<a,a>,n:number) : Fun<a,a>{
+  if(n<=0){
+    return Identity<a>()
+  }
+  else{
+    return f.then(repeat(f,(n-1)))
   }
 }
 
-type Id<a> = a //"simple"?
-const id = <a>() : Fun<a,a> => Fun(a=>a)
-type container<a> = {value: a, counter:number}
-type List<a> = Array<a>
+let repeatUntil = function<a>(f:Fun<a,a>,rUntil:Fun<a,boolean>) : Fun<a,a>{
+  let g = (x:a) =>{
+    if(rUntil.f(x)){
+      return Identity<a>().f(x)
+    }else{
+      return f.then(repeatUntil(f,rUntil)).f(x)
+    }
+  }
+  return Fun(g)
+}
 
-type Unit = {}
-type Pair<a,b> = {fst:a,snd:b}
-let makePair = <a,b>() : Fun<a, Fun<b, Pair<a,b>>> => Fun(a => Fun(b=> ({ fst:a, snd:b })))
-
-//two ways to do the same (not really the best way? teacher said)
-const eta_sum : Fun<Unit,number> = Fun(_ => 0)
-const join_sum : Fun<Pair<number,number>,number> = Fun(xy => xy.fst * xy.snd) 
-
-const e_sum : number = eta_sum.f({})
-const plus_sum = (x:number, y:number) => join_sum.f({fst:x, snd:y})
-
-const eta_Id = <a>() : Fun<a, Id<a>> => id()
-const join_Id = <a>() : Fun<Id<Id<a>>, Id<a>> => id()
-const Map_id = <a, b>(): Fun<Fun<a,b>, Fun<Id<a>,Id<b>>> => id()
-
-
-type Fun_n<a> = Fun<number,a>
-const Map_fun_n = <a,b>() :
-    Fun<Fun<a,b>,Fun<Fun_n<a>,Fun_n<b>>> =>
-      Fun((f:Fun<a,b>) =>
-        Fun((f_n:Fun<number,a>) : Fun<number,b> =>
-            f_n.then(f) //this becomes b?
-        )
-      )
-
-
-type  PairLeft<a> = Pair<a,number>
-const map_PairLeft = <a,b>():
-  Fun<Fun<a,b>, Fun<PairLeft<a>,PairLeft<b>>> =>
-    Fun((f:Fun<a,b>)=>
-      Fun(p1=>
-        ({ fst: f.f(p1.fst), snd: p1.snd})
-      )
-    ) 
-    
-
-const eta_fun_n = <a>() : Fun<a,Fun_n<a>> => Fun(a => null)
-const join_fun_n = <a>() : Fun<Fun_n<Fun_n<a>>, Fun_n<a>> =>
-        Fun((f_f:Fun_n<Fun_n<a>>): Fun_n<a> =>
-          Fun(n => f_f.f(n).f(n))
-        ) 
-
-const eta_PairLeft = <a>(): Fun<a, PairLeft<a>> => Fun(a => ({fst:a,snd:0}))
-const join_PairLeft = <a>() : Fun<PairLeft<PairLeft<a>>, PairLeft<a>> =>
-        Fun(pl_pl =>({ fst:pl_pl.fst.fst, snd:pl_pl.fst.snd*pl_pl.snd }))
-
-// const bind_fun_n = //did not type it over (around 60 minutes of lecture a) 
-
-const bind_PairLeft = <a,b> (p:PairLeft<a>, k:Fun<a, PairLeft<b>>) : PairLeft<b> =>{
-  return (map_PairLeft<a,PairLeft<b>>().f(k).then(join_PairLeft<b>())).f(p)
+let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
+  return{
+    f:f,
+    then:function<c>(this,g:Fun<b,c>) : Fun<a,c>{
+      return then(this,g)
+    },
+    repeat:function(this) : Fun<number,Fun<a,a>>{
+      return Fun<number, Fun<a, a>>((x:number) => repeat(this,x))
+    },
+    repeatUntil:function(this) : Fun<Fun<a,boolean>,Fun<a,a>>{
+      return Fun(x=> repeatUntil(this,x))
+    }
+  }
 }
 
 
-// type Process <s,e,a> = Fun<s, Either<e, Pair<a,s>>>
+let incr = Fun((x: number) => x + 1)
+let double = Fun((x: number) => x * 2)
+let square = Fun((x: number) => x * x)
+let isPositive = Fun((x: number) => x > 0)
+let isEven = Fun((x: number) => x % 2 == 0)
+let invert = Fun((x: number) => -x)
+let squareRoot = Fun((x: number) => Math.sqrt(x))
+let ifThenElse =
+  function<a, b>(p: Fun<a, boolean>, _then: Fun<a, b>, _else: Fun<a, b>) : Fun<a, b> {
+    return Fun((x: a) => {
+      if (p.f(x)) {
+        return _then.f(x)
+      }
+      else {
+        return _else.f(x)
+      }
+    })
+  }
+  // Implement a function that computes the square root if the input is positive, otherwise inverts it and then performs the square root
+  let v = Fun<number,number>((x)=> x+1)
+  let x = v.repeat().f(5).f(5)
+  console.log(x)
