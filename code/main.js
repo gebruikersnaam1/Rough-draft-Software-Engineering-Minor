@@ -1,5 +1,6 @@
-//to do: Fun implementeren met methodes f,then,repeat,repeatUntil
-//to do: ongein van assignment 1.1
+/*
+  @lecture 1
+*/
 var Identity = function () { return Fun(function (x) { return x; }); };
 var then = function (f, g) {
     return Fun(function (x) { return g.f(f.f(x)); });
@@ -39,24 +40,22 @@ var Fun = function (f) {
         }
     };
 };
-var incr = Fun(function (x) { return x + 1; });
-var double = Fun(function (x) { return x * 2; });
-var square = Fun(function (x) { return x * x; });
-var isPositive = Fun(function (x) { return x > 0; });
-var isEven = Fun(function (x) { return x % 2 == 0; });
-var invert = Fun(function (x) { return -x; });
-var squareRoot = Fun(function (x) { return Math.sqrt(x); });
-var ifThenElse = function (p, _then, _else) {
-    return Fun(function (x) {
-        if (p.f(x)) {
-            return _then.f(x);
-        }
-        else {
-            return _else.f(x);
-        }
-    });
+var Cons = function (Head, Tail) { return ({
+    kind: "Cons",
+    head: Head,
+    tail: Tail
+}); };
+var Empty = function () { return ({
+    kind: "Empty"
+}); };
+//f "a"+1 = 2
+var map_countainer = function (f, c) {
+    return { content: f.f(c.content), counter: c.counter };
 };
-// Implement a function that computes the square root if the input is positive, otherwise inverts it and then performs the square root
-var v = Fun(function (x) { return x + 1; });
-var x = v.repeat().f(5).f(5);
-console.log(x);
+var listExample = Cons("a", Cons("b", Cons("c", Empty())));
+var assignment2 = Fun(function (x) { return x + "5"; });
+var list_option = function (f) {
+    return Fun(function (x) { return x.kind == "Empty" ? Empty() : Cons((f.f(x.head)), (list_option(f).f(x.tail))); });
+};
+var result = list_option(assignment2).f(listExample);
+console.log(result);
