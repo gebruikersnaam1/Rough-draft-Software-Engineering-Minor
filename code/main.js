@@ -1,28 +1,25 @@
-/*
-  @lecture 1
-*/
-var Identity = function () { return Fun(function (x) { return x; }); };
-var then = function (f, g) {
-    return Fun(function (x) { return g.f(f.f(x)); });
-};
+var Id = function () { return Fun(function (x) { return x; }); };
 var repeat = function (f, n) {
     if (n <= 0) {
-        return Identity();
+        return Id();
     }
     else {
         return f.then(repeat(f, (n - 1)));
     }
 };
-var repeatUntil = function (f, rUntil) {
+var repeatUntil = function (f, p) {
     var g = function (x) {
-        if (rUntil.f(x)) {
-            return Identity().f(x);
+        if (p.f(x)) {
+            return Id().f(x);
         }
         else {
-            return f.then(repeatUntil(f, rUntil)).f(x);
+            return f.then(repeatUntil(f, p)).f(x);
         }
     };
     return Fun(g);
+};
+var then = function (f, g) {
+    return Fun(function (x) { return g.f(f.f(x)); });
 };
 var Fun = function (f) {
     return {
@@ -34,28 +31,44 @@ var Fun = function (f) {
             var _this = this;
             return Fun(function (x) { return repeat(_this, x); });
         },
-        repeatUntil: function () {
+        repeatUntil: function (g) {
             var _this = this;
-            return Fun(function (x) { return repeatUntil(_this, x); });
+            return Fun(function (x) { return repeatUntil(_this, g); });
         }
     };
 };
-var Cons = function (Head, Tail) { return ({
-    kind: "Cons",
-    head: Head,
-    tail: Tail
-}); };
-var Empty = function () { return ({
-    kind: "Empty"
-}); };
-//f "a"+1 = 2
-var map_countainer = function (f, c) {
-    return { content: f.f(c.content), counter: c.counter };
+var Cons = function (h, t) {
+    return {
+        kind: "Cons",
+        head: h,
+        tail: t
+    };
 };
-var listExample = Cons("a", Cons("b", Cons("c", Empty())));
-var assignment2 = Fun(function (x) { return x + "5"; });
-var list_option = function (f) {
-    return Fun(function (x) { return x.kind == "Empty" ? Empty() : Cons((f.f(x.head)), (list_option(f).f(x.tail))); });
+var Empty = function () {
+    return {
+        kind: "Empty"
+    };
 };
-var result = list_option(assignment2).f(listExample);
-console.log(result);
+var map_list = function (f, l) {
+    return l.kind == "Cons" ? Cons(f.f(l.head), map_list(f, l.tail)) : Empty();
+};
+var f_l = Fun(function (x) { return (x + 1); });
+var l1 = Cons("a", Cons("b", Cons("c", Empty())));
+var l2 = map_list(f_l, l1);
+console.log(l2);
+var Result = function (v) {
+    return {
+        kind: "Result",
+        value: v
+    };
+};
+var Ex_Error = function () {
+    return {
+        kind: "Error"
+    };
+};
+//feels wrong because it not really generic... or is it?
+var Exception = Fun(function (x) { return x.kind == "Result" ? x.value : "Something went wrong"; });
+/*
+  ***** Lesson 3
+*/ 
