@@ -80,7 +80,7 @@ let f_l = Fun<string,string>(x => (x+1))
 let l1 = Cons("a",Cons("b",Cons("c",Empty())))
 let l2 = map_list(f_l,l1)
 
-console.log(l2)
+// console.log(l2)
 
 type Exception <a> = {
   kind: "Result",
@@ -102,7 +102,7 @@ const Ex_Error = <a>() : Exception<a> =>{
   }
 }
 
-//feels wrong because it not really generic... or is it?
+//TODO: feels wrong because it not really generic... or is it?
 let Exception = Fun<Exception<string>,string>(
     x => x.kind == "Result" ? x.value : "Something went wrong"
   )
@@ -111,3 +111,33 @@ let Exception = Fun<Exception<string>,string>(
 /*
   ***** Lesson 3
 */
+type Unit = {}
+type Pair<a,b> = { fst: a, snd:b}
+type Id<a> = a
+
+//example from code provided by the teacher
+let zero_int : Fun<Unit,number> = Fun((_:Unit) => 0)
+
+//assignment 3.1
+const Pair = <a,b>(fst:a,snd:b) : Pair<a,b> => ({
+  fst:fst, snd:snd
+})
+
+let zero_string : Fun<Unit,string> = Fun((_:Unit)=>"")
+
+let plus_string : Fun<Pair<string,string>,string> = Fun(
+  x => x.fst + x.snd
+)
+
+
+
+let plus_ie = Pair<string,string>("Hello", " world")
+let plus_r = plus_string.f(plus_ie)
+// console.log(plus_r)
+
+//assignment 3.2
+let zero_list : <a> () => Fun<List<a>,List<a>> //TODO: I don't know if this is correct???
+
+const plus_list = <a>() : Fun<Pair<List<a>,List<a>>,List<a>> => Fun(
+  x=> x.fst.kind == "Cons" ? Cons<a>(x.fst.head,plus_list<a>().f({fst: x.fst.tail, snd: x.snd})) : x.snd
+)

@@ -105,7 +105,7 @@ const Ex_Error = <a>() : Exception<a> =>{
   }
 }
 
-//feels wrong because it not really generic... or is it?
+//TODO: feels wrong because it not really generic... or is it?
 let Exception = Fun<Exception<string>,string>(
     x => x.kind == "Result" ? x.value : "Something went wrong"
   )

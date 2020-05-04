@@ -51,7 +51,6 @@ var map_list = function (f, l) {
 var f_l = Fun(function (x) { return (x + 1); });
 var l1 = Cons("a", Cons("b", Cons("c", Empty())));
 var l2 = map_list(f_l, l1);
-console.log(l2);
 var Result = function (v) {
     return {
         kind: "Result",
@@ -63,8 +62,19 @@ var Ex_Error = function () {
         kind: "Error"
     };
 };
-//feels wrong because it not really generic... or is it?
+//TODO: feels wrong because it not really generic... or is it?
 var Exception = Fun(function (x) { return x.kind == "Result" ? x.value : "Something went wrong"; });
-/*
-  ***** Lesson 3
-*/ 
+//example from code provided by the teacher
+var zero_int = Fun(function (_) { return 0; });
+//assignment 3.1
+var Pair = function (fst, snd) { return ({
+    fst: fst, snd: snd
+}); };
+var zero_string = Fun(function (_) { return ""; });
+var plus_string = Fun(function (x) { return x.fst + x.snd; });
+var plus_ie = Pair("Hello", " world");
+var plus_r = plus_string.f(plus_ie);
+// console.log(plus_r)
+//assignment 3.2
+var zero_list; //TODO: I don't know if this is correct???
+var plus_list = function () { return Fun(function (x) { return x.fst.kind == "Cons" ? Cons(x.fst.head, plus_list().f({ fst: x.fst.tail, snd: x.snd })) : x.snd; }); };
