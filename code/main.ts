@@ -62,19 +62,15 @@ type List<a> = {
   kind: "Empty"
 }
 
-const Cons = <a>(h: a, t:List<a>):List<a>=>{
-  return{
+const Cons = <a>(h: a, t:List<a>):List<a>=>({
     kind: "Cons",
     head: h,
     tail: t
-  }
-}
+})
 
-const Empty =<a>() : List<a> =>{
-  return{
+const Empty =<a>() : List<a> => ({
     kind: "Empty"
-  }
-}
+})
 
 let map_list = function<a,b>(f:Fun<a,b>,l:List<a>) : List<b>{
   return l.kind == "Cons" ? Cons(f.f(l.head),map_list(f,l.tail)) : Empty()

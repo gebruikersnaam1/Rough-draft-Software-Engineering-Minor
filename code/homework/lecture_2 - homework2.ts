@@ -63,19 +63,15 @@ type List<a> = {
   kind: "Empty"
 }
 
-const Cons = <a>(h: a, t:List<a>):List<a>=>{
-  return{
+const Cons = <a>(h: a, t:List<a>):List<a>=>({
     kind: "Cons", //to type check
     head: h, //the value
     tail: t //the next ref containg a heap ref
-  }
-}
+})
 
-const Empty =<a>() : List<a> =>{
-  return{
+const Empty =<a>() : List<a> =>({
     kind: "Empty" //to type check
-  }
-}
+})
 
 // map transforms one or more items based on the given Functor
 let map_list = function<a,b>(f:Fun<a,b>,l:List<a>) : List<b>{

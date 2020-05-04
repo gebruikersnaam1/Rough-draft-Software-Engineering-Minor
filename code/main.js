@@ -37,18 +37,14 @@ var Fun = function (f) {
         }
     };
 };
-var Cons = function (h, t) {
-    return {
-        kind: "Cons",
-        head: h,
-        tail: t
-    };
-};
-var Empty = function () {
-    return {
-        kind: "Empty"
-    };
-};
+var Cons = function (h, t) { return ({
+    kind: "Cons",
+    head: h,
+    tail: t
+}); };
+var Empty = function () { return ({
+    kind: "Empty"
+}); };
 var map_list = function (f, l) {
     return l.kind == "Cons" ? Cons(f.f(l.head), map_list(f, l.tail)) : Empty();
 };
