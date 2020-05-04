@@ -78,3 +78,8 @@ var plus_r = plus_string.f(plus_ie);
 //assignment 3.2
 var zero_list; //TODO: I don't know if this is correct???
 var plus_list = function () { return Fun(function (x) { return x.fst.kind == "Cons" ? Cons(x.fst.head, plus_list().f({ fst: x.fst.tail, snd: x.snd })) : x.snd; }); };
+var p_list1 = Cons(10, Cons(20, Cons(30, Empty())));
+var p_list2 = Cons(40, Cons(50, Cons(60, Empty())));
+var p_pair = Pair(p_list1, p_list2);
+var p_list3 = plus_list().f(p_pair);
+console.log(p_list3);
