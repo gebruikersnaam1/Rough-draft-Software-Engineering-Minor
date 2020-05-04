@@ -136,14 +136,12 @@ let plus_r = plus_string.f(plus_ie)
 // console.log(plus_r)
 
 //assignment 3.2
-let zero_list : <a> () => Fun<List<a>,List<a>> //TODO: I don't know if this is correct???
+let zero_list = <a> () : Fun<List<a>,List<a>> => Fun(a=> a) //TODO: I don't know if this is correct???
 
-const plus_list = <a>() : Fun<Pair<List<a>,List<a>>,List<a>> => Fun(
-  x=> x.fst.kind == "Cons" ? Cons<a>(x.fst.head,plus_list<a>().f({fst: x.fst.tail, snd: x.snd})) : x.snd
+// l1: 4,5,7 Empty
+// l2: 8,5,4 Empty
+// l3 4,5,7,8,5,4 Empty
+let plus_list = <a> () : Fun<Pair<List<a>,List<a>>,List<a>> => Fun(
+  x => x.fst.kind == "Cons" ? Cons<a>(x.fst.head,plus_list<a>().f({fst: x.fst.tail, snd: x.snd})) : x.snd
 )
 
-let p_list1 = Cons(10,Cons(20,Cons(30,Empty())))
-let p_list2 = Cons(40,Cons(50,Cons(60,Empty())))
-let p_pair = Pair(p_list1,p_list2)
-let p_list3 = plus_list().f(p_pair)
-console.log(p_list3)
