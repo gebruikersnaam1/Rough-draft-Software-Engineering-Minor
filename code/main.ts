@@ -114,6 +114,8 @@ let Exception = Fun<Exception<string>,string>(
 type Unit = {}
 type Pair<a,b> = { fst: a, snd:b}
 type Id<a> = a
+type Option<a> = { kind:"none" } | { kind:"some", value:a }
+
 
 //example from code provided by the teacher
 let zero_int : Fun<Unit,number> = Fun((_:Unit) => 0)
@@ -136,12 +138,41 @@ let plus_r = plus_string.f(plus_ie)
 // console.log(plus_r)
 
 //assignment 3.2
-let zero_list = <a> () : Fun<List<a>,List<a>> => Fun(a=> a) //TODO: I don't know if this is correct???
-
+//NOTE: zero_something always returns the 0 of that object... int=0, List=Empty, etc.... I think.
+let zero_List = function<a>(): Fun<Unit, List<a>> {
+  return Fun<Unit, List<a>>((_: Unit) => Empty<a>())
+}
 // l1: 4,5,7 Empty
 // l2: 8,5,4 Empty
 // l3 4,5,7,8,5,4 Empty
 let plus_list = <a> () : Fun<Pair<List<a>,List<a>>,List<a>> => Fun(
   x => x.fst.kind == "Cons" ? Cons<a>(x.fst.head,plus_list<a>().f({fst: x.fst.tail, snd: x.snd})) : x.snd
 )
+var p_list1 = Cons(10, Cons(20, Cons(30, Empty())));
+var p_list2 = Cons(40, Cons(50, Cons(60, Empty())));
+var p_pair = Pair(p_list1, p_list2);
+var p_list3 = plus_list().f(p_pair);
+console.log(p_list3);
 
+//
+let id =  <a>() : Fun<a, Id<a>> => Fun(  x=> x)
+//nothing more to do because Id<Id<a>> = a
+let join = <a>() : Fun<Id<Id<a>>, Id<a>> => Fun( x => x)
+
+
+
+let Some = <a>(value:a) : Option<a> => ({kind: "some", value: value})
+let None = <a>()  : Option<a> => ({kind: "none"})
+// let none = <a>() : Fun<{},Option<a>> => Fun<{},Option<a>>(_ => ({ kind:"None" }))
+// let some = <a>() : Fun<a,Option<a>> => Fun<a,Option<a>>(x => ({ kind:"Some", value:x }))
+let z = Some("x")
+let unit_option = <a>() => Fun<a, Option<a>>(x => Some(x))
+
+let join_option = function<a>() :  Fun<Option<Option<a>>, Option<a>> {
+  return Fun<Option<Option<a>>, Option<a>>(x =>  x.kind == "some" ? x.value : None())
+}
+
+let unit_list = <a>() : Fun<a,List<a>> => Fun(x => Cons(x,Empty()))
+let join_list = <a>() : Fun<List<List<a>>, List<a>> => Fun(x => {
+  return x.kind == "Cons" ? plus_list<a>().f({ fst: x.head, snd: join_list<a>().f(x.tail) } ) : Empty<a>()
+})

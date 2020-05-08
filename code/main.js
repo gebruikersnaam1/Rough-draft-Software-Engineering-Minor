@@ -1,7 +1,7 @@
-var Id = function () { return Fun(function (x) { return x; }); };
+var id = function () { return Fun(function (x) { return x; }); };
 var repeat = function (f, n) {
     if (n <= 0) {
-        return Id();
+        return id();
     }
     else {
         return f.then(repeat(f, (n - 1)));
@@ -10,7 +10,7 @@ var repeat = function (f, n) {
 var repeatUntil = function (f, p) {
     var g = function (x) {
         if (p.f(x)) {
-            return Id().f(x);
+            return id().f(x);
         }
         else {
             return f.then(repeatUntil(f, p)).f(x);
@@ -31,12 +31,18 @@ var Fun = function (f) {
             var _this = this;
             return Fun(function (x) { return repeat(_this, x); });
         },
-        repeatUntil: function (g) {
+        repeatUntil: function () {
             var _this = this;
-            return Fun(function (x) { return repeatUntil(_this, g); });
+            return Fun(function (x) { return repeatUntil(_this, x); });
         }
     };
 };
+var incr = Fun(function (x) { return x + 1; });
+var double = Fun(function (x) { return x * 2; });
+console.log(incr.f(5));
+console.log(incr.then(double).f(5));
+console.log(incr.repeat().f(5).f(5));
+console.log(incr.repeatUntil().f(Fun(function (x) { return x > 100; })).f(5));
 var Cons = function (h, t) { return ({
     kind: "Cons",
     head: h,
@@ -45,39 +51,29 @@ var Cons = function (h, t) { return ({
 var Empty = function () { return ({
     kind: "Empty"
 }); };
-var map_list = function (f, l) {
-    return l.kind == "Cons" ? Cons(f.f(l.head), map_list(f, l.tail)) : Empty();
+var map_list = function (f, list) {
+    return list.kind == "Cons" ? Cons(f.f(list.head), map_list(f, list.tail)) : Empty();
 };
-var f_l = Fun(function (x) { return (x + 1); });
-var l1 = Cons("a", Cons("b", Cons("c", Empty())));
-var l2 = map_list(f_l, l1);
-var Result = function (v) {
-    return {
-        kind: "Result",
-        value: v
-    };
-};
-var Ex_Error = function () {
-    return {
-        kind: "Error"
-    };
-};
-//TODO: feels wrong because it not really generic... or is it?
-var Exception = Fun(function (x) { return x.kind == "Result" ? x.value : "Something went wrong"; });
-//example from code provided by the teacher
-var zero_int = Fun(function (_) { return 0; });
-//assignment 3.1
-var Pair = function (fst, snd) { return ({
-    fst: fst, snd: snd
-}); };
+var m_l = Fun(function (x) { return x + 1; });
+var example_list = Cons("a", Cons("b", Cons("c", Empty())));
+var example_list2 = map_list(m_l, example_list);
+console.log(example_list2);
 var zero_string = Fun(function (_) { return ""; });
-var plus_string = Fun(function (x) { return x.fst + x.snd; });
-var plus_ie = Pair("Hello", " world");
-var plus_r = plus_string.f(plus_ie);
-// console.log(plus_r)
-//assignment 3.2
-var zero_list = function () { return Fun(function (a) { return a; }); }; //TODO: I don't know if this is correct???
-// l1: 4,5,7 Empty
-// l2: 8,5,4 Empty
-// l3 4,5,7,8,5,4 Empty
+var plus_pair = Fun(function (x) { return x.fst + " " + x.snd; });
+var zero_list = function () { return Fun(function (_) { return Empty(); }); };
 var plus_list = function () { return Fun(function (x) { return x.fst.kind == "Cons" ? Cons(x.fst.head, plus_list().f({ fst: x.fst.tail, snd: x.snd })) : x.snd; }); };
+var idk_id = function () { return Fun(function (x) { return x; }); };
+var join_id = function () { return Fun(function (x) { return x; }); };
+var Some = function (value) { return ({ kind: "Some", value: value }); };
+var None = function () { return ({ kind: "None" }); };
+// let none = <a>() : Fun<{},Option<a>> => Fun<{},Option<a>>(_ => ({ kind:"None" }))
+// let some = <a>() : Fun<a,Option<a>> => Fun<a,Option<a>>(x => ({ kind:"Some", value:x }))
+var z = Some("x");
+var unit_option = function () { return Fun(function (x) { return Some(x); }); };
+var join_option = function () {
+    return Fun(function (x) { return x.kind == "Some" ? x.value : None(); });
+};
+var unit_list = function () { return Fun(function (x) { return Cons(x, Empty()); }); };
+var join_list = function () { return Fun(function (x) {
+    return x.kind == "Cons" ? plus_list().f({ fst: x.head, snd: join_list().f(x.tail) }) : Empty();
+}); };
