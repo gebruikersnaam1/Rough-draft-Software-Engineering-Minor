@@ -1,19 +1,6 @@
 "use strict";
 exports.__esModule = true;
-exports.map_TableRow = function (row) {
-    return null;
-};
-//l = [a,b,c] of type T
-//    [d] of type U
-// 
-exports.map_table = function (x) {
-    if (x.kind == "Cons") {
-        for (var i in x.head) {
-        }
-    }
-    // var z = x.kind == "Cons" ? Cons(map_TableRow(x.head),Empty()) : Empty()
-    return null;
-};
+var utils_1 = require("../utils/utils"); //import tool
 exports.Table = function (tableData) {
     return {
         tableData: tableData,
@@ -25,7 +12,7 @@ exports.Table = function (tableData) {
             return exports.Table(tableData);
         },
         Commit: function () {
-            return exports.map_table(tableData);
+            return utils_1.map_table(tableData, utils_1.Fun(function () { return null; }));
         }
     };
 };

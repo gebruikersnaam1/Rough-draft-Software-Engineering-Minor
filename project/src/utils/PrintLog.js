@@ -10,7 +10,7 @@ var PrintStudentGrades = function (l) {
 };
 var PrintStudents = function (l) {
     if (l.kind == "Cons") {
-        console.log("Student: #" + l.head.Id + " " + l.head.Firstname + " " + l.head.Prefix + " " + l.head.LastName);
+        console.log("Student: #" + l.head.Id + " " + l.head.Firstname + " " + l.head.Prefix + " " + l.head.Lastname);
         console.log("Gender: " + l.head.Gender.gender);
         // console.log()
         console.log("Education: " + l.head.Educations.Name + " with a duration: " + l.head.Educations.Study_Duration);

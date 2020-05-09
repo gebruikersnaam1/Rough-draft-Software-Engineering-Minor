@@ -47,3 +47,9 @@ exports.Fun = function (f) {
         }
     };
 };
+/*******************************************
+  * map
+*******************************************/
+exports.map_table = function (l, f) {
+    return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();
+};

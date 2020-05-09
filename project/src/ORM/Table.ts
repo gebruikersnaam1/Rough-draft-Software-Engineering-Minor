@@ -1,5 +1,4 @@
-import * as models from  "../data/models"//import model
-import {List, Cons,Empty} from  "../utils/utils"//import tool
+import {List,map_table,Fun} from  "../utils/utils"//import tool
 import {ExcludeProps, GetProps,Filter,ExcludePropTypes,IncludePropTypes} from  "./Tools" //import 'tools'
 
 
@@ -13,21 +12,6 @@ export interface Table<T,U>{
     // GroupBy: null
     //TODO: implement ^ stuff
 }
-export let map_TableRow = <T,U>(row:T[]) : U[] =>{
-    return null!
-} 
-//l = [a,b,c] of type T
-//    [d] of type U
-// 
-export let map_table = <T,U>(x:List<T>) : List<U> =>{
-    if(x.kind == "Cons"){
-        for(let i in x.head){
-            
-        }
-    }
-    // var z = x.kind == "Cons" ? Cons(map_TableRow(x.head),Empty()) : Empty()
-    return null!
-}
 
 export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
     return {
@@ -36,7 +20,7 @@ export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
             return Table<ExcludeProps<T,k>,Pick<T,k>>(tableData)
         },
         Commit: () => { //a little to get the list
-            return map_table<T,U>(tableData)
+            return map_table<T,U>(tableData,Fun<T,U>(()=>null!))
         }
     }
 }
