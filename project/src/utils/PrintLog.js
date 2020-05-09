@@ -4,7 +4,7 @@ var data_1 = require("../data/data");
 //kind of a mess to read, but helps me to see the data being show in the console.log
 var PrintStudentGrades = function (l) {
     if (l.kind == "Cons") {
-        console.log("Grade entry ID: #" + l.head.Id + " = course: " + l.head.Course_Name + " & Grade " + l.head.Grade);
+        console.log("\t Grade entry ID: #" + l.head.Id + " = course: " + l.head.Course_Name + " & Grade " + l.head.Grade);
         PrintStudentGrades(l.tail);
     }
 };
@@ -13,8 +13,8 @@ var PrintStudents = function (l) {
         console.log("Student: #" + l.head.Id + " " + l.head.Firstname + " " + l.head.Prefix + " " + l.head.LastName);
         console.log("Gender: " + l.head.Gender.gender);
         // console.log()
-        console.log("Education: " + l.head.Educations.Name + " duration: " + l.head.Educations.Study_Duration);
-        console.log("Grades of student");
+        console.log("Education: " + l.head.Educations.Name + " with a duration: " + l.head.Educations.Study_Duration);
+        console.log("Grades of student:");
         PrintStudentGrades(l.head.Grades);
         console.log("----------------------------------------------------\n");
         PrintStudents(l.tail);
