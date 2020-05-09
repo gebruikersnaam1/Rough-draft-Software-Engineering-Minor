@@ -20,7 +20,8 @@ var CreateRandomGrades = function () {
 };
 var gradeID = 0; //TODO: find a way that fits more the minor
 var CreateGradeID = function () {
-    return (gradeID + 1);
+    gradeID += 1;
+    return (gradeID);
 };
 //random grades used for 28 students... but doesn't allow include
 var CreateGrades = function () {

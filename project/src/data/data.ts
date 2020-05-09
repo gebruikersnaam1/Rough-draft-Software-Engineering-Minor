@@ -22,7 +22,8 @@ const CreateRandomGrades = () : number =>{
 
 let gradeID = 0 //TODO: find a way that fits more the minor
 const CreateGradeID = () : number => {
-  return (gradeID+1)
+  gradeID+=1
+  return (gradeID)
 }
 
 //random grades used for 28 students... but doesn't allow include
