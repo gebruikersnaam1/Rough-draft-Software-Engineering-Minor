@@ -13,17 +13,8 @@ exports.Table = function (tableData) {
         },
         Commit: function () {
             return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
-                //T = {} somewhere between 0 and 1000
-                //U = {} somewhere between 0 and 1000
-                //i.e. T = {x,y,z} | U = {y,z}
-                //obj = {x,y,z}
-                var result = {};
-                for (var prop in obj) {
-                    if (typeof obj[prop] !== 'object' && typeof obj[prop] !== 'function') {
-                        result[prop] = obj[prop];
-                    }
-                }
-                return result;
+                // [P in keyof T] : T[P] extends Condition ? P : never
+                return null;
             }));
         }
     };

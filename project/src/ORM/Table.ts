@@ -25,13 +25,11 @@ export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
                 //U = {} somewhere between 0 and 1000
                 //i.e. T = {x,y,z} | U = {y,z}
                 //obj = {x,y,z}
-                let result: any = {};
-                for (let prop in obj) {
-                    if (typeof obj[prop] !== 'object' && typeof obj[prop] !== 'function') {
-                        result[prop] = obj[prop]
-                    }
-                }
-                return result;
+                type result = ExcludeProps<T,U>
+                type TypeWithGeneric<T> = T[]
+                type extractGeneric<Type> = Type extends TypeWithGeneric<infer X> ? X : never
+                // [P in keyof T] : T[P] extends Condition ? P : never
+                return null!
             }))
         }
     }
