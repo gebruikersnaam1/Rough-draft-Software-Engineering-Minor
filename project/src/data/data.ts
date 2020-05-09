@@ -79,4 +79,5 @@ export let ListStudents =
           Cons(models.Students(25,"Quinten", "van", "Meijbeek-Huisman",CreateGrades(),models.Gender("Gender fluid"), cmi4),
           Cons(models.Students(26,"Lindsey", "de", "Ark",CreateGrades(),models.Gender("Women"), cmi4),
           Cons(models.Students(27,"Steven", "", "Kole",CreateGrades(),models.Gender("Man"), cmi4),
-          Cons(models.Students(28,"Folkert", "van der", "Heiden",CreateGrades(),models.Gender("Man"), cmi4), Empty()))))))))))))))))))))))))))))
+          Cons(models.Students(28,"Andre", "van", "Duin",CreateGrades(),models.Gender("Man"), cmi4),
+          Cons(models.Students(29,"Folkert", "van der", "Heiden",CreateGrades(),models.Gender("Man"), cmi4), Empty()))))))))))))))))))))))))))))
