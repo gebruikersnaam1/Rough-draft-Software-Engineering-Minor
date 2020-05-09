@@ -13,6 +13,14 @@ exports.Table = function (tableData) {
         },
         Commit: function () {
             return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
+                //T = {} somewhere between 0 and 1000
+                //U = {} somewhere between 0 and 1000
+                //i.e. T = {x,y,z} | U = {y,z}
+                //obj = {x,y,z}
+                var z = Object.getOwnPropertyNames(obj);
+                for (var i = 0; i < z.length; i++) {
+                    console.log(z[i]);
+                }
                 // [P in keyof T] : T[P] extends Condition ? P : never
                 return null;
             }));
