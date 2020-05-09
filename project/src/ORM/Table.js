@@ -1,12 +1,15 @@
 "use strict";
 exports.__esModule = true;
+//notes: how to create the table SELECT
 //interface x = {y,z,i}
 //possible selections = interface
 //SELECTED {}
 //FOR EACH SELECT remove possible selection
 //i.e. SELECTED("y") == possible selection {z,i}
-// y,z, i | { }
-// z,i | { y }
+// T = {y,z, i} | U = { } | 
+// T = {z,i } | U = { y } |
+// z = T - U
+// y = Props of type T(k) + U
 exports.Table = function (tableData) {
     return {
         tableData: tableData,
@@ -15,7 +18,7 @@ exports.Table = function (tableData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return null;
+            return exports.Table(tableData);
         }
     };
 };

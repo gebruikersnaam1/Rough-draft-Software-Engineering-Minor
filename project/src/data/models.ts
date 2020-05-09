@@ -21,7 +21,7 @@ export type Students = {
     Firstname:string
     Prefix: string
     Gender: Gender
-    LastName: string
+    Lastname: string
     Educations: Educations
     Grades: List<Grades>
 }
@@ -54,7 +54,7 @@ export const Students = (id:number, firstname: string, prefix: string,lastname: 
     {
         Id: id,
         Firstname: firstname,
-        LastName: lastname,
+        Lastname: lastname,
         Prefix: prefix,
         Gender: gender,
         Educations: education,

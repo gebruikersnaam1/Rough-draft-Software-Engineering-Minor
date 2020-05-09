@@ -7,7 +7,7 @@ exports.Gender = function (x) { return (x == "Man" ? { gender: "Man" } : x == "W
 exports.Students = function (id, firstname, prefix, lastname, grades, gender, education) { return ({
     Id: id,
     Firstname: firstname,
-    LastName: lastname,
+    Lastname: lastname,
     Prefix: prefix,
     Gender: gender,
     Educations: education,
