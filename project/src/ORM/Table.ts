@@ -6,7 +6,7 @@ import {ExcludeProps, GetProps,Filter,ExcludePropTypes,IncludePropTypes} from  "
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T>{
     tableData: List<T>
-    Select: <k>(...Props:k[])=> k[]
+    Select: <k extends keyof T>(...Props:k[])=> Table<k>
     // Include: null,
     // OrderBy: null,
     // GroupBy: null
@@ -18,12 +18,14 @@ export interface Table<T>{
 //SELECTED {}
 //FOR EACH SELECT remove possible selection
 //i.e. SELECTED("y") == possible selection {z,i}
+// y,z, i | { }
+// z,i | { y }
 
 export let Table = function<T>(tableData: List<T>) : Table<T> {
     return {
         tableData: tableData,
-        Select: function<k>(...Props:k[]){
-            return Props
+        Select: function<k extends keyof T>(...Props:k[]) : Table<k>{
+            return null!
         }
     }
 }

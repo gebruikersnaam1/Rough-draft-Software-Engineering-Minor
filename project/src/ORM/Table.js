@@ -5,6 +5,8 @@ exports.__esModule = true;
 //SELECTED {}
 //FOR EACH SELECT remove possible selection
 //i.e. SELECTED("y") == possible selection {z,i}
+// y,z, i | { }
+// z,i | { y }
 exports.Table = function (tableData) {
     return {
         tableData: tableData,
@@ -13,7 +15,7 @@ exports.Table = function (tableData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return Props;
+            return null;
         }
     };
 };
