@@ -1,10 +1,19 @@
 "use strict";
 exports.__esModule = true;
+//interface x = {y,z,i}
+//possible selections = interface
+//SELECTED {}
+//FOR EACH SELECT remove possible selection
+//i.e. SELECTED("y") == possible selection {z,i}
 exports.Table = function (tableData) {
     return {
         tableData: tableData,
         Select: function () {
-            return null;
+            var Props = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                Props[_i] = arguments[_i];
+            }
+            return Props;
         }
     };
 };
