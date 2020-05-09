@@ -1,16 +1,5 @@
 "use strict";
-/*
-    * the types/interfaces of the models that are going to be used during this project
-*/
 exports.__esModule = true;
-/*
-    * the constructors for the models
-*/
-exports.Students = function (id, firstname, prefix, lastname, education, Grades) { return ({
-    Id: id,
-    Firstname: firstname,
-    LastName: lastname,
-    Prefix: prefix,
-    Educations: education,
-    Grades: Grades
-}); };
+var PrintLog_1 = require("./utils/PrintLog");
+//kind of a mess to read, but helps me to see the data being show in the console.log
+PrintLog_1.PrintUsedData();

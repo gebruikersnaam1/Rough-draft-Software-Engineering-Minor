@@ -7,7 +7,9 @@ export type Gender = {
     gender: "Women"
 } |{
     gender: "Other"
-} 
+}
+
+
 export let Gender = (x:string) : Gender =>(
     x == "Man"? {gender: "Man"} : x == "Women" ? {gender: "Women"} : {gender: "Other"}
 )
