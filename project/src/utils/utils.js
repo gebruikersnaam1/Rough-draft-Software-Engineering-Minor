@@ -1,4 +1,7 @@
 "use strict";
+/*******************************************
+ * List
+*******************************************/
 exports.__esModule = true;
 exports.Cons = function (head, tail) { return ({
     kind: "Cons",
@@ -48,7 +51,10 @@ exports.Fun = function (f) {
     };
 };
 /*******************************************
-  * map
+   * join
+*******************************************/
+/*******************************************
+   * map
 *******************************************/
 exports.map_table = function (l, f) {
     return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();

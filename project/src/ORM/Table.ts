@@ -20,7 +20,16 @@ export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
             return Table<ExcludeProps<T,k>,Pick<T,k>>(tableData)
         },
         Commit: () => { //a little to get the list
-            return map_table<T,U>(tableData,Fun<T,U>(()=>null!))
+            return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
+                //T = {} somewhere between 0 and 1000
+                //U = {} somewhere between 0 and 1000
+                //i.e. T = {x,y,z} | U = {y,z}
+                //obj = {x,y,z}
+                // if(obj.kind)
+                // let tmp1 = 
+                // const copy = {} as Pick<T, obj>;
+                return null!
+            }))
         }
     }
 }

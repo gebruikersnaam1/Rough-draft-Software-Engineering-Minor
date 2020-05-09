@@ -12,7 +12,16 @@ exports.Table = function (tableData) {
             return exports.Table(tableData);
         },
         Commit: function () {
-            return utils_1.map_table(tableData, utils_1.Fun(function () { return null; }));
+            return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
+                //T = {} somewhere between 0 and 1000
+                //U = {} somewhere between 0 and 1000
+                //i.e. T = {x,y,z} | U = {y,z}
+                //obj = {x,y,z}
+                // if(obj.kind)
+                // let tmp1 = 
+                // const copy = {} as Pick<T, obj>;
+                return null;
+            }));
         }
     };
 };
