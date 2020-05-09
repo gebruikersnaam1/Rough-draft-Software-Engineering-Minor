@@ -72,7 +72,7 @@ export let ListStudents =
           Cons(models.Students(19,"Rox", "van", "Egmond",CreateGrades(),models.Gender("Women"), cmi3),
           Cons(models.Students(20,"Thom", "van", "Hemsworth",CreateGrades(),models.Gender("Man"), cmi3),
           //8 technische communicatie
-          Cons(models.Students(21,"Lalya", "van der", "Heiden",CreateGrades(),models.Gender("Women"), cmi4),
+          Cons(models.Students(21,"Lalya", "van der", "Grey",CreateGrades(),models.Gender("Women"), cmi4),
           Cons(models.Students(22,"Lotte", "", "Brik",CreateGrades(),models.Gender("Women"), cmi4),
           Cons(models.Students(23,"Wah", "van", "Nek",CreateGrades(),models.Gender("Man"), cmi4),
           Cons(models.Students(24,"Kevin", "", "Moerkerken",CreateGrades(),models.Gender("Women"), cmi4),
