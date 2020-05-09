@@ -6,7 +6,6 @@ import {Unit} from '../utils/utils'
     * database environment
     * get all the tables of this environment with one connect'
 */
-
 export type dbEnv = {
     tableStudents: () => Table<Students,Unit> 
 }

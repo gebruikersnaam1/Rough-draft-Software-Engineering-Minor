@@ -25,10 +25,13 @@ export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
                 //U = {} somewhere between 0 and 1000
                 //i.e. T = {x,y,z} | U = {y,z}
                 //obj = {x,y,z}
-                // if(obj.kind)
-                // let tmp1 = 
-                // const copy = {} as Pick<T, obj>;
-                return null!
+                let result: any = {};
+                for (let prop in obj) {
+                    if (typeof obj[prop] !== 'object' && typeof obj[prop] !== 'function') {
+                        result[prop] = obj[prop]
+                    }
+                }
+                return result;
             }))
         }
     }
