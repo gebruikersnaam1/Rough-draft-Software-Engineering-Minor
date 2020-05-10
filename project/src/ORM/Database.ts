@@ -18,7 +18,7 @@ export type dbEnv = {
 
 let dbEnv = () : dbEnv => {
     return{
-        tableStudents: () : Table<Students,Unit> => { return Table<Students,Unit>(ListStudents,null!) }
+        tableStudents: () : Table<Students,Unit> => { return Table<Students,Unit>(ListStudents,[]) }
     }
 }
 

@@ -1,44 +1,43 @@
 "use strict";
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
+// type T = {x,y,z}
+// type U = {}
+// let customArray = List<T>({x,y,z},{x,y,z})
+// Select(x)
+// Type T = {y,z}
+// Type U = { x }
+// can select twice
+// Select(y)
+// Type T = {y,z}
+// Type U = { x,y }
+//let customArray2 = List<U>
+//for i in customArray: 
+//      //I = {x,y,z}
+//      let z = FilterToNewType(i) //z contains {x,y}
+//      add z to customArray 2
+// let customArray2 = List<T>({x,y},{x,y})
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,
         FilterData: filterData,
         Select: function () {
+            var _this = this;
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            var i = [Props, this.FilterData];
-            var a = [];
             Props.map(function (x) {
-                console.log(x);
+                _this.FilterData.push(String(x));
             });
-            // console.log(a)
-            return exports.Table(tableData, null);
+            return exports.Table(tableData, filterData);
         },
         Commit: function () {
             var _this = this;
             return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
-                //T = {} somewhere between 0 and 1000
-                //U = {} somewhere between 0 and 1000
-                //i.e. T = {x,y,z} | U = {y,z}
-                //obj = {x,y,z}
-                var i = _this.FilterData;
-                var z = Object.getOwnPropertyNames(obj);
-                var x = JSON.parse(JSON.stringify((Object.assign({}, obj))));
-                var a = { "Id": 0 };
-                // console.log(i)
-                for (var i_1 = 0; i_1 < z.length; i_1++) {
-                    //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
-                    //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
-                    // console.log(obj)
-                    if (x[z[i_1]] in a) {
-                        // console.log(x[z[i]])
-                    }
-                }
-                // [P in keyof T] : T[P] extends Condition ? P : never
+                _this.FilterData.map(function (x) {
+                    console.log(x);
+                });
                 return null;
             }));
         }

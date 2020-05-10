@@ -5,7 +5,7 @@ import { isArray } from "util"
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
     tableData: List<T>
-    FilterData: U[]
+    FilterData: string[]
     Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k> & U>
     Commit: () => List<U>
     // Include: null,
@@ -14,41 +14,42 @@ export interface Table<T,U>{
     //TODO: implement ^ stuff
 }
 
-export let Table = function<T,U>(tableData: List<T>, filterData: U[]) : Table<T,U> {
+// type T = {x,y,z}
+// type U = {}
+// let customArray = List<T>({x,y,z},{x,y,z})
+
+// Select(x)
+// Type T = {y,z}
+// Type U = { x }
+
+// can select twice
+// Select(y)
+// Type T = {y,z}
+// Type U = { x,y }
+
+//let customArray2 = List<U>
+//for i in customArray: 
+//      //I = {x,y,z}
+//      let z = FilterToNewType(i) //z contains {x,y}
+//      add z to customArray 2
+// let customArray2 = List<T>({x,y},{x,y})
+
+export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Table<T,U> {
     return {
         tableData: tableData,
         FilterData : filterData,
 
         Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
-            let i = [Props,this.FilterData]
-            let a = []
             Props.map(x=> {
-                    console.log(x)                             
+                this.FilterData.push(String(x))
             })
-            // console.log(a)
-            return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,null!)
+            return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
         },
         Commit: function(this) { //a little to get the list
             return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
-
-                //T = {} somewhere between 0 and 1000
-                //U = {} somewhere between 0 and 1000
-                //i.e. T = {x,y,z} | U = {y,z}
-                //obj = {x,y,z}
-                let i = this.FilterData
-                let z = Object.getOwnPropertyNames(obj)
-                let x = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-                let a = { "Id":0 }
-                // console.log(i)
-                for(let i = 0; i < z.length; i++){
-                    //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
-                    //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
-                    // console.log(obj)
-                    if(x[z[i]] in a){
-                        // console.log(x[z[i]])
-                    }
-                }
-                // [P in keyof T] : T[P] extends Condition ? P : never
+                this.FilterData.map(x=> {
+                    console.log(x)
+                })
                 return null!
             }))
         }
