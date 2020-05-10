@@ -23,7 +23,7 @@ const CreateRandomGrades = () : number =>{
   return Math.floor(Math.random() * (10-6 + 1)) + 6 //extra random? 
 }
 
-let gradeID = 0 //TODO: find a way that fits more the minor
+let gradeID = 0 //TODO: find a way to do this that fits more to the style of the minor
 const CreateGradeID = () : number => {
   gradeID+=1
   return (gradeID)

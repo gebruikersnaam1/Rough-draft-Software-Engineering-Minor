@@ -19,7 +19,7 @@ var courceName4 = "Become a Gift For Your Environment";
 var CreateRandomGrades = function () {
     return Math.floor(Math.random() * (10 - 6 + 1)) + 6; //extra random? 
 };
-var gradeID = 0; //TODO: find a way that fits more the minor
+var gradeID = 0; //TODO: find a way to do this that fits more to the style of the minor
 var CreateGradeID = function () {
     gradeID += 1;
     return (gradeID);
