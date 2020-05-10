@@ -89,14 +89,30 @@ export const GradeStats = (courseName: string,averageStats: number, teacher:stri
  * Not part of the data model, but useful!
  */
 
-export type Row<T> = {
+export type Column<T> = {
     name: string,
     value: T
 }
 
-export const Row = <T>(name:string, value: T) : Row<T> =>{
-    return {
+export const Column = <T>(name:string, value: T) : Column<T> =>(
+    {
         name: name,
         value: value
     }
+)
+
+export type Row<T> = {
+    columns: Column<T>[]
+    getHeader: string[]
+    getValues: string[]
+
 }
+
+
+export let Row = <T>(columns: Column<T>[]) : Row<T> =>(
+    {
+        columns: columns,
+        getHeader: columns.map(x => String(x.name)),
+        getValues: columns.map(x => String(x.value))
+    }
+)

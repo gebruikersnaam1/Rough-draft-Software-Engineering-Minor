@@ -79,8 +79,8 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
   /******************************************* 
      * map 
   *******************************************/
-  export let map_table = <T,U>(l:List<T>,f:Fun<T,Row<U>[]>) : List<Row<U>[]> =>{
-    return l.kind == "Cons" ? Cons<Row<U>[]>(f.f(l.head),map_table(l.tail,f)) : Empty<Row<U>[]>()
+  export let map_table = <T,U>(l:List<T>,f:Fun<T,Row<U>>) : List<Row<U>> =>{
+    return l.kind == "Cons" ? Cons<Row<U>>(f.f(l.head),map_table(l.tail,f)) : Empty<Row<U>>()
   }
   /******************************************* 
      * Other 

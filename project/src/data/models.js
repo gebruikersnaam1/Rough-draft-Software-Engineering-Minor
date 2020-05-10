@@ -27,9 +27,12 @@ exports.GradeStats = function (courseName, averageStats, teacher) { return ({
     Average_Grade: averageStats,
     Teacher: teacher
 }); };
-exports.Row = function (name, value) {
-    return {
-        name: name,
-        value: value
-    };
-};
+exports.Column = function (name, value) { return ({
+    name: name,
+    value: value
+}); };
+exports.Row = function (columns) { return ({
+    columns: columns,
+    getHeader: columns.map(function (x) { return String(x.name); }),
+    getValues: columns.map(function (x) { return String(x.value); })
+}); };

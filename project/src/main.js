@@ -2,10 +2,14 @@
 exports.__esModule = true;
 var Database_1 = require("./ORM/Database");
 // import {PrintUsedData} from "./utils/PrintLog"
+var QueryRun = function (l) {
+    if (l.kind == "Cons") {
+        console.log(l.head.getValues);
+        QueryRun(l.tail);
+    }
+};
 var query1 = Database_1.dbTables.tableStudents().Select("Prefix").Select("Firstname", "Lastname").Commit();
-if (query1.kind == "Cons") { //just to stop the 'error'
-    console.log(query1.head);
-}
+QueryRun(query1);
 // console.log(query1)
 //kind of a mess to read, but helps me to see the data being show in the console.log
 // PrintUsedData()

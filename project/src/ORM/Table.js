@@ -39,11 +39,11 @@ exports.Table = function (tableData, filterData) {
                 _this.FilterData.map(function (x) {
                     Object.getOwnPropertyNames(obj).map(function (y) {
                         if (String(x) == String(y)) {
-                            newBody.push(models_1.Row(String(x), jObject[y]));
+                            newBody.push(models_1.Column(String(x), jObject[y]));
                         }
                     });
                 });
-                return newBody;
+                return models_1.Row(newBody);
             }));
         }
     };
