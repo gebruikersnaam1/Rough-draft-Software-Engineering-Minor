@@ -4,7 +4,7 @@ import {ExcludeProps} from  "./Tools" //import 'tools'
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
     tableData: List<T>
-    FilterData: []
+    FilterData: U[]
     Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k> & U>
     Commit: () => List<U>
     // Include: null,
@@ -13,17 +13,18 @@ export interface Table<T,U>{
     //TODO: implement ^ stuff
 }
 
-export let Table = function<T,U>(tableData: List<T>, filterData: []) : Table<T,U> {
+export let Table = function<T,U>(tableData: List<T>, filterData: U[]) : Table<T,U> {
     return {
         tableData: tableData,
         FilterData : filterData,
         Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
-            let z = Props.concat(filterData)
-            console.log(z)
-            return Table<ExcludeProps<T,k>,Pick<T,k> &U>(tableData,z)
+            let z = [Props,this.FilterData]
+            console.log(z.map(x=>x))
+            return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,null!)
         },
         Commit: function(this) { //a little to get the list
             return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
+
                 //T = {} somewhere between 0 and 1000
                 //U = {} somewhere between 0 and 1000
                 //i.e. T = {x,y,z} | U = {y,z}

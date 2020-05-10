@@ -10,9 +10,9 @@ exports.Table = function (tableData, filterData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            var z = Props.concat(filterData);
-            console.log(z);
-            return exports.Table(tableData, z);
+            var z = [Props, this.FilterData];
+            console.log(z.map(function (x) { return x; }));
+            return exports.Table(tableData, null);
         },
         Commit: function () {
             var _this = this;
