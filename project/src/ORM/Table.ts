@@ -1,6 +1,5 @@
 import {List,map_table,Fun} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
-import { isArray } from "util"
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
@@ -44,20 +43,18 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
         },
         Commit: function(this) { //a little to get the list
-            return map_table<T,U>(tableData,Fun<T,U[]>((obj:T)=>{
-                let z =  Object.getOwnPropertyNames(obj)
-                let o = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-                let i : U[] = []
+            return map_table<T,U>(tableData,Fun<T,U[]>((obj:T)=>{ 
+                let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
+                let newBody : U[] = []
                 this.FilterData.map(x=> {
-                    z.map(y =>{
+                    Object.getOwnPropertyNames(obj).map(y =>{
                             if(String(x) == String(y)){
-                                i.push(o[y])
+                                newBody.push(jObject[y])
                             }
                         }
                     )
                 })
-                i.map(o => console.log(o))
-                return i
+                return newBody
             }))
         }
     }
