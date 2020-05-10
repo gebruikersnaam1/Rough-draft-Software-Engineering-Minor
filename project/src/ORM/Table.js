@@ -1,7 +1,6 @@
 "use strict";
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
-var util_1 = require("util");
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,
@@ -11,10 +10,10 @@ exports.Table = function (tableData, filterData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            [Props, this.FilterData].map(function (x) {
-                if (util_1.isArray(x)) {
-                    console.log(x);
-                }
+            var i = [Props, this.FilterData];
+            var a = [];
+            Props.map(function (x) {
+                console.log(x);
             });
             // console.log(a)
             return exports.Table(tableData, null);

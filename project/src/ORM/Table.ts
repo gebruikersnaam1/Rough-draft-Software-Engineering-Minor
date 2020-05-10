@@ -18,11 +18,12 @@ export let Table = function<T,U>(tableData: List<T>, filterData: U[]) : Table<T,
     return {
         tableData: tableData,
         FilterData : filterData,
+
         Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
-            [Props,this.FilterData].map(x=> {
-                if(isArray(x)){
-                    console.log(x)
-                }
+            let i = [Props,this.FilterData]
+            let a = []
+            Props.map(x=> {
+                    console.log(x)                             
             })
             // console.log(a)
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,null!)
