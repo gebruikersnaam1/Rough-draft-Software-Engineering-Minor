@@ -2,18 +2,19 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import list
 var models = require("./models");
-//education
+//create education
 var cmi1 = models.Educations("Informatica", 4);
 var cmi2 = models.Educations("Communicatie", 4);
 var cmi3 = models.Educations("Technische Informatica", 4);
 var cmi4 = models.Educations("Technische communicatie", 4);
+exports.ListEducations = utils_1.Cons(cmi1, utils_1.Cons(cmi2, utils_1.Cons(cmi3, utils_1.Cons(cmi4, utils_1.Empty()))));
 //cource names
 var courceName1 = "SLC";
 var courceName2 = "Skills";
 var courceName3 = "Work Safety - Corona Edition";
 var courceName4 = "Become a Gift For Your Environment";
 /*
-  * Grade
+  * stuff to generate a Grade
 */
 var CreateRandomGrades = function () {
     return Math.floor(Math.random() * (10 - 6 + 1)) + 6; //extra random? 
@@ -27,8 +28,8 @@ var CreateGradeID = function () {
 var CreateGrades = function () {
     return utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName1), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName2), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName3), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName4), utils_1.Empty()))));
 };
-//maybe not needed for include
-exports.educations = utils_1.Cons(cmi1, utils_1.Cons(cmi2, utils_1.Cons(cmi3, utils_1.Cons(cmi3, utils_1.Empty()))));
+//may be needed for include
+exports.RandomGrades = CreateGrades();
 //grade states to have something to include
 var g1 = models.GradeStats(courceName1, CreateRandomGrades(), "Judith-Lotte van Koopvrouw");
 var g2 = models.GradeStats(courceName2, CreateRandomGrades(), "Gwen-Anouk van Koopman");

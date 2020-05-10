@@ -2,22 +2,6 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
-// type T = {x,y,z}
-// type U = {}
-// let customArray = List<T>({x,y,z},{x,y,z})
-// Select(x)
-// Type T = {y,z}
-// Type U = { x }
-// can select twice
-// Select(y)
-// Type T = {y,z}
-// Type U = { x,y }
-//let customArray2 = List<U>
-//for i in customArray: 
-//      //I = {x,y,z}
-//      let z = FilterToNewType(i) //z contains {x,y}
-//      add z to customArray 2
-// let customArray2 = List<T>({x,y},{x,y})
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,

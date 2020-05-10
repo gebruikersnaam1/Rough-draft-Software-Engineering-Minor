@@ -1,11 +1,14 @@
 import {List, Cons, Empty, } from  "../utils/utils"//import list
 import * as models from './models'
 
-//education
+
+//create education
 let cmi1 = models.Educations("Informatica",4)
 let cmi2 = models.Educations("Communicatie",4)
 let cmi3 = models.Educations("Technische Informatica",4)
 let cmi4 = models.Educations("Technische communicatie",4)
+
+export let ListEducations = Cons(cmi1,Cons(cmi2,Cons(cmi3,Cons(cmi4,Empty()))))
 
 //cource names
 let courceName1 = "SLC"
@@ -14,7 +17,7 @@ let courceName3 = "Work Safety - Corona Edition"
 let courceName4 = "Become a Gift For Your Environment"
 
 /*
-  * Grade
+  * stuff to generate a Grade
 */
 const CreateRandomGrades = () : number =>{
   return Math.floor(Math.random() * (10-6 + 1)) + 6 //extra random? 
@@ -27,16 +30,15 @@ const CreateGradeID = () : number => {
 }
 
 //random grades used for 28 students... but doesn't allow include
-const CreateGrades = ( ): List<models.Grades> => {
+const CreateGrades = (): List<models.Grades> => {
   return Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName1),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName2),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName3),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName4),Empty()))))
 }
 
-
-//maybe not needed for include
-export let educations = Cons<models.Educations>(cmi1,Cons(cmi2,Cons(cmi3,Cons(cmi3,Empty())))) 
+//may be needed for include
+export let RandomGrades :  List<models.Grades> = CreateGrades()
 
 //grade states to have something to include
 let g1 = models.GradeStats(courceName1,CreateRandomGrades(),"Judith-Lotte van Koopvrouw")

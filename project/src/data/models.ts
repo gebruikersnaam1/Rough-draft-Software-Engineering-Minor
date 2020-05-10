@@ -1,6 +1,6 @@
 import {List} from  "../utils/utils"//import list
 
-//'enums'/array to be define 
+//'enums'/array to  define genders 
 export type Gender = {
     gender: "Man"
 } | {
@@ -26,20 +26,17 @@ export type Students = {
     Grades: List<Grades>
 }
 
-//table is made in a way that include isn't possible
 export type Educations = {
     Name: string,
     Study_Duration: number
 }
 
-//table is made in a way that include isn't possible
 export type Grades = {
     Id: number,
     Grade: number,
     Course_Name: string
 }
 
-//table is made to have a table to include
 export type GradeStats = {
     Course_Name: string,
     Average_Grade: number,
