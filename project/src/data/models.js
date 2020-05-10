@@ -39,12 +39,21 @@ exports.Row = function (columns) { return ({
 }); };
 exports.QueryResult = function (list) { return ({
     data: list,
-    countRows: function () {
+    countColumns: function () {
         var z = 0;
         if (list.kind == "Cons") {
-            list.head.columns.map(function (_) { return z + 1; });
+            list.head.columns.map(function (_) { return z += 1; });
         }
         return z;
+    },
+    countRows: function () {
+        var i = function (l) {
+            if (l.kind == "Cons") {
+                return 1 + i(l.tail);
+            }
+            return 0;
+        };
+        return i(list);
     },
     printRows: function () {
         if (list.kind == "Cons") {

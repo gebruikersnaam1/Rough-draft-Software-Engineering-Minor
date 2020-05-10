@@ -4,7 +4,9 @@ import {dbTables} from './ORM/Database'
 
 let query1 = dbTables.tableStudents().Select("Id").Select("Firstname","Lastname","Grades").Commit()
 
-query1.printRows()
+// query1.printRows()
+console.log(query1.countRows())
+
 // console.log(query1)
 
 

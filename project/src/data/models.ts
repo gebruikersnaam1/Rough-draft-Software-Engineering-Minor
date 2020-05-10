@@ -116,6 +116,7 @@ export let Row = <T>(columns: Column<T>[]) : Row<T> =>(
 
 export type QueryResult<T> = {
     data: List<Row<T>>
+    countColumns: ()=> number
     countRows: ()=> number
     printRows: ()=> void
 }
@@ -123,12 +124,21 @@ export type QueryResult<T> = {
 export const QueryResult = <T> (list: List<Row<T>>) : QueryResult<T> =>(
     {
         data: list,
-        countRows: function(){
+        countColumns: function(){
             let z = 0
             if(list.kind == "Cons"){
-                list.head.columns.map(_ => z+1)
+                list.head.columns.map(_ => z+=1)
             }
             return z
+        },
+        countRows:function(){
+            let i = (l:List<Row<T>>) : number =>{
+                if(l.kind == "Cons"){
+                    return  1 + i(l.tail)
+                }
+                return 0
+            }
+            return i(list)
         },
         printRows: ()=>{
             if(list.kind == "Cons"){
