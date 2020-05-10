@@ -47,9 +47,18 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
         },
         Commit: function(this) { //a little to get the list
             return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
+                let z =  Object.getOwnPropertyNames(obj)
+                let o = JSON.parse(JSON.stringify((Object.assign({}, obj))))
+                let i = new Array
                 this.FilterData.map(x=> {
-                    console.log(x)
+                    z.map(y =>{
+                            if(String(x) == String(y)){
+                                i.push(o[y])
+                            }
+                        }
+                    )
                 })
+                i.map(o => console.log(o))
                 return null!
             }))
         }

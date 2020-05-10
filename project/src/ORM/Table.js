@@ -35,9 +35,17 @@ exports.Table = function (tableData, filterData) {
         Commit: function () {
             var _this = this;
             return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
+                var z = Object.getOwnPropertyNames(obj);
+                var o = JSON.parse(JSON.stringify((Object.assign({}, obj))));
+                var i = new Array;
                 _this.FilterData.map(function (x) {
-                    console.log(x);
+                    z.map(function (y) {
+                        if (String(x) == String(y)) {
+                            i.push(o[y]);
+                        }
+                    });
                 });
+                i.map(function (o) { return console.log(o); });
                 return null;
             }));
         }
