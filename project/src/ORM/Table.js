@@ -27,9 +27,7 @@ exports.Table = function (tableData, filterData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            Props.map(function (x) {
-                _this.FilterData.push(String(x));
-            });
+            Props.map(function (x) { _this.FilterData.push(String(x)); });
             return exports.Table(tableData, filterData);
         },
         Commit: function () {
@@ -37,7 +35,7 @@ exports.Table = function (tableData, filterData) {
             return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
                 var z = Object.getOwnPropertyNames(obj);
                 var o = JSON.parse(JSON.stringify((Object.assign({}, obj))));
-                var i = new Array;
+                var i = [];
                 _this.FilterData.map(function (x) {
                     z.map(function (y) {
                         if (String(x) == String(y)) {
@@ -46,7 +44,7 @@ exports.Table = function (tableData, filterData) {
                     });
                 });
                 i.map(function (o) { return console.log(o); });
-                return null;
+                return i;
             }));
         }
     };

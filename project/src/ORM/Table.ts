@@ -7,7 +7,7 @@ export interface Table<T,U>{
     tableData: List<T>
     FilterData: string[]
     Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k> & U>
-    Commit: () => List<U>
+    Commit: () => List<U[]>
     // Include: null,
     // OrderBy: null,
     // GroupBy: null
@@ -40,16 +40,14 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
         FilterData : filterData,
 
         Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
-            Props.map(x=> {
-                this.FilterData.push(String(x))
-            })
+            Props.map(x=> {this.FilterData.push(String(x))})
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
         },
         Commit: function(this) { //a little to get the list
-            return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
+            return map_table<T,U>(tableData,Fun<T,U[]>((obj:T)=>{
                 let z =  Object.getOwnPropertyNames(obj)
                 let o = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-                let i = new Array
+                let i : U[] = []
                 this.FilterData.map(x=> {
                     z.map(y =>{
                             if(String(x) == String(y)){
@@ -59,7 +57,7 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
                     )
                 })
                 i.map(o => console.log(o))
-                return null!
+                return i
             }))
         }
     }
