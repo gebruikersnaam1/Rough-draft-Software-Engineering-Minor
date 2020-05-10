@@ -26,8 +26,15 @@ export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
                 //i.e. T = {x,y,z} | U = {y,z}
                 //obj = {x,y,z}
                 let z = Object.getOwnPropertyNames(obj)
+                let x = JSON.parse(JSON.stringify((Object.assign({}, obj))))
+                
                 for(let i = 0; i < z.length; i++){
-                    console.log(z[i])
+                    //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
+                    //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
+                    if(x[z[i]]){
+                        console.log("x")
+                        console.log(x[z[i]])
+                    }
                 }
                 // [P in keyof T] : T[P] extends Condition ? P : never
                 return null!
