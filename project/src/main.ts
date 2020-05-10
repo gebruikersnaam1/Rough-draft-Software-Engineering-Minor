@@ -1,7 +1,10 @@
 import {dbTables} from './ORM/Database'
-import {PrintUsedData} from "./utils/PrintLog"
+// import {PrintUsedData} from "./utils/PrintLog"
 
-let query1 = dbTables.tableStudents().Select("Id").Commit()
+let query1 = dbTables.tableStudents().Select("Id").Select("Firstname","Lastname").Commit()
+if(query1){
+    
+}
 // console.log(query1)
 
 

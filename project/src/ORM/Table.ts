@@ -1,11 +1,11 @@
 import {List,map_table,Fun} from  "../utils/utils"//import tool
-import {ExcludeProps, GetProps,Filter,ExcludePropTypes,IncludePropTypes} from  "./Tools" //import 'tools'
-
+import {ExcludeProps} from  "./Tools" //import 'tools'
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
     tableData: List<T>
-    Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k>>
+    FilterData: []
+    Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,k>
     Commit: () => List<U>
     // Include: null,
     // OrderBy: null,
@@ -13,28 +13,30 @@ export interface Table<T,U>{
     //TODO: implement ^ stuff
 }
 
-export let Table = function<T,U>(tableData: List<T>) : Table<T,U> {
+export let Table = function<T,U>(tableData: List<T>, filterData: []) : Table<T,U> {
     return {
         tableData: tableData,
-        Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k>>{
-            return Table<ExcludeProps<T,k>,Pick<T,k>>(tableData)
+        FilterData : filterData,
+        Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,k>{
+            return Table<ExcludeProps<T,k>,k>(tableData,null!)
         },
-        Commit: () => { //a little to get the list
+        Commit: function(this) { //a little to get the list
             return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
                 //T = {} somewhere between 0 and 1000
                 //U = {} somewhere between 0 and 1000
                 //i.e. T = {x,y,z} | U = {y,z}
                 //obj = {x,y,z}
+                let i = this.FilterData
                 let z = Object.getOwnPropertyNames(obj)
                 let x = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let a = { "Id":0 }
-                
+                console.log(i)
                 for(let i = 0; i < z.length; i++){
                     //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
                     //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
                     // console.log(obj)
-                    if(z[i] in a){
-                        console.log(x[z[i]])
+                    if(x[z[i]] in a){
+                        // console.log(x[z[i]])
                     }
                 }
                 // [P in keyof T] : T[P] extends Condition ? P : never
