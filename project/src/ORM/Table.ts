@@ -1,5 +1,6 @@
 import {List,map_table,Fun} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
+import { isArray } from "util"
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
@@ -18,8 +19,12 @@ export let Table = function<T,U>(tableData: List<T>, filterData: U[]) : Table<T,
         tableData: tableData,
         FilterData : filterData,
         Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
-            let z = [Props,this.FilterData]
-            console.log(z.map(x=>x))
+            [Props,this.FilterData].map(x=> {
+                if(isArray(x)){
+                    console.log(x)
+                }
+            })
+            // console.log(a)
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,null!)
         },
         Commit: function(this) { //a little to get the list
