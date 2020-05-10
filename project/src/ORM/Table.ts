@@ -50,7 +50,7 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
                 this.FilterData.map(x=> {
                     Object.getOwnPropertyNames(obj).map(y =>{
                             if(String(x) == String(y)){
-                                newBody.push(Column(String(x), jObject[y]))
+                                newBody.push(Column(String(x), jObject[y] == "[object Object]" ? null : jObject[y]))
                             }
                         }
                     )

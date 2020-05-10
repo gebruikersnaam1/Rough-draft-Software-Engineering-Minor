@@ -11,7 +11,7 @@ let QueryRun = function<T>(l : List<Row<T>>){
     }
 }
 
-let query1 = dbTables.tableStudents().Select("Prefix").Select("Firstname","Lastname").Commit()
+let query1 = dbTables.tableStudents().Select("Id").Select("Firstname","Lastname","Grades").Commit()
 
 QueryRun(query1)
 
