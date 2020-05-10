@@ -5,7 +5,7 @@ import {ExcludeProps} from  "./Tools" //import 'tools'
 export interface Table<T,U>{
     tableData: List<T>
     FilterData: []
-    Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,k>
+    Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k> & U>
     Commit: () => List<U>
     // Include: null,
     // OrderBy: null,
@@ -17,8 +17,10 @@ export let Table = function<T,U>(tableData: List<T>, filterData: []) : Table<T,U
     return {
         tableData: tableData,
         FilterData : filterData,
-        Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,k>{
-            return Table<ExcludeProps<T,k>,k>(tableData,null!)
+        Select: function<k extends keyof T>(...Props:k[]) : Table<ExcludeProps<T,k>,Pick<T,k> & U>{
+            let z = Props.concat(filterData)
+            console.log(z)
+            return Table<ExcludeProps<T,k>,Pick<T,k> &U>(tableData,z)
         },
         Commit: function(this) { //a little to get the list
             return map_table<T,U>(tableData,Fun<T,U>((obj:T)=>{
@@ -30,7 +32,7 @@ export let Table = function<T,U>(tableData: List<T>, filterData: []) : Table<T,U
                 let z = Object.getOwnPropertyNames(obj)
                 let x = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let a = { "Id":0 }
-                console.log(i)
+                // console.log(i)
                 for(let i = 0; i < z.length; i++){
                     //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
                     //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/

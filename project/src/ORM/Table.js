@@ -10,7 +10,9 @@ exports.Table = function (tableData, filterData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return exports.Table(tableData, null);
+            var z = Props.concat(filterData);
+            console.log(z);
+            return exports.Table(tableData, z);
         },
         Commit: function () {
             var _this = this;
@@ -23,7 +25,7 @@ exports.Table = function (tableData, filterData) {
                 var z = Object.getOwnPropertyNames(obj);
                 var x = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var a = { "Id": 0 };
-                console.log(i);
+                // console.log(i)
                 for (var i_1 = 0; i_1 < z.length; i_1++) {
                     //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
                     //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
