@@ -1,13 +1,13 @@
 import {List,map_table,Fun} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
-import {Column, Row} from "../data/models"
+import {Column, Row,QueryResult} from "../data/models"
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 export interface Table<T,U>{
     tableData: List<T>
     FilterData: string[]
     Select: <k extends keyof T>(...Props:k[])=> Table<ExcludeProps<T,k>,Pick<T,k> & U>
-    Commit: () => List<Row<U>>
+    Commit: () => QueryResult<U>
     // Include: null,
     // OrderBy: null,
     // GroupBy: null
@@ -24,7 +24,7 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
         },
         Commit: function(this) { //a little to get the list
-            return map_table<T,U>(tableData,Fun<T,Row<U>>((obj:T)=>{ 
+            return QueryResult(map_table<T,U>(tableData,Fun<T,Row<U>>((obj:T)=>{ 
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<U>[] = []
                 this.FilterData.map(x=> {
@@ -36,7 +36,7 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
                     )
                 })
                 return Row(newBody)
-            }))
+            })))
         }
     }
 }

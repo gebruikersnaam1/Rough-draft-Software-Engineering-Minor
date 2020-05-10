@@ -2,6 +2,9 @@ import {List} from './utils'
 import * as models from '../data/models'
 import  {ListGrades,ListStudents} from '../data/data'
 
+/************
+ * TODO: Review THIS, as it IS MORE LEGACY CODE... and CAN BE REMOVED???
+ */
 //kind of a mess to read, but helps me to see the data being show in the console.log
 
 let PrintStudentGrades = function(l: List<models.Grades>){

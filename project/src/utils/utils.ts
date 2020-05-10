@@ -86,3 +86,10 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
      * Other 
   *******************************************/
   export type Unit = {}
+
+  export let PrintQueryValues = function<T>(l : List<Row<T>>){
+    if(l.kind == "Cons"){
+        console.log(l.head.getValues)
+        PrintQueryValues(l.tail)
+    }
+  }

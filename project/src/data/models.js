@@ -1,5 +1,6 @@
 "use strict";
 exports.__esModule = true;
+var utils_1 = require("../utils/utils"); //import list
 exports.Gender = function (x) { return (x == "Man" ? { gender: "Man" } : x == "Women" ? { gender: "Women" } : { gender: "Other" }); };
 /*
     * the constructors for the models
@@ -35,4 +36,20 @@ exports.Row = function (columns) { return ({
     columns: columns,
     getHeader: columns.map(function (x) { return String(x.name); }),
     getValues: columns.map(function (x) { return String(x.value); })
+}); };
+exports.QueryResult = function (list) { return ({
+    data: list,
+    countRows: function () {
+        var z = 0;
+        if (list.kind == "Cons") {
+            list.head.columns.map(function (_) { return z + 1; });
+        }
+        return z;
+    },
+    printRows: function () {
+        if (list.kind == "Cons") {
+            console.log(list.head.getHeader);
+            utils_1.PrintQueryValues(list);
+        }
+    }
 }); };

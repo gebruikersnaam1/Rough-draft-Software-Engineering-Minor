@@ -56,3 +56,9 @@ exports.Fun = function (f) {
 exports.map_table = function (l, f) {
     return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();
 };
+exports.PrintQueryValues = function (l) {
+    if (l.kind == "Cons") {
+        console.log(l.head.getValues);
+        exports.PrintQueryValues(l.tail);
+    }
+};

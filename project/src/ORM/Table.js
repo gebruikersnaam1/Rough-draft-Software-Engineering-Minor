@@ -17,7 +17,7 @@ exports.Table = function (tableData, filterData) {
         },
         Commit: function () {
             var _this = this;
-            return utils_1.map_table(tableData, utils_1.Fun(function (obj) {
+            return models_1.QueryResult(utils_1.map_table(tableData, utils_1.Fun(function (obj) {
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
                 _this.FilterData.map(function (x) {
@@ -28,7 +28,7 @@ exports.Table = function (tableData, filterData) {
                     });
                 });
                 return models_1.Row(newBody);
-            }));
+            })));
         }
     };
 };

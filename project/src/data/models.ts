@@ -1,4 +1,4 @@
-import {List} from  "../utils/utils"//import list
+import {List,PrintQueryValues} from  "../utils/utils"//import list
 
 //'enums'/array to  define genders 
 export type Gender = {
@@ -111,5 +111,30 @@ export let Row = <T>(columns: Column<T>[]) : Row<T> =>(
         columns: columns,
         getHeader: columns.map(x => String(x.name)),
         getValues: columns.map(x => String(x.value))
+    }
+)
+
+export type QueryResult<T> = {
+    data: List<Row<T>>
+    countRows: ()=> number
+    printRows: ()=> void
+}
+
+export const QueryResult = <T> (list: List<Row<T>>) : QueryResult<T> =>(
+    {
+        data: list,
+        countRows: function(){
+            let z = 0
+            if(list.kind == "Cons"){
+                list.head.columns.map(_ => z+1)
+            }
+            return z
+        },
+        printRows: ()=>{
+            if(list.kind == "Cons"){
+                console.log(list.head.getHeader)
+                PrintQueryValues(list)
+            }
+        }
     }
 )
