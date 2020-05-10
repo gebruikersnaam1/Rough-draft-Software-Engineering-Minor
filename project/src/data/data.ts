@@ -62,11 +62,11 @@ export let ListStudents =
           //5 Communicatie
           Cons(models.Students(11,"Jurgen", "", "Redelijkheid",CreateGrades(),models.Gender("Man"), cmi2),
           Cons(models.Students(12,"Joey", "van der", "Heiden",CreateGrades(),models.Gender("Man"), cmi2),
-          Cons(models.Students(13,"Marvin", "", "IDK-Lamens",CreateGrades(),models.Gender("Women"), cmi2),//no mistake
+          Cons(models.Students(13,"Marvin", "", "IDK-Lamens",CreateGrades(),models.Gender("Women"), cmi2),
           Cons(models.Students(14,"Roos", "van der", "Flodder",CreateGrades(),models.Gender("Women"), cmi2),
           Cons(models.Students(15,"Sara", "van der", "Flodder",CreateGrades(),models.Gender("Women"), cmi2),
           //5 technische
-          Cons(models.Students(16,"Jurrian", "van", "Goud",CreateGrades(),models.Gender("Women"), cmi3),
+          Cons(models.Students(16,"Jurrian", "van", "Goud",CreateGrades(),models.Gender("Goud"), cmi3),
           Cons(models.Students(17,"Eibert", "van", "Kitten",CreateGrades(),models.Gender("Man"), cmi3), 
           Cons(models.Students(18,"Suzan", "", "Redelijkheid",CreateGrades(),models.Gender("Women"), cmi3),
           Cons(models.Students(19,"Rox", "van", "Egmond",CreateGrades(),models.Gender("Women"), cmi3),
