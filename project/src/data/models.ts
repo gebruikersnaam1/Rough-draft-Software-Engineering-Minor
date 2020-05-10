@@ -84,3 +84,19 @@ export const GradeStats = (courseName: string,averageStats: number, teacher:stri
         Teacher: teacher
     }
 )
+
+/***********
+ * Not part of the data model, but useful!
+ */
+
+export type Row<T> = {
+    name: string,
+    value: T
+}
+
+export const Row = <T>(name:string, value: T) : Row<T> =>{
+    return {
+        name: name,
+        value: value
+    }
+}

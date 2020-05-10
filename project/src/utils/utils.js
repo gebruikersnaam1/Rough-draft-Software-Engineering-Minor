@@ -1,7 +1,4 @@
 "use strict";
-/*******************************************
- * List
-*******************************************/
 exports.__esModule = true;
 exports.Cons = function (head, tail) { return ({
     kind: "Cons",

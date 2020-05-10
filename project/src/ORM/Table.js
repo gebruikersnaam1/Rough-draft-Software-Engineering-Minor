@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
+var models_1 = require("../data/models");
 // type T = {x,y,z}
 // type U = {}
 // let customArray = List<T>({x,y,z},{x,y,z})
@@ -38,7 +39,7 @@ exports.Table = function (tableData, filterData) {
                 _this.FilterData.map(function (x) {
                     Object.getOwnPropertyNames(obj).map(function (y) {
                         if (String(x) == String(y)) {
-                            newBody.push(jObject[y]);
+                            newBody.push(models_1.Row(String(x), jObject[y]));
                         }
                     });
                 });
