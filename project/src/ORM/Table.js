@@ -19,11 +19,12 @@ exports.Table = function (tableData) {
                 //obj = {x,y,z}
                 var z = Object.getOwnPropertyNames(obj);
                 var x = JSON.parse(JSON.stringify((Object.assign({}, obj))));
+                var a = { "Id": 0 };
                 for (var i = 0; i < z.length; i++) {
                     //https://stackoverflow.com/questions/28150967/typescript-cloning-object/42758108
                     //https://www.samanthaming.com/tidbits/70-3-ways-to-clone-objects/
-                    if (x[z[i]]) {
-                        console.log("x");
+                    // console.log(obj)
+                    if (z[i] in a) {
                         console.log(x[z[i]]);
                     }
                 }
