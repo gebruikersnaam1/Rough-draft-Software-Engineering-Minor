@@ -2,6 +2,9 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import list
 var models = require("./models");
+/*
+  * COULD DO: is to refactor the data source in a way that the data is received from a real data source (i.e. txt-file)
+*/
 //create education
 var cmi1 = models.Educations("Informatica", 4);
 var cmi2 = models.Educations("Communicatie", 4);
@@ -40,7 +43,7 @@ exports.ListStudents =
 //10 Informatica
 utils_1.Cons(models.Students(1, "Jurgen", "van der", "Heiden", CreateGrades(), models.Gender("Man"), cmi1), utils_1.Cons(models.Students(2, "Joey", "van", "Egmond", CreateGrades(), models.Gender("Man"), cmi1), utils_1.Cons(models.Students(3, "Abdul-Achmed", "van", "UniNiveau", CreateGrades(), models.Gender("Binary"), cmi1), utils_1.Cons(models.Students(4, "Roos", "", "Padre", CreateGrades(), models.Gender("Women"), cmi1), utils_1.Cons(models.Students(5, "Marvin", "", "Madre", CreateGrades(), models.Gender("Man"), cmi1), utils_1.Cons(models.Students(6, "Edin", "", "Lamens", CreateGrades(), models.Gender("Bigender"), cmi1), utils_1.Cons(models.Students(7, "Sara", "van", "Hemsworth", CreateGrades(), models.Gender("Women"), cmi1), utils_1.Cons(models.Students(8, "Martijn", "", "Muilwijk", CreateGrades(), models.Gender("Polygender"), cmi1), utils_1.Cons(models.Students(9, "Steven", "van der", "Heiden", CreateGrades(), models.Gender("Androgyne"), cmi1), utils_1.Cons(models.Students(10, "Kees", "", "Flodder", CreateGrades(), models.Gender("Women"), cmi1), 
 //5 Communicatie
-utils_1.Cons(models.Students(11, "Jurgen", "", "Redelijkheid", CreateGrades(), models.Gender("Man"), cmi2), utils_1.Cons(models.Students(12, "Joey", "van der", "Heiden", CreateGrades(), models.Gender("Man"), cmi2), utils_1.Cons(models.Students(13, "Marvin", "", "IDK-Lamens", CreateGrades(), models.Gender("Women"), cmi2), utils_1.Cons(models.Students(14, "Roos", "van der", "Flodder", CreateGrades(), models.Gender("Women"), cmi2), utils_1.Cons(models.Students(15, "Sara", "van der", "Flodder", CreateGrades(), models.Gender("Women"), cmi2), 
+utils_1.Cons(models.Students(11, "Jurgen", "", "Redelijkheid", CreateGrades(), models.Gender("Man"), cmi2), utils_1.Cons(models.Students(12, "Joey", "van der", "Heiden", CreateGrades(), models.Gender("Man"), cmi2), utils_1.Cons(models.Students(13, "Marvin", "", "IDK-Lamens", CreateGrades(), models.Gender("Women"), cmi2), utils_1.Cons(models.Students(14, "Roos", "van der", "Flodder", CreateGrades(), models.Gender("Man"), cmi2), utils_1.Cons(models.Students(15, "Sara", "van der", "Flodder", CreateGrades(), models.Gender("Women"), cmi2), 
 //5 technische
 utils_1.Cons(models.Students(16, "Jurrian", "van", "Goud", CreateGrades(), models.Gender("Goud"), cmi3), utils_1.Cons(models.Students(17, "Eibert", "van", "Kitten", CreateGrades(), models.Gender("Man"), cmi3), utils_1.Cons(models.Students(18, "Suzan", "", "Redelijkheid", CreateGrades(), models.Gender("Women"), cmi3), utils_1.Cons(models.Students(19, "Rox", "van", "Egmond", CreateGrades(), models.Gender("Women"), cmi3), utils_1.Cons(models.Students(20, "Thom", "van", "Hemsworth", CreateGrades(), models.Gender("Man"), cmi3), 
 //8 technische communicatie

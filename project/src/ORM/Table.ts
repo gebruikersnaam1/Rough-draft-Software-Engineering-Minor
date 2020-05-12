@@ -30,6 +30,9 @@ export interface PrepareOperators<T,U> extends Execute<U>,TableData<T>{
 
 interface Table<T,U> extends PrepareOperators<T,U>,PrepareSelect<T,U>{}
 
+/*
+    SELECT = [Object] == nul can be a way to do Include
+*/
 
 export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Table<T,U> {
     return {
@@ -40,8 +43,10 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
         },
-        Commit: function(this) { //a little to get the list
-            return QueryResult(map_table<T,U>(tableData,Fun<T,Row<U>>((obj:T)=>{ 
+        Commit: function(this) { //this is to get the list
+            //return the result of map_table in datatype "Query result"
+            return QueryResult(map_table<T,U>(tableData,Fun<T,Row<U>>((obj:T)=>{
+                //the lambda turns obj into json-format, otherwise a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<U>[] = []
                 this.FilterData.map(x=> {

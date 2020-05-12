@@ -1,6 +1,9 @@
 import {List, Cons, Empty, } from  "../utils/utils"//import list
 import * as models from './models'
 
+/*
+  * COULD DO: is to refactor the data source in a way that the data is received from a real data source (i.e. txt-file)
+*/
 
 //create education
 let cmi1 = models.Educations("Informatica",4)
@@ -65,7 +68,8 @@ export let ListStudents =
           Cons(models.Students(11,"Jurgen", "", "Redelijkheid",CreateGrades(),models.Gender("Man"), cmi2),
           Cons(models.Students(12,"Joey", "van der", "Heiden",CreateGrades(),models.Gender("Man"), cmi2),
           Cons(models.Students(13,"Marvin", "", "IDK-Lamens",CreateGrades(),models.Gender("Women"), cmi2),
-          Cons(models.Students(14,"Roos", "van der", "Flodder",CreateGrades(),models.Gender("Women"), cmi2),
+          Cons(models.Students(14,"Roos", "van der", "Flodder",CreateGrades(),models.Gender("Man"), cmi2),
+
           Cons(models.Students(15,"Sara", "van der", "Flodder",CreateGrades(),models.Gender("Women"), cmi2),
           //5 technische
           Cons(models.Students(16,"Jurrian", "van", "Goud",CreateGrades(),models.Gender("Goud"), cmi3),
