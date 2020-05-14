@@ -102,8 +102,10 @@ export type Row<T> = {
     columns: Column<T>[]
     getHeader: string[]
     getValues: string[]
-
-}
+} 
+// | {
+//     rows: Row<T>[]
+// }
 
 
 export let Row = <T>(columns: Column<T>[]) : Row<T> =>(

@@ -22,7 +22,7 @@ export interface PrepareSelect<T,U> extends TableData<T>{
 
 export interface PrepareOperators<T,U> extends Execute<U>,TableData<T>{
     // WHERE: null,
-    // Include: null,
+    // Include: () => Omit<Table<T, U>, "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -30,9 +30,7 @@ export interface PrepareOperators<T,U> extends Execute<U>,TableData<T>{
 
 interface Table<T,U> extends PrepareOperators<T,U>,PrepareSelect<T,U>{}
 
-/*
-    SELECT = [Object] == nul can be a way to do Include
-*/
+
 
 export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Table<T,U> {
     return {
@@ -51,11 +49,13 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
                 let newBody : Column<U>[] = []
                 this.FilterData.map(x=> {
                     Object.getOwnPropertyNames(obj).map(y =>{
-                            if(String(x) == String(y)){
+                            if(String(x) == String(y)){ 
                                 newBody.push(Column(String(x), jObject[y] == "[object Object]" ? null : jObject[y]))
                             }
                         }
                     )
+                    // let z : Column<U>[] = []
+                    // newBody.push(z)
                 })
                 return Row(newBody)
             })))
@@ -77,3 +77,32 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
     // T = {z,i } | U = { y } |
     // z = T - U
     // y = Props of type T(k) + U
+
+/*
+    Idea: If implementing something like this is possible, then a custom lambda needs to be developed for each table. 
+
+    SELECT = [Object] == nul can be a way to do Include
+    
+    Table gets a Fun that recursive goes to the list, if attribute is selected then get value?
+    Type U removes the attributes that are not selected?
+    Type U is a real object, not a JSON file.
+    Then type column or row can be changed. Either row contains the value of U or column contains the value T?
+    Column x.name and x.age are not type U right? Yeah
+    so, column needs to be removed and contains the value of U
+
+    <U>(queryresult:U) => Fun<definedType(i.e. student), U>(
+        let tmp1 = List<definedTypte() //with content
+        let tmp2 =  <definedType() => {}
+        let tmp3 = map_option(tmp2,tmp3)
+        instance : definedType => {
+                let newI : U = {}
+                for(let i in instance){
+                    if (i in queryresult){
+                       newI.Name = instance.Name
+                    } 
+                }
+        return tmp3;
+            }
+        }
+    )
+*/
