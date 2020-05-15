@@ -17,19 +17,18 @@ export interface Execute<U>{
 
 //the user can only select something before commit
 export interface PrepareSelect<T,U> extends TableData<T>{
-    Select: <k extends keyof T>(...Props:k[])=> PrepareOperators<ExcludeProps<T,k>,Pick<T,k> & U>
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,Pick<T,k> & U>
 }
 
-export interface PrepareOperators<T,U> extends Execute<U>,TableData<T>{
-    // WHERE: null,
-    // Include: () => Omit<Table<T, U>, "Include">,
+export interface Operators<T,U> extends Execute<U>,TableData<T>{
+    Where: <P> (this:P) => Omit<P, "Where">,
+    Include:<P> (this:P) => Omit<P, "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
-interface Table<T,U> extends PrepareOperators<T,U>,PrepareSelect<T,U>{}
-
+interface Table<T,U> extends Operators<T,U>,PrepareSelect<T,U>{}
 
 
 export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Table<T,U> {
@@ -37,9 +36,16 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
         tableData: tableData,
         FilterData : filterData,
 
-        Select: function<k extends keyof T>(...Props:k[]) : PrepareOperators<ExcludeProps<T,k>,Pick<T,k> & U>{
+        //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
+        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,Pick<T,k> & U>{
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
+        },
+        Include:function<P>(this:P): Omit<P, "Include">{
+            return this
+        },
+        Where:function<P>(this:P): Omit<P, "Where">{
+            return this
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
