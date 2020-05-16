@@ -1,7 +1,6 @@
 import {PrepareSelect,Table} from './Table'
 import {Students,GradeStats,Grades,Educations} from  "../data/models"//import model
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
-import {Unit} from '../utils/utils'
 
 /*
     * database environment
@@ -9,18 +8,18 @@ import {Unit} from '../utils/utils'
 */
 
 export type dbEnv = {
-    tableStudents: () => PrepareSelect<Students,Unit> 
-    tableGrades: () => PrepareSelect<GradeStats,Unit> 
-    tableCources: () => PrepareSelect<Grades,Unit> 
-    tableEducations: () => PrepareSelect<Educations,Unit> 
+    tableStudents: () => PrepareSelect<Students> 
+    tableGrades: () => PrepareSelect<GradeStats> 
+    tableCources: () => PrepareSelect<Grades> 
+    tableEducations: () => PrepareSelect<Educations> 
 }
 
 let dbEnv = () : dbEnv => {
     return{
-        tableStudents: () : PrepareSelect<Students,Unit> => { return Table<Students,Unit>(ListStudents,[]) },
-        tableGrades: () : PrepareSelect<GradeStats,Unit> => { return Table<GradeStats,Unit>(ListGrades,[]) },
-        tableCources: () : PrepareSelect<Grades,Unit> => { return Table<Grades,Unit>(RandomGrades,[]) },
-        tableEducations: () : PrepareSelect<Educations,Unit> => { return Table<Educations,Unit>(ListEducations,[]) },
+        tableStudents: () : PrepareSelect<Students> => { return Table<Students>(ListStudents,[]) },
+        tableGrades: () : PrepareSelect<GradeStats> => { return Table<GradeStats>(ListGrades,[]) },
+        tableCources: () : PrepareSelect<Grades> => { return Table<Grades>(RandomGrades,[]) },
+        tableEducations: () : PrepareSelect<Educations> => { return Table<Educations>(ListEducations,[]) },
     }
 }
 

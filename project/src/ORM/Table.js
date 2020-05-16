@@ -14,14 +14,14 @@ exports.Table = function (tableData, filterData) {
                 Props[_i] = arguments[_i];
             }
             Props.map(function (x) { _this.FilterData.push(String(x)); });
+            //Pick<T,K>
             return exports.Table(tableData, filterData);
         },
         Include: function () {
-            return exports.Table(tableData, filterData);
+            return this;
         },
         Where: function () {
-            // let a : ExcludePropTypes<Operators<T,U>,P> = Table<T,U>(tableData,filterData)
-            return exports.Table(tableData, filterData);
+            return this;
         },
         Commit: function () {
             var _this = this;
@@ -59,7 +59,6 @@ exports.Table = function (tableData, filterData) {
 // y = Props of type T(k) + U
 /*
     Idea: If implementing something like this is possible, then a custom lambda needs to be developed for each table.
-
     SELECT = [Object] == nul can be a way to do Include
     
     Table gets a Fun that recursive goes to the list, if attribute is selected then get value?
@@ -68,7 +67,6 @@ exports.Table = function (tableData, filterData) {
     Then type column or row can be changed. Either row contains the value of U or column contains the value T?
     Column x.name and x.age are not type U right? Yeah
     so, column needs to be removed and contains the value of U
-
     <U>(queryresult:U) => Fun<definedType(i.e. student), U>(
         let tmp1 = List<definedTypte() //with content
         let tmp2 =  <definedType() => {}

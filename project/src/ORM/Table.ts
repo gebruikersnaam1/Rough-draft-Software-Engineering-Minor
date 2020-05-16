@@ -21,8 +21,8 @@ export interface PrepareSelect<T> extends TableData<T>{
 }
 
 export interface Operators<T> extends Execute,TableData<T>{
-    Where:  () => Omit<Omit<Operators<T>,"Where">,z>,
-    Include:() => Omit<Omit<Operators<T>,"Include">,z>,
+    Where: <P> (this:P) => Omit<P, "Where">,
+    Include:<P> (this:P) => Omit<P, "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -30,7 +30,6 @@ export interface Operators<T> extends Execute,TableData<T>{
 
 interface Table<T> extends Operators<T>,PrepareSelect<T>{}
 
-type z = string
 
 export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table<T> {
     return {
@@ -40,16 +39,16 @@ export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table
         //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
         Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>>{
             Props.map(x=> {this.FilterData.push(String(x))})
+            //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function(): Omit<Omit<Operators<T>,"Include">,z>{
-            return Table<T>(tableData,filterData)
+        Include:function<P>(this:P): Omit<P, "Include">{
+            return this
         },
-        Where:function(): Omit<Omit<Operators<T>,"Where">,z>{
-            // let a : ExcludePropTypes<Operators<T,U>,P> = Table<T,U>(tableData,filterData)
-            return Table<T>(tableData,filterData)
+        Where:function<P>(this:P): Omit<P, "Where">{
+            return this
         },
-        Commit:function(this) { //this is to get the list
+        Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
             return QueryResult(map_table<T,Unit>(tableData,Fun<T,Row<Unit>>((obj:T)=>{
                 //the lambda turns obj into json-format, otherwise a problem occurs  
@@ -88,7 +87,6 @@ export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table
 
 /*
     Idea: If implementing something like this is possible, then a custom lambda needs to be developed for each table. 
-
     SELECT = [Object] == nul can be a way to do Include
     
     Table gets a Fun that recursive goes to the list, if attribute is selected then get value?
@@ -97,7 +95,6 @@ export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table
     Then type column or row can be changed. Either row contains the value of U or column contains the value T?
     Column x.name and x.age are not type U right? Yeah
     so, column needs to be removed and contains the value of U
-
     <U>(queryresult:U) => Fun<definedType(i.e. student), U>(
         let tmp1 = List<definedTypte() //with content
         let tmp2 =  <definedType() => {}
