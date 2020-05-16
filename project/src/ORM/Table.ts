@@ -22,7 +22,7 @@ export interface PrepareSelect<T> extends TableData<T>{
 
 export interface Operators<T> extends Execute,TableData<T>{
     Where: <P> (this:P) => Omit<Omit<Operators<T>,"Where">,z>,
-    Include:<P> (this:P) => Omit<Omit<Operators<T>,"Where">,z>,
+    Include:<P> (this:P) => Omit<Omit<Operators<T>,"Include">,z>,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -43,7 +43,7 @@ export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function():Omit<Omit<Operators<T>,"Where">,z>{
+        Include:function():Omit<Omit<Operators<T>,"Include">,z>{
             return Table(tableData,filterData)
         },
         Where:function(): Omit<Omit<Operators<T>,"Where">,z>{
