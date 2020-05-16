@@ -4,6 +4,7 @@ import {Column, Row,QueryResult} from "../data/models"
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 
+
 //base interface that contens tables
 export interface TableData<T>{
     tableData: List<T>
@@ -21,8 +22,8 @@ export interface PrepareSelect<T,U extends string> extends TableData<T>{
 }
 
 export interface Operators<T,U extends string> extends Execute,TableData<T>{
-    Where: () => Omit<Omit<Operators<T,U>,"Where">,U>,
-    Include: () => Omit<Omit<Operators<T,U>,"Include">,U>,
+    Where: () => Omit<Operators<T,U | "Where">,U | "Where">,
+    Include: () => Omit<Operators<T,U | "Include">,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -42,11 +43,11 @@ export let Table = function<T,U extends string>(tableData: List<T>, filterData: 
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function():Omit<Omit<Operators<T,U>,"Include">,U>{
-            return Table<T,U>(tableData,filterData)
+        Include:function():Omit<Operators<T,U | "Include">,U | "Include">{
+            return Table<T,U | "Include">(tableData,filterData)
         },
-        Where:function(): Omit<Omit<Operators<T,U>,"Where">,U>{
-            return Table<T,U>(tableData,filterData)
+        Where:function(): Omit<Operators<T,U | "Where">,U | "Where">{
+            return Table<T,U | "Where">(tableData,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
