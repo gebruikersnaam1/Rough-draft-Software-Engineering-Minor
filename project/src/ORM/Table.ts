@@ -30,7 +30,7 @@ export interface Operators<T> extends Execute,TableData<T>{
 
 interface Table<T> extends Operators<T>,PrepareSelect<T>{}
 
-type z = string
+type z = "s"
 
 export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table<T> {
     return {
