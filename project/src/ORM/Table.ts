@@ -16,38 +16,37 @@ export interface Execute{
 }
 
 //the user can only select something before commit
-export interface PrepareSelect<T> extends TableData<T>{
-    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>>
+export interface PrepareSelect<T,U extends string> extends TableData<T>{
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U>
 }
 
-export interface Operators<T> extends Execute,TableData<T>{
-    Where: <P> (this:P) => Omit<Omit<Operators<T>,"Where">,z>,
-    Include:<P> (this:P) => Omit<Omit<Operators<T>,"Include">,z>,
+export interface Operators<T,U extends string> extends Execute,TableData<T>{
+    Where: () => Omit<Omit<Operators<T,U>,"Where">,U>,
+    Include: () => Omit<Omit<Operators<T,U>,"Include">,U>,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
-interface Table<T> extends Operators<T>,PrepareSelect<T>{}
+interface Table<T,U extends string> extends Operators<T,U>,PrepareSelect<T,U>{}
 
-type z = "s"
 
-export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table<T> {
+export let Table = function<T,U extends string>(tableData: List<T>, filterData: string[]) : Table<T,U> {
     return {
         tableData: tableData,
         FilterData : filterData,
 
         //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
-        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>>{
+        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U>{
             Props.map(x=> {this.FilterData.push(String(x))})
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function():Omit<Omit<Operators<T>,"Include">,z>{
-            return Table(tableData,filterData)
+        Include:function():Omit<Omit<Operators<T,U>,"Include">,U>{
+            return Table<T,U>(tableData,filterData)
         },
-        Where:function(): Omit<Omit<Operators<T>,"Where">,z>{
-            return Table(tableData,filterData)
+        Where:function(): Omit<Omit<Operators<T,U>,"Where">,U>{
+            return Table<T,U>(tableData,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
