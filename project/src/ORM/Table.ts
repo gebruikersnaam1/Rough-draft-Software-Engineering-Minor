@@ -1,13 +1,15 @@
-import {List,map_table,Fun,Unit} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit,tableData} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
+
+
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 
 
 //base interface that contens tables
 export interface TableData<T>{
-    tableData: List<T>
+    tableData: tableData<T>
     FilterData: string[]
 }
 
@@ -32,7 +34,8 @@ export interface Operators<T,U extends string> extends Execute,TableData<T>{
 interface Table<T,U extends string> extends Operators<T,U>,PrepareSelect<T,U>{}
 
 
-export let Table = function<T,U extends string>(tableData: List<T>, filterData: string[]) : Table<T,U> {
+
+export let Table = function<T,U extends string>(tableData: tableData<T>, filterData: string[]) : Table<T,U> {
     return {
         tableData: tableData,
         FilterData : filterData,
@@ -51,7 +54,7 @@ export let Table = function<T,U extends string>(tableData: List<T>, filterData: 
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(map_table<T,Unit>(tableData,Fun<T,Row<Unit>>((obj:T)=>{
+            return QueryResult(map_table<T,Unit>(tableData.snd,Fun<T,Row<Unit>>((obj:T)=>{
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []

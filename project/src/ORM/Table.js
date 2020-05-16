@@ -26,7 +26,7 @@ exports.Table = function (tableData, filterData) {
         Commit: function () {
             var _this = this;
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.map_table(tableData, utils_1.Fun(function (obj) {
+            return models_1.QueryResult(utils_1.map_table(tableData.snd, utils_1.Fun(function (obj) {
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];

@@ -87,6 +87,11 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
   *******************************************/
   export type Unit = {}
 
+  export type Pair<a,b> = {fst:a, snd: b}
+  export type tableData<T> = Pair<string,List<T>>
+
+  export let tableData = <T> (dbName: string, dbData: List<T>) : Pair<string,List<T>> => ({fst:dbName, snd: dbData})
+
   export type StringUnit = ""
 
   export let PrintQueryValues = function<T>(l : List<Row<T>>){
