@@ -18,10 +18,10 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function () {
-            return this;
+            return exports.Table(tableData, filterData);
         },
         Where: function () {
-            return this;
+            return exports.Table(tableData, filterData);
         },
         Commit: function () {
             var _this = this;

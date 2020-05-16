@@ -21,8 +21,8 @@ export interface PrepareSelect<T> extends TableData<T>{
 }
 
 export interface Operators<T> extends Execute,TableData<T>{
-    Where: <P> (this:P) => Omit<P, "Where">,
-    Include:<P> (this:P) => Omit<P, "Include">,
+    Where: <P> (this:P) => Omit<Omit<Operators<T>,"Where">,z>,
+    Include:<P> (this:P) => Omit<Omit<Operators<T>,"Where">,z>,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -30,6 +30,7 @@ export interface Operators<T> extends Execute,TableData<T>{
 
 interface Table<T> extends Operators<T>,PrepareSelect<T>{}
 
+type z = string
 
 export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table<T> {
     return {
@@ -42,11 +43,11 @@ export let Table = function<T>(tableData: List<T>, filterData: string[]) : Table
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function<P>(this:P): Omit<P, "Include">{
-            return this
+        Include:function():Omit<Omit<Operators<T>,"Where">,z>{
+            return Table(tableData,filterData)
         },
-        Where:function<P>(this:P): Omit<P, "Where">{
-            return this
+        Where:function(): Omit<Omit<Operators<T>,"Where">,z>{
+            return Table(tableData,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
