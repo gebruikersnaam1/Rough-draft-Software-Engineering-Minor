@@ -1,5 +1,5 @@
 import {List,map_table,Fun} from  "../utils/utils"//import tool
-import {ExcludeProps,IncludePropTypes} from  "./Tools" //import 'tools'
+import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
@@ -17,12 +17,12 @@ export interface Execute<U>{
 
 //the user can only select something before commit
 export interface PrepareSelect<T,U> extends TableData<T>{
-    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,Pick<T,k> & U>
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U>
 }
 
 export interface Operators<T,U> extends Execute<U>,TableData<T>{
-    Where: <P> () => IncludePropTypes<Omit<Operators<T,U>,"Where">,P>,
-    Include:<P> () => IncludePropTypes<Omit<Operators<T,U>,"Include">,P>,
+    Where:  () => Omit<Omit<Operators<T,U>,"Where">,z>,
+    Include:() => Omit<Omit<Operators<T,U>,"Include">,z>,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -30,6 +30,7 @@ export interface Operators<T,U> extends Execute<U>,TableData<T>{
 
 interface Table<T,U> extends Operators<T,U>,PrepareSelect<T,U>{}
 
+type z = "Include" | "Where"
 
 export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Table<T,U> {
     return {
@@ -37,14 +38,14 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
         FilterData : filterData,
 
         //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
-        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,Pick<T,k> & U>{
+        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U>{
             Props.map(x=> {this.FilterData.push(String(x))})
-            return Table<ExcludeProps<T,k>,Pick<T,k> & U>(tableData,filterData)
+            return Table(tableData,filterData)
         },
-        Include:function<P>(this:P): IncludePropTypes<Omit<Operators<T,U>,"Include">,P>{
+        Include:function(): Omit<Omit<Operators<T,U>,"Include">,z>{
             return Table<T,U>(tableData,filterData)
         },
-        Where:function<P>(): IncludePropTypes<Omit<Operators<T,U>,"Where">,P>{
+        Where:function(): Omit<Omit<Operators<T,U>,"Where">,z>{
             // let a : ExcludePropTypes<Operators<T,U>,P> = Table<T,U>(tableData,filterData)
             return Table<T,U>(tableData,filterData)
         },
