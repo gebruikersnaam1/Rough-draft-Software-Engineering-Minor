@@ -1,4 +1,4 @@
-import {List,map_table,Fun} from  "../utils/utils"//import tool
+import {List,map_table,Fun,Unit} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 
@@ -11,8 +11,8 @@ export interface TableData<T>{
 }
 
 //base execute something
-export interface Execute<U>{
-    Commit: () => QueryResult<U>
+export interface Execute{
+    Commit: () => QueryResult<Unit>
 }
 
 //the user can only select something before commit
@@ -20,7 +20,7 @@ export interface PrepareSelect<T,U> extends TableData<T>{
     Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U>
 }
 
-export interface Operators<T,U> extends Execute<U>,TableData<T>{
+export interface Operators<T,U> extends Execute,TableData<T>{
     Where:  () => Omit<Omit<Operators<T,U>,"Where">,z>,
     Include:() => Omit<Omit<Operators<T,U>,"Include">,z>,
     // OrderBy: null,
@@ -49,12 +49,12 @@ export let Table = function<T,U>(tableData: List<T>, filterData: string[]) : Tab
             // let a : ExcludePropTypes<Operators<T,U>,P> = Table<T,U>(tableData,filterData)
             return Table<T,U>(tableData,filterData)
         },
-        Commit: function(this) { //this is to get the list
+        Commit:function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(map_table<T,U>(tableData,Fun<T,Row<U>>((obj:T)=>{
+            return QueryResult(map_table<T,Unit>(tableData,Fun<T,Row<Unit>>((obj:T)=>{
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-                let newBody : Column<U>[] = []
+                let newBody : Column<Unit>[] = []
                 this.FilterData.map(x=> {
                     Object.getOwnPropertyNames(obj).map(y =>{
                             if(String(x) == String(y)){ 

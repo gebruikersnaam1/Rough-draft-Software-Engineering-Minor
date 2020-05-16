@@ -3,6 +3,7 @@ exports.__esModule = true;
 var Database_1 = require("./ORM/Database");
 // import {PrintUsedData} from "./utils/PrintLog"
 var query1 = Database_1.dbTables.tableStudents().Select("Id", "Firstname", "Lastname", "Grades").Commit();
+var query2 = Database_1.dbTables.tableStudents().Select("Id", "Firstname", "Grades").Include();
 // query1.printRows()
 query1.printRows();
 // console.log(query1)

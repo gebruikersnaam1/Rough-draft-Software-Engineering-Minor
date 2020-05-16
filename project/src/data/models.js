@@ -32,6 +32,9 @@ exports.Column = function (name, value) { return ({
     name: name,
     value: value
 }); };
+// | {
+//     rows: Row<T>[]
+// }
 exports.Row = function (columns) { return ({
     columns: columns,
     getHeader: columns.map(function (x) { return String(x.name); }),
