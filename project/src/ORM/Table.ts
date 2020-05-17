@@ -1,7 +1,6 @@
 import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
-import {Column, Row,QueryResult} from "../data/models"
-import {dbEnv} from './Database'
+import {Column, Row,QueryResult,Models} from "../data/models"
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
 
 
@@ -26,7 +25,7 @@ export interface PrepareSelect<T,U extends string,M,N> extends TableData<T,N>{
 
 export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">,
+    Include:<k extends keyof M> (tableName:k) =>  <a extends keyof Filter<Models,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -63,9 +62,9 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
+        Include:function<k extends keyof M>(tableName:k) : <a extends keyof Filter<Models,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
             //(i:a) =>b
-            return <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+            return function<a extends keyof Filter<Models,"Students">> (...Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
                 let newList : List<a>= GetTableData(String(tableName))
                 let fData : string[] = []
                 Props.map(x=> {fData.push(String(x))})

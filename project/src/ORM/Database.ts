@@ -1,5 +1,5 @@
 import {PrepareSelect,Table} from './Table'
-import {Students,GradeStats,Grades,Educations} from  "../data/models"//import model
+import {Students,GradeStats,Grades,Educations, Models} from  "../data/models"//import model
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
 import {StringUnit,tableData, Unit, Empty} from '../utils/utils'
 
@@ -10,10 +10,10 @@ import {StringUnit,tableData, Unit, Empty} from '../utils/utils'
 */
 
 export type dbEnv = {
-    Students: () => PrepareSelect<Students,StringUnit,Omit<dbEnv,"Students">,Unit> 
-    GradeStats: () => PrepareSelect<GradeStats,StringUnit,Omit<dbEnv,"GradeStats">,Unit> 
-    Grades: () => PrepareSelect<Grades,StringUnit,Omit<dbEnv,"Grades">,Unit>
-    Educations: () => PrepareSelect<Educations,StringUnit,Omit<dbEnv,"Educations">,Unit>
+    Students: () => PrepareSelect<Students,StringUnit,Omit<Models,"Students">,Unit> 
+    GradeStats: () => PrepareSelect<GradeStats,StringUnit,Omit<Models,"GradeStats">,Unit> 
+    Grades: () => PrepareSelect<Grades,StringUnit,Omit<Models,"Grades">,Unit>
+    Educations: () => PrepareSelect<Educations,StringUnit,Omit<Models,"Educations">,Unit>
 }
 
 let dbEnv = () : dbEnv => {
