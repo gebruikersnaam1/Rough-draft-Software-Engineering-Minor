@@ -26,7 +26,7 @@ export interface PrepareSelect<T,U extends string,M,N> extends TableData<T,N>{
 
 export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",M,N>,U | "Include">,
+    Include:<k extends keyof M> (tableName:k) =>  <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -63,16 +63,15 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
+        Include:function<k extends keyof M>(tableName:k) : <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
             //(i:a) =>b
-            let o :<a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+            return <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
                 let newList : List<a>= GetTableData(String(tableName))
                 let fData : string[] = []
                 Props.map(x=> {fData.push(String(x))})
                 let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data
                 return Table<T,U | "Include",M,Unit>({fst: tableData.fst,snd:a},fData)
             }
-            return Table<T,U | "Include",M,N>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
             return Table<T,U | "Where",M,N>(tableData,filterData)

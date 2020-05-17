@@ -1,6 +1,4 @@
 import {Row} from "../data/models"
-import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
-
 
 
 /******************************************* 

@@ -3,7 +3,7 @@ import {dbTables} from './ORM/Database'
 // import {PrintUsedData} from "./utils/PrintLog"
 
 let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
-// let query2 = dbTables.Students().Select("Id","Firstname","Grades").Include("Grades")
+let query2 = dbTables.Students().Select("Id","Firstname","Grades").Include("Grades")
 
 // query1.printRows()
 query1.printRows()

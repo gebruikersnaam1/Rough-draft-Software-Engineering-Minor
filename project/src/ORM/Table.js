@@ -35,7 +35,7 @@ exports.Table = function (tableData, filterData) {
         },
         Include: function (tableName) {
             //(i:a) =>b
-            var o = function () {
+            return function () {
                 var Props = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
                     Props[_i] = arguments[_i];
@@ -46,7 +46,6 @@ exports.Table = function (tableData, filterData) {
                 var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;
                 return exports.Table({ fst: tableData.fst, snd: a }, fData);
             };
-            return exports.Table(tableData, filterData);
         },
         Where: function () {
             return exports.Table(tableData, filterData);
