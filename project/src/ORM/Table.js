@@ -20,7 +20,8 @@ exports.Table = function (tableData, filterData) {
             //Pick<T,K>
             return exports.Table(tableData, filterData);
         },
-        Include: function (tableName, z) {
+        Include: function (tableName) {
+            var z = function (x) { };
             return exports.Table(tableData, filterData);
         },
         Where: function () {

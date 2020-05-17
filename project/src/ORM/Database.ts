@@ -1,5 +1,5 @@
 import {PrepareSelect,Table} from './Table'
-import {Students,GradeStats,Grades,Educations,Models} from  "../data/models"//import model
+import {Students,GradeStats,Grades,Educations} from  "../data/models"//import model
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
 import {StringUnit,tableData} from '../utils/utils'
 
@@ -10,24 +10,24 @@ import {StringUnit,tableData} from '../utils/utils'
 */
 
 export type dbEnv = {
-    tableStudents: () => PrepareSelect<Students,StringUnit,Omit<Models,"Students">> 
-    tableGrades: () => PrepareSelect<GradeStats,StringUnit,Omit<Models,"GradeStats">> 
-    tableCources: () => PrepareSelect<Grades,StringUnit,Omit<Models,"Grades">>
-    tableEducations: () => PrepareSelect<Educations,StringUnit,Omit<Models,"Educations">>
+    Students: () => PrepareSelect<Students,StringUnit,Omit<dbEnv,"Students">> 
+    Grades: () => PrepareSelect<GradeStats,StringUnit,Omit<dbEnv,"GradeStats">> 
+    Cources: () => PrepareSelect<Grades,StringUnit,Omit<dbEnv,"Grades">>
+    Educations: () => PrepareSelect<Educations,StringUnit,Omit<dbEnv,"Educations">>
 }
 
 let dbEnv = () : dbEnv => {
     return{
-        tableStudents: function(){  
+        Students: function(){  
             return Table(tableData("Students",ListStudents),[]) 
         },
-        tableGrades: function(){ 
+        Grades: function(){ 
             return Table(tableData("GradeStats",ListGrades),[]) 
         },
-        tableCources: function() { 
+        Cources: function() { 
             return Table(tableData("Grades",RandomGrades),[]) 
         },
-        tableEducations: function() { 
+        Educations: function() { 
             return Table(tableData("Educations",ListEducations),[]) 
         }
     }

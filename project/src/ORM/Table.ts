@@ -1,5 +1,5 @@
 import {map_table,Fun,Unit,tableData} from  "../utils/utils"//import tool
-import {ExcludeProps} from  "./Tools" //import 'tools'
+import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {dbEnv} from './Database'
 
@@ -25,19 +25,19 @@ export interface PrepareSelect<T,U extends string,M> extends TableData<T>{
 
 export interface Operators<T,U extends string,M> extends Execute,TableData<T>{
     Where:() => Omit<Operators<T,U | "Where",M>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k,z:(x:Omit<dbEnv,k>)=>k) => Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">,
+    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",M>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
-interface Table<T,U extends string,M> extends Operators<T,U,M>,PrepareSelect<T,U,M>{}
+interface Table<T,U extends string,M extends string> extends Operators<T,U,M>,PrepareSelect<T,U,M>{}
 
 
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //K is to say the includes possible are X,Y and Z
-export let Table = function<T,U extends string,M>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
+export let Table = function<T,U extends string,M extends string>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
     return {
         tableData: tableData,
         FilterData : filterData,
@@ -48,8 +48,9 @@ export let Table = function<T,U extends string,M>(tableData: tableData<T>, filte
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k,z:(x:Omit<Models,k>)=>k) : Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">{
-            return Table<T,U | "Include",Omit<M,k>>(tableData,filterData)
+        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M>,U | "Include">{
+            let z = (x:Filter<dbEnv,M>) => {}
+            return Table<T,U | "Include",M>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{
             return Table<T,U | "Where",M>(tableData,filterData)

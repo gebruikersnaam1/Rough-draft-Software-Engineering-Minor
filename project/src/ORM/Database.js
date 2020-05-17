@@ -5,16 +5,16 @@ var data_1 = require("../data/data"); //import model
 var utils_1 = require("../utils/utils");
 var dbEnv = function () {
     return {
-        tableStudents: function () {
+        Students: function () {
             return Table_1.Table(utils_1.tableData("Students", data_1.ListStudents), []);
         },
-        tableGrades: function () {
+        Grades: function () {
             return Table_1.Table(utils_1.tableData("GradeStats", data_1.ListGrades), []);
         },
-        tableCources: function () {
+        Cources: function () {
             return Table_1.Table(utils_1.tableData("Grades", data_1.RandomGrades), []);
         },
-        tableEducations: function () {
+        Educations: function () {
             return Table_1.Table(utils_1.tableData("Educations", data_1.ListEducations), []);
         }
     };
