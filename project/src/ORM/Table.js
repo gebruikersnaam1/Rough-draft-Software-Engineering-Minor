@@ -34,6 +34,7 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
+            //(i:a) =>b
             var o = function () {
                 var Props = [];
                 for (var _i = 0; _i < arguments.length; _i++) {

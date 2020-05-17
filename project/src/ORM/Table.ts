@@ -64,12 +64,13 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
-            let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Table<T,U,M,Unit> => {
+            //(i:a) =>b
+            let o :<a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
                 let newList : List<a>= GetTableData(String(tableName))
                 let fData : string[] = []
                 Props.map(x=> {fData.push(String(x))})
                 let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data
-                return Table<T,U,M,Unit>({fst: tableData.fst,snd:a},fData)
+                return Table<T,U | "Include",M,Unit>({fst: tableData.fst,snd:a},fData)
             }
             return Table<T,U | "Include",M,N>(tableData,filterData)
         },
