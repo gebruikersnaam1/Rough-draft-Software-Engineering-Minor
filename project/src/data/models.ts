@@ -50,6 +50,7 @@ export type Models = {
     Educations: Educations,
     Students: Students 
 }
+
 /*
     * the constructors for the models
 */
