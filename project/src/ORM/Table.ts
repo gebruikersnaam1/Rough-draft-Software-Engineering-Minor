@@ -1,7 +1,7 @@
 import {map_table,Fun,Unit,tableData} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
-import {Column, Row,QueryResult,Models} from "../data/models"
-
+import {Column, Row,QueryResult} from "../data/models"
+import {dbEnv} from './Database'
 
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
@@ -25,7 +25,7 @@ export interface PrepareSelect<T,U extends string,M> extends TableData<T>{
 
 export interface Operators<T,U extends string,M> extends Execute,TableData<T>{
     Where:() => Omit<Operators<T,U | "Where",M>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k,z:(x:k)=>k) => Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">,
+    Include:<k extends keyof M> (tableName:k,z:(x:Omit<dbEnv,k>)=>k) => Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -48,7 +48,7 @@ export let Table = function<T,U extends string,M>(tableData: tableData<T>, filte
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k,z:(x:k)=>k):Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">{
+        Include:function<k extends keyof M>(tableName:k,z:(x:Omit<Models,k>)=>k) : Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">{
             return Table<T,U | "Include",Omit<M,k>>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{

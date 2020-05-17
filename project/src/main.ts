@@ -3,7 +3,8 @@ import {dbTables} from './ORM/Database'
 // import {PrintUsedData} from "./utils/PrintLog"
 
 let query1 = dbTables.tableStudents().Select("Id","Firstname","Grades").Commit()
-let query2 = dbTables.tableStudents().Select("Id","Firstname","Grades").Include("Grades",((x:"Grades" )=>{
+let query2 = dbTables.tableStudents().Select("Id","Firstname","Grades").Include("Grades",((x)=>{
+    let z = x.tableCources().Select("Id")
     return null!
 }))
 
