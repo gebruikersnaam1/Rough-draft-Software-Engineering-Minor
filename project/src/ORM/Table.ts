@@ -24,8 +24,8 @@ export interface PrepareSelect<T,U extends string,M> extends TableData<T>{
 }
 
 export interface Operators<T,U extends string,M> extends Execute,TableData<T>{
-    Where: () => Omit<Operators<T,U | "Where",M>,U | "Where">,
-    Include: () => Omit<Operators<T,U | "Include",M>,U | "Include">,
+    Where:() => Omit<Operators<T,U | "Where",M>,U | "Where">,
+    Include:<k extends keyof M> (tableName:k) => Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -36,6 +36,7 @@ interface Table<T,U extends string,M> extends Operators<T,U,M>,PrepareSelect<T,U
 
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
+//K is to say 
 export let Table = function<T,U extends string,M>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
     return {
         tableData: tableData,
@@ -47,8 +48,8 @@ export let Table = function<T,U extends string,M>(tableData: tableData<T>, filte
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function():Omit<Operators<T,U | "Include",M>,U | "Include">{
-            return Table<T,U | "Include",M>(tableData,filterData)
+        Include:function<k extends keyof M>(tableName:k):Omit<Operators<T,U | "Include",Omit<M,k>>,U | "Include">{
+            return Table<T,U | "Include",Omit<M,k>>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{
             return Table<T,U | "Where",M>(tableData,filterData)
