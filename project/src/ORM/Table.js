@@ -26,7 +26,10 @@ exports.Table = function (tableData, filterData) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     Props[_i] = arguments[_i];
                 }
-                return Props;
+                // let z = Table<a,U,M,N>(,filterData)
+                var newList = utils_1.GetDataTable(String(tableName));
+                var a = exports.Table({ fst: newList, snd: null }, filterData).Select();
+                return 5;
             };
             return exports.Table(tableData, filterData);
         },

@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit,tableData} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit,tableData,GetDataTable,List,Pair} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {dbEnv} from './Database'
@@ -49,7 +49,13 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
-            let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Props 
+            let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : number => {
+                // let z = Table<a,U,M,N>(,filterData)
+                let newList : List<a>=  GetDataTable<Unit>(String(tableName))
+                type o = {}
+                let a = Table<a,U,M,N>({fst: newList,snd:null!},filterData).Select()
+                return 5
+            }
             return Table<T,U | "Include",M,N>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
