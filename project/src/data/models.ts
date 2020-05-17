@@ -45,10 +45,10 @@ export type GradeStats = {
 
 //all models
 export type Models = {
-    GradeStats: string,
-    Grades: string,
-    Educations: string,
-    Students: string 
+    GradeStats: GradeStats,
+    Grades: Grades,
+    Educations: Educations,
+    Students: Students 
 }
 /*
     * the constructors for the models
