@@ -6,16 +6,16 @@ var utils_1 = require("../utils/utils");
 var dbEnv = function () {
     return {
         Students: function () {
-            return Table_1.Table(utils_1.tableData("Students", data_1.ListStudents), []);
+            return Table_1.Table(utils_1.tableData(data_1.ListStudents, null), []);
         },
         Grades: function () {
-            return Table_1.Table(utils_1.tableData("GradeStats", data_1.ListGrades), []);
+            return Table_1.Table(utils_1.tableData(data_1.ListGrades, null), []);
         },
         Cources: function () {
-            return Table_1.Table(utils_1.tableData("Grades", data_1.RandomGrades), []);
+            return Table_1.Table(utils_1.tableData(data_1.RandomGrades, null), []);
         },
         Educations: function () {
-            return Table_1.Table(utils_1.tableData("Educations", data_1.ListEducations), []);
+            return Table_1.Table(utils_1.tableData(data_1.ListEducations, null), []);
         }
     };
 };

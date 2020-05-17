@@ -88,9 +88,9 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
   export type Unit = {}
 
   export type Pair<a,b> = {fst:a, snd: b}
-  export type tableData<T> = Pair<string,List<T>>
+  export type tableData<T,N> = Pair<List<T>,List<N>>
 
-  export let tableData = <T> (dbName: string, dbData: List<T>) : Pair<string,List<T>> => ({fst:dbName, snd: dbData})
+  export let tableData = <T,N> (dbData: List<T>, newData: List<N>) : tableData<T,N> => ({fst:dbData, snd: newData})
 
   export type StringUnit = ""
 

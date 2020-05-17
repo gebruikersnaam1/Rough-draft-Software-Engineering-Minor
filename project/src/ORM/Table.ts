@@ -8,8 +8,8 @@ import {dbEnv} from './Database'
 
 
 //base interface that contens tables
-export interface TableData<T>{
-    tableData: tableData<T>
+export interface TableData<T,N>{
+    tableData: tableData<T,N>
     FilterData: string[]
 }
 
@@ -19,45 +19,45 @@ export interface Execute{
 }
 
 //the user can only select something before commit
-export interface PrepareSelect<T,U extends string,M> extends TableData<T>{
-    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M>
+export interface PrepareSelect<T,U extends string,M,N> extends TableData<T,N>{
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
 }
 
-export interface Operators<T,U extends string,M> extends Execute,TableData<T>{
-    Where:() => Omit<Operators<T,U | "Where",M>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",M>,U | "Include">,
+export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
+    Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
+    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",M,N>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
-interface Table<T,U extends string,M extends string> extends Operators<T,U,M>,PrepareSelect<T,U,M>{}
+interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
 
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//K is to say the includes possible are X,Y and Z
-export let Table = function<T,U extends string,M extends string>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
+//M is to say the includes possible are X,Y and Z
+export let Table = function<T,U extends string,M extends string,N>(tableData: tableData<T,N>, filterData: string[]) : Table<T,U,M,N> {
     return {
         tableData: tableData,
         FilterData : filterData,
 
         //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
-        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U,M>{
+        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U,M,N>{
             Props.map(x=> {this.FilterData.push(String(x))})
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M>,U | "Include">{
+        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
             let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Props 
-            return Table<T,U | "Include",M>(tableData,filterData)
+            return Table<T,U | "Include",M,N>(tableData,filterData)
         },
-        Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{
-            return Table<T,U | "Where",M>(tableData,filterData)
+        Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
+            return Table<T,U | "Where",M,N>(tableData,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(map_table<T,Unit>(tableData.snd,Fun<T,Row<Unit>>((obj:T)=>{
+            return QueryResult(map_table<T,Unit>(tableData.fst,Fun<T,Row<Unit>>((obj:T)=>{
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []
@@ -83,5 +83,12 @@ export let Table = function<T,U extends string,M extends string>(tableData: tabl
 */
 /*
     na de include wil ik een: Table<T,U,M> returnen en iets dat alleen input van dat Include table toelaat ()
-    (...Props:Pick<x,x>[])
+    Dus wat ik ook terug geeft moet in het begin Table bevatten + key
+    Moet een optie bevatten voor x.("Y")
+    Moet terug geven Table + nieuwe waarde 
+
+    <a (van nieuwe table)> (...Props:a[]) =>{
+        t = Table()
+
+    }
 */

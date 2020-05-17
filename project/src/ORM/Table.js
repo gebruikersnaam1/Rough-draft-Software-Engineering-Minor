@@ -4,7 +4,7 @@ var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//K is to say the includes possible are X,Y and Z
+//M is to say the includes possible are X,Y and Z
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,
@@ -36,7 +36,7 @@ exports.Table = function (tableData, filterData) {
         Commit: function () {
             var _this = this;
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.map_table(tableData.snd, utils_1.Fun(function (obj) {
+            return models_1.QueryResult(utils_1.map_table(tableData.fst, utils_1.Fun(function (obj) {
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
@@ -59,5 +59,12 @@ exports.Table = function (tableData, filterData) {
 */
 /*
     na de include wil ik een: Table<T,U,M> returnen en iets dat alleen input van dat Include table toelaat ()
-    (...Props:Pick<x,x>[])
+    Dus wat ik ook terug geeft moet in het begin Table bevatten + key
+    Moet een optie bevatten voor x.("Y")
+    Moet terug geven Table + nieuwe waarde
+
+    <a (van nieuwe table)> (...Props:a[]) =>{
+        t = Table()
+
+    }
 */ 
