@@ -19,14 +19,17 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
-            // let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Table<T,U,M,Unit> => {
-            //     // let z = Table<a,U,M,N>(,filterData)
-            //     let newList : List<a>=  GetDataTable(String(tableName))
-            //     let fData : string[] = []
-            //     Props.map(x=> {fData.push(String(x))})
-            //     let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data
-            //     return Table<T,U,M,Unit>({fst: tableData.fst,snd:a},fData)
-            // }
+            var o = function () {
+                var Props = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    Props[_i] = arguments[_i];
+                }
+                var newList = utils_1.GetDataTable(String(tableName));
+                var fData = [];
+                Props.map(function (x) { fData.push(String(x)); });
+                var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;
+                return exports.Table({ fst: tableData.fst, snd: a }, fData);
+            };
             return exports.Table(tableData, filterData);
         },
         Where: function () {

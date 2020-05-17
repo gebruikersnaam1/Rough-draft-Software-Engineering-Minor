@@ -60,16 +60,16 @@ exports.tableData = function (dbData, newData) { return ({ fst: dbData, snd: new
 exports.GetDataTable = function (searchTerm) {
     switch (searchTerm) {
         case 'Students':
-            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+            return null;
         case 'Grades':
-            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+            return null;
         case 'Cources':
-            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+            return null;
         case 'Educations':
-            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+            return null;
     } //ListStudents,ListGrades,RandomGrades,ListEducations
     // return ListEducations
-    return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+    return null;
 };
 exports.PrintQueryValues = function (l) {
     if (l.kind == "Cons") {

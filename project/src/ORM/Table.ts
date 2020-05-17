@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit,tableData,List,GetDataTable} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {dbEnv} from './Database'
@@ -48,14 +48,13 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
-            // let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Table<T,U,M,Unit> => {
-            //     // let z = Table<a,U,M,N>(,filterData)
-            //     let newList : List<a>=  GetDataTable(String(tableName))
-            //     let fData : string[] = []
-            //     Props.map(x=> {fData.push(String(x))})
-            //     let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data
-            //     return Table<T,U,M,Unit>({fst: tableData.fst,snd:a},fData)
-            // }
+            let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Table<T,U,M,Unit> => {
+                let newList : List<a>=  GetDataTable(String(tableName))
+                let fData : string[] = []
+                Props.map(x=> {fData.push(String(x))})
+                let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data
+                return Table<T,U,M,Unit>({fst: tableData.fst,snd:a},fData)
+            }
             return Table<T,U | "Include",M,N>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{

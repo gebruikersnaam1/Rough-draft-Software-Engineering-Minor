@@ -97,19 +97,19 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
 
   export type StringUnit = ""
 
-  export let GetDataTable = function(searchTerm: string) : List<Unit>{
+  export let GetDataTable = function(searchTerm: string) : List<any>{
     switch(searchTerm){
         case 'Students':
-          return Cons("a",Cons("b",Cons("c",Empty())))
+          return null!
         case 'Grades':
-          return Cons("a",Cons("b",Cons("c",Empty())))
+          return null!
         case 'Cources':
-          return Cons("a",Cons("b",Cons("c",Empty())))
+          return null!
         case 'Educations':
-          return Cons("a",Cons("b",Cons("c",Empty())))
+          return null!
       } //ListStudents,ListGrades,RandomGrades,ListEducations
     // return ListEducations
-    return Cons("a",Cons("b",Cons("c",Empty())))
+    return null!
   }
 
   export let PrintQueryValues = function<T>(l : List<Row<T>>){
