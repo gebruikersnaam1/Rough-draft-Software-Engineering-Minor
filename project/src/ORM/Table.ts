@@ -49,7 +49,7 @@ export let Table = function<T,U extends string,M extends string>(tableData: tabl
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M>,U | "Include">{
-            let z = (x:Filter<dbEnv,M>) => {}
+            let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) => Props 
             return Table<T,U | "Include",M>(tableData,filterData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{
@@ -81,40 +81,7 @@ export let Table = function<T,U extends string,M extends string>(tableData: tabl
 /*
  *notes
 */
-//how to create the table SELECT for Props
-    //interface x = {y,z,i}
-    //possible selections = interface
-    //SELECTED {}
-    //FOR EACH SELECT remove possible selection
-    //i.e. SELECTED("y") == possible selection {z,i}
-    // T = {y,z, i} | U = { } | 
-    // T = {z,i } | U = { y } |
-    // z = T - U
-    // y = Props of type T(k) + U
-
 /*
-    Idea: If implementing something like this is possible, then a custom lambda needs to be developed for each table. 
-    SELECT = [Object] == nul can be a way to do Include
-    
-    Table gets a Fun that recursive goes to the list, if attribute is selected then get value?
-    Type U removes the attributes that are not selected?
-    Type U is a real object, not a JSON file.
-    Then type column or row can be changed. Either row contains the value of U or column contains the value T?
-    Column x.name and x.age are not type U right? Yeah
-    so, column needs to be removed and contains the value of U
-    <U>(queryresult:U) => Fun<definedType(i.e. student), U>(
-        let tmp1 = List<definedTypte() //with content
-        let tmp2 =  <definedType() => {}
-        let tmp3 = map_option(tmp2,tmp3)
-        instance : definedType => {
-                let newI : U = {}
-                for(let i in instance){
-                    if (i in queryresult){
-                       newI.Name = instance.Name
-                    } 
-                }
-        return tmp3;
-            }
-        }
-    )
+    na de include wil ik een: Table<T,U,M> returnen en iets dat alleen input van dat Include table toelaat ()
+    (...Props:Pick<x,x>[])
 */
