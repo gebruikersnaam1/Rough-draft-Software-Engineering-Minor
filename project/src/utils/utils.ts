@@ -97,21 +97,6 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
 
   export type StringUnit = ""
 
-  export let GetDataTable = function(searchTerm: string) : List<any>{
-    switch(searchTerm){
-        case 'Students':
-          return null!
-        case 'Grades':
-          return null!
-        case 'Cources':
-          return null!
-        case 'Educations':
-          return null!
-      } //ListStudents,ListGrades,RandomGrades,ListEducations
-    // return ListEducations
-    return null!
-  }
-
   export let PrintQueryValues = function<T>(l : List<Row<T>>){
     if(l.kind == "Cons"){
         console.log(l.head.getValues)

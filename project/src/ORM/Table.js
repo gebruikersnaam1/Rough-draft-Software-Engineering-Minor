@@ -2,6 +2,10 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
+var data_1 = require("../data/data");
+var oz = function () {
+    return data_1.ListEducations;
+};
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
@@ -24,7 +28,7 @@ exports.Table = function (tableData, filterData) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     Props[_i] = arguments[_i];
                 }
-                var newList = utils_1.GetDataTable(String(tableName));
+                var newList = oz();
                 var fData = [];
                 Props.map(function (x) { fData.push(String(x)); });
                 var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;

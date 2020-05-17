@@ -47,6 +47,8 @@ export type GradeStats = {
 export type Models = GradeStats | Grades | Educations | Students 
 
 
+
+
 /*
     * the constructors for the models
 */
