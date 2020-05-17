@@ -1,4 +1,4 @@
-import {List, Cons, Empty, } from  "../utils/utils"//import list
+import {List, Cons, Empty } from  "../utils/utils"//import list
 import * as models from './models'
 
 /*

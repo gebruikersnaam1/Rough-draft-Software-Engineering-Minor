@@ -57,19 +57,20 @@ exports.map_table = function (l, f) {
     return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();
 };
 exports.tableData = function (dbData, newData) { return ({ fst: dbData, snd: newData }); };
-// export let GetDataTable = function(searchTerm: string) : List<any>{
-//     switch(searchTerm){
-//       case 'Students':
-//         return ListStudents
-//       case 'Grades':
-//         return ListGrades
-//       case 'Cources':
-//         return RandomGrades
-//       case 'Educations':
-//         return ListEducations
-//     } //ListStudents,ListGrades,RandomGrades,ListEducations
-//   return Empty()
-// }
+exports.GetDataTable = function (searchTerm) {
+    switch (searchTerm) {
+        case 'Students':
+            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+        case 'Grades':
+            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+        case 'Cources':
+            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+        case 'Educations':
+            return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+    } //ListStudents,ListGrades,RandomGrades,ListEducations
+    // return ListEducations
+    return exports.Cons("a", exports.Cons("b", exports.Cons("c", exports.Empty())));
+};
 exports.PrintQueryValues = function (l) {
     if (l.kind == "Cons") {
         console.log(l.head.getValues);

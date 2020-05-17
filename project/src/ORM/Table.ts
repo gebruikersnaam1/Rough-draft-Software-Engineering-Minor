@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit,tableData,GetDataTable,List} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {dbEnv} from './Database'
