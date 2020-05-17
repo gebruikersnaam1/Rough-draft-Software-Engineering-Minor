@@ -4,7 +4,7 @@ var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//K is to say 
+//K is to say the includes possible are X,Y and Z
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,
@@ -33,14 +33,14 @@ exports.Table = function (tableData, filterData) {
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
-                _this.FilterData.map(function (x) {
-                    Object.getOwnPropertyNames(obj).map(function (y) {
+                Object.getOwnPropertyNames(obj).map(function (y) {
+                    _this.FilterData.map(function (x) {
+                        //loops through all objects and looks if it is selected with another loop
+                        //Foreign key can be selected, but will not be shown just like normal SQL
                         if (String(x) == String(y)) {
-                            newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? null : jObject[y]));
+                            newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
                         }
                     });
-                    // let z : Column<U>[] = []
-                    // newBody.push(z)
                 });
                 return models_1.Row(newBody);
             })));

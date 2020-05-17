@@ -36,7 +36,7 @@ interface Table<T,U extends string,M> extends Operators<T,U,M>,PrepareSelect<T,U
 
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//K is to say 
+//K is to say the includes possible are X,Y and Z
 export let Table = function<T,U extends string,M>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
     return {
         tableData: tableData,
@@ -60,15 +60,15 @@ export let Table = function<T,U extends string,M>(tableData: tableData<T>, filte
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []
-                this.FilterData.map(x=> {
-                    Object.getOwnPropertyNames(obj).map(y =>{
-                            if(String(x) == String(y)){ 
-                                newBody.push(Column(String(x), jObject[y] == "[object Object]" ? null : jObject[y]))
+                Object.getOwnPropertyNames(obj).map(y =>{
+                        this.FilterData.map(x=> { 
+                            //loops through all objects and looks if it is selected with another loop
+                            //Foreign key can be selected, but will not be shown just like normal SQL
+                            if(String(x) == String(y)){  
+                                newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
                             }
                         }
                     )
-                    // let z : Column<U>[] = []
-                    // newBody.push(z)
                 })
                 return Row(newBody)
             })))
