@@ -3,6 +3,7 @@ exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data");
+//function to get data for the Union had to be in this file.
 var GetTableData = function (name) {
     switch (name) {
         case 'Students':

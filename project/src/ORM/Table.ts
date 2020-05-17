@@ -34,6 +34,8 @@ export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N
 
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
+
+//function to get data for the Union had to be in this file.
 let GetTableData = function(name:string): List<any>{
     switch(name){
         case 'Students':
