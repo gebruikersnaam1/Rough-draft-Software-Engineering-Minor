@@ -1,4 +1,4 @@
-import {Row, Models} from "../data/models"
+import {Row} from "../data/models"
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
 
 
@@ -97,7 +97,7 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
 
   export type StringUnit = ""
 
-  export let GetDataTable = function<a>(searchTerm: string) : List<any>{
+  export let GetDataTable = function(searchTerm: string) : List<any>{
       switch(searchTerm){
         case 'Students':
           return ListStudents

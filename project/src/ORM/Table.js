@@ -9,7 +9,6 @@ exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,
         FilterData: filterData,
-        //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
         Select: function () {
             var _this = this;
             var Props = [];
@@ -17,7 +16,6 @@ exports.Table = function (tableData, filterData) {
                 Props[_i] = arguments[_i];
             }
             Props.map(function (x) { _this.FilterData.push(String(x)); });
-            //Pick<T,K>
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
@@ -28,8 +26,10 @@ exports.Table = function (tableData, filterData) {
                 }
                 // let z = Table<a,U,M,N>(,filterData)
                 var newList = utils_1.GetDataTable(String(tableName));
-                var a = exports.Table({ fst: newList, snd: null }, filterData).Select();
-                return 5;
+                var fData = [];
+                Props.map(function (x) { fData.push(String(x)); });
+                var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;
+                return exports.Table({ fst: tableData.fst, snd: a }, fData);
             };
             return exports.Table(tableData, filterData);
         },
