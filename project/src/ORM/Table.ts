@@ -2,7 +2,7 @@ import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {dbEnv} from './Database'
-import {ListEducations} from '../data/data'
+import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
 
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
@@ -34,7 +34,17 @@ export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N
 
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
-let oz = function(): List<any>{
+let GetTableData = function(name:string): List<any>{
+    switch(name){
+        case 'Students':
+            return ListStudents
+        case 'GradeStats':
+            return ListGrades
+        case 'Grades':
+            return RandomGrades
+        case 'Educations':
+            return ListEducations
+    }
     return ListEducations
 }
 
@@ -53,7 +63,7 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",M,N>,U | "Include">{
             let o = <a extends keyof Filter<dbEnv,k>> (...Props:a[]) : Table<T,U,M,Unit> => {
-                let newList : List<a>= oz()
+                let newList : List<a>= GetTableData(String(tableName))
                 let fData : string[] = []
                 Props.map(x=> {fData.push(String(x))})
                 let a : List<Unit> = Table<a,U,M,N>({fst: newList,snd:null!},fData).Commit().data

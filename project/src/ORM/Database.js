@@ -8,10 +8,10 @@ var dbEnv = function () {
         Students: function () {
             return Table_1.Table(utils_1.tableData(data_1.ListStudents, utils_1.Empty()), []);
         },
-        Grades: function () {
+        GradeStats: function () {
             return Table_1.Table(utils_1.tableData(data_1.ListGrades, utils_1.Empty()), []);
         },
-        Cources: function () {
+        Grades: function () {
             return Table_1.Table(utils_1.tableData(data_1.RandomGrades, utils_1.Empty()), []);
         },
         Educations: function () {

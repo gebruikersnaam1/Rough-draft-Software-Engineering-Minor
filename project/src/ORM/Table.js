@@ -3,7 +3,17 @@ exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data");
-var oz = function () {
+var GetTableData = function (name) {
+    switch (name) {
+        case 'Students':
+            return data_1.ListStudents;
+        case 'GradeStats':
+            return data_1.ListGrades;
+        case 'Grades':
+            return data_1.RandomGrades;
+        case 'Educations':
+            return data_1.ListEducations;
+    }
     return data_1.ListEducations;
 };
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
@@ -28,7 +38,7 @@ exports.Table = function (tableData, filterData) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     Props[_i] = arguments[_i];
                 }
-                var newList = oz();
+                var newList = GetTableData(String(tableName));
                 var fData = [];
                 Props.map(function (x) { fData.push(String(x)); });
                 var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;

@@ -11,8 +11,8 @@ import {StringUnit,tableData, Unit, Empty} from '../utils/utils'
 
 export type dbEnv = {
     Students: () => PrepareSelect<Students,StringUnit,Omit<dbEnv,"Students">,Unit> 
-    Grades: () => PrepareSelect<GradeStats,StringUnit,Omit<dbEnv,"GradeStats">,Unit> 
-    Cources: () => PrepareSelect<Grades,StringUnit,Omit<dbEnv,"Grades">,Unit>
+    GradeStats: () => PrepareSelect<GradeStats,StringUnit,Omit<dbEnv,"GradeStats">,Unit> 
+    Grades: () => PrepareSelect<Grades,StringUnit,Omit<dbEnv,"Grades">,Unit>
     Educations: () => PrepareSelect<Educations,StringUnit,Omit<dbEnv,"Educations">,Unit>
 }
 
@@ -21,10 +21,10 @@ let dbEnv = () : dbEnv => {
         Students: function(){  
             return Table(tableData(ListStudents,Empty()),[]) 
         },
-        Grades: function(){ 
+        GradeStats: function(){ 
             return Table(tableData(ListGrades,Empty()),[]) 
         },
-        Cources: function() { 
+        Grades: function() { 
             return Table(tableData(RandomGrades,Empty()),[]) 
         },
         Educations: function() { 
