@@ -2,6 +2,8 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
+//T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
+//U contains information which Operators is chosen
 exports.Table = function (tableData, filterData) {
     return {
         tableData: tableData,

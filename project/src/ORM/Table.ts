@@ -19,38 +19,39 @@ export interface Execute{
 }
 
 //the user can only select something before commit
-export interface PrepareSelect<T,U extends string> extends TableData<T>{
-    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U>
+export interface PrepareSelect<T,U extends string,M> extends TableData<T>{
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M>
 }
 
-export interface Operators<T,U extends string> extends Execute,TableData<T>{
-    Where: () => Omit<Operators<T,U | "Where">,U | "Where">,
-    Include: () => Omit<Operators<T,U | "Include">,U | "Include">,
+export interface Operators<T,U extends string,M> extends Execute,TableData<T>{
+    Where: () => Omit<Operators<T,U | "Where",M>,U | "Where">,
+    Include: () => Omit<Operators<T,U | "Include",M>,U | "Include">,
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
-interface Table<T,U extends string> extends Operators<T,U>,PrepareSelect<T,U>{}
+interface Table<T,U extends string,M> extends Operators<T,U,M>,PrepareSelect<T,U,M>{}
 
 
-
-export let Table = function<T,U extends string>(tableData: tableData<T>, filterData: string[]) : Table<T,U> {
+//T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
+//U contains information which Operators is chosen
+export let Table = function<T,U extends string,M>(tableData: tableData<T>, filterData: string[]) : Table<T,U,M> {
     return {
         tableData: tableData,
         FilterData : filterData,
 
         //if interface fails and select get selected twice, keyof ensures that i.e. column1 can still not be selected twice
-        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U>{
+        Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U,M>{
             Props.map(x=> {this.FilterData.push(String(x))})
             //Pick<T,K>
             return Table(tableData,filterData)
         },
-        Include:function():Omit<Operators<T,U | "Include">,U | "Include">{
-            return Table<T,U | "Include">(tableData,filterData)
+        Include:function():Omit<Operators<T,U | "Include",M>,U | "Include">{
+            return Table<T,U | "Include",M>(tableData,filterData)
         },
-        Where:function(): Omit<Operators<T,U | "Where">,U | "Where">{
-            return Table<T,U | "Where">(tableData,filterData)
+        Where:function(): Omit<Operators<T,U | "Where",M>,U | "Where">{
+            return Table<T,U | "Where",M>(tableData,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
