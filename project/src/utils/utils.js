@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-var data_1 = require("../data/data"); //import model
 exports.Cons = function (head, tail) { return ({
     kind: "Cons",
     head: head,
@@ -58,19 +57,19 @@ exports.map_table = function (l, f) {
     return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();
 };
 exports.tableData = function (dbData, newData) { return ({ fst: dbData, snd: newData }); };
-exports.GetDataTable = function (searchTerm) {
-    switch (searchTerm) {
-        case 'Students':
-            return data_1.ListStudents;
-        case 'Grades':
-            return data_1.ListGrades;
-        case 'Cources':
-            return data_1.RandomGrades;
-        case 'Educations':
-            return data_1.ListEducations;
-    } //ListStudents,ListGrades,RandomGrades,ListEducations
-    return exports.Empty();
-};
+// export let GetDataTable = function(searchTerm: string) : List<any>{
+//     switch(searchTerm){
+//       case 'Students':
+//         return ListStudents
+//       case 'Grades':
+//         return ListGrades
+//       case 'Cources':
+//         return RandomGrades
+//       case 'Educations':
+//         return ListEducations
+//     } //ListStudents,ListGrades,RandomGrades,ListEducations
+//   return Empty()
+// }
 exports.PrintQueryValues = function (l) {
     if (l.kind == "Cons") {
         console.log(l.head.getValues);
