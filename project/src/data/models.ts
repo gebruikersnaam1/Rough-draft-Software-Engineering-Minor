@@ -51,6 +51,17 @@ export type Models = {
     Students: Students
 } 
 
+export type ModelsType = {
+    type: GradeStats
+} | {
+    type: Grades
+} | {
+    type: Educations
+} | {
+    type: Students
+}
+
+
 /*
     * the constructors for the models
 */

@@ -17,6 +17,13 @@ var GetTableData = function (name) {
     }
     return data_1.ListEducations;
 };
+var IncludeLambda = function (tableName, tableData, Props) {
+    var tempList = GetTableData(tableName);
+    var fData = [];
+    Props.map(function (x) { fData.push(String(x)); });
+    var newList = exports.Table({ fst: tempList, snd: null }, fData).Commit().data;
+    return exports.Table({ fst: tableData.fst, snd: newList }, fData);
+};
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
@@ -40,11 +47,7 @@ exports.Table = function (tableData, filterData) {
                 for (var _i = 0; _i < arguments.length; _i++) {
                     Props[_i] = arguments[_i];
                 }
-                var newList = GetTableData(String(tableName));
-                var fData = [];
-                Props.map(function (x) { fData.push(String(x)); });
-                var a = exports.Table({ fst: newList, snd: null }, fData).Commit().data;
-                return exports.Table({ fst: tableData.fst, snd: a }, fData);
+                return IncludeLambda(String(tableName), tableData, Props);
             };
         },
         Where: function () {

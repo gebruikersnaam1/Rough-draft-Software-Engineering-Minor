@@ -1,4 +1,3 @@
-
   /*
     * So, I know my option
     * TODO: look if everything is used and maybe refactor
@@ -21,6 +20,4 @@
 
  //get all props of type 'number' as example
  export type IncludePropTypes<T,Condition> = Pick<T,Filter<T,Condition>>
-
-
   
