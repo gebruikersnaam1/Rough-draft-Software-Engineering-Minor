@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, StringUnit, tableData,List} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData,List, Empty} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult,Students, Grades,GradeStats,Educations} from "../data/models"
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
@@ -46,31 +46,30 @@ type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn
 type IncludeReturnTypes = "Students" |"GradeStats" | "Grades" | "Educations"  
 
 // type tmp1 = "barcode" | "mqtt"
-function get<T,U extends string,S extends IncludeReturnTypes>(s: S):  
-    S extends "Students" ? { IncludeStudents: () => StudentsReturn<T,U> } :
-    S extends "Grades" ? { IncludeGrades: () => GradesReturn<T,U> } : 
-    S extends "GradeStats" ? { IncludeGradeStats: () => GradeStatsReturn<T,U> } : 
-    { IncludeEducation: () => EducationsReturn<T,U> }
-function get<T,U extends string>(s: IncludeReturnTypes): { IncludeStudents: () => StudentsReturn<T,U> } |  { IncludeGrades: () => GradesReturn<T,U> } | { IncludeGradeStats: () => GradeStatsReturn<T,U> } |  { IncludeEducation: () => EducationsReturn<T,U> }{
+function get<S extends IncludeReturnTypes>(s: S):  
+    S extends "Students" ? { IncludeStudents: <T,U extends string>() => StudentsReturn<T,U> } :
+    S extends "Grades" ? { IncludeGrades: <T,U extends string>() => GradesReturn<T,U> } : 
+    S extends "GradeStats" ? { IncludeGradeStats:<T,U extends string>() => GradeStatsReturn<T,U> } : 
+    { IncludeEducation:<T,U extends string> () => EducationsReturn<T,U> }
+function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> () => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
     return s === "Students" ?
-        { IncludeStudents: () => (
+        { IncludeStudents: <T,U extends string>() => (
              <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => 
                 ( IncludeLambda<T,U,Students,k>(ListStudents,null!,i)))
         } : s === "Grades" ?
-        { IncludeGrades: () => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+        { IncludeGrades: <T,U extends string>() => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
                 (IncludeLambda<T,U,Grades,k>(RandomGrades,null!,i))
             ))
         } : s === "GradeStats" ?
-        { IncludeGradeStats: () => (<k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+        { IncludeGradeStats:<T,U extends string> () => (<k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
                IncludeLambda<T,U,GradeStats,k>(ListGrades,null!,i)))
         } : 
-        { IncludeEducation: () => (<k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+        { IncludeEducation:<T,U extends string>() => (<k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
                  IncludeLambda<T,U,Educations,k>(ListEducations,null!,i)))
         }
 }
 
-
-let z = get("Students").IncludeStudents()("Grades","Id")  // OK
+get("Students").IncludeStudents<Students,StringUnit>()("Grades","Id").Commit().printRows()  // OK
 // get("GradeStats").pan()     // OK
 
 

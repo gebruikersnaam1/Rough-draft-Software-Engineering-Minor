@@ -38,7 +38,7 @@ function get(s) {
             }); }
         };
 }
-var z = get("Students").IncludeStudents()("Grades", "Id"); // OK
+get("Students").IncludeStudents()("Grades", "Id").Commit().printRows(); // OK
 // get("GradeStats").pan()     // OK
 var IncludeLambda = function (incData, tableData, Props) {
     var fData = [];
