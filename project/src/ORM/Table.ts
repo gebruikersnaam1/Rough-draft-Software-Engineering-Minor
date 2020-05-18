@@ -1,6 +1,6 @@
 import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
 import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
-import {Column, Row,QueryResult,Students} from "../data/models"
+import {Column, Row,QueryResult,Students, Grades} from "../data/models"
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
 
 
@@ -48,6 +48,33 @@ let GetTableData = function(name:string): List<any>{
             return ListEducations
     }
     return ListEducations
+}
+type StudentsIE<T,U extends string,M extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+type GradesIE<T,U extends string,M extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+
+//<T,U extends string,M extends string,N>
+let temp = function<T,U extends string,M extends string,N>(name:string) : StudentsIE<T,U,M> | GradesIE<T,U,M>
+{
+    if(name == "test"){
+        return <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+            return IncludeLambda<T,U,M,N,k>(String(""),null!,null!)
+        }
+    }else{
+        return <k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+            return IncludeLambda<T,U,M,N,k>(String(""),null!,null!)
+        }
+    }
+    // switch(name){
+    //     case 'Students':
+    //         return ListStudents
+    //     case 'GradeStats':
+    //         return ListGrades
+    //     case 'Grades':
+    //         return RandomGrades
+    //     case 'Educations':
+    //         return ListEducations
+    // }
+    // return ListEducations
 }
 
 let IncludeLambda = function<T,U extends string,M extends string,N,a>(tableName:string,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
