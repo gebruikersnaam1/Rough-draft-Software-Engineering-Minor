@@ -1,7 +1,8 @@
-import {map_table,Fun,Unit, StringUnit, tableData} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData as tableFactory} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
-import {dbTables} from './Database'
+import {Students,GradeStats,Grades,Educations, Models} from  "../data/models"//import model
+import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
 
 
 
@@ -11,7 +12,7 @@ import {dbTables} from './Database'
 
 //base interface that contens tables
 export interface TableData<T,N>{
-    tableData: tableData<T,N>
+    tableData: tableFactory<T,N>
     FilterData: string[]
 }
 
@@ -38,16 +39,10 @@ interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N
 
 
 
-// let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
-//     let fData : string[] = []
-//     Props.map(x=> {fData.push(String(x))})
-//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
-//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
-// }
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
-export let Table = function<T,U extends string,M extends string,N>(tableData: tableData<T,N>, filterData: string[]) : Table<T,U,M,N> {
+export let Table = function<T,U extends string,M extends string,N>(tableData: tableFactory<T,N>, filterData: string[]) : Table<T,U,M,N> {
     return {
         tableData: tableData,
         FilterData : filterData,
@@ -58,20 +53,7 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> {
-            switch(String(tableName)){
-                case 'Students':
-                    dbTables.Students()
-                    break;
-                case 'GradeStats':
-                    dbTables.GradeStats()
-                    break;
-                case 'Grades':
-                    dbTables.Grades()
-                    break;
-                case 'Educations':
-                    dbTables.Educations()
-                    break;
-            }
+            Table<Grades,StringUnit,U,T>(tableFactory(RandomGrades,tableData.fst),null!)
             return null!
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
@@ -147,7 +129,12 @@ function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> (l:
                  IncludeLambda<T,U,Educations,k>(ListEducations,null!,i)))
         }
 }
-
+// let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+//     let fData : string[] = []
+//     Props.map(x=> {fData.push(String(x))})
+//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
+// }
 get("Students").IncludeStudents()("Grades","Id").Commit().printRows()  // OK
 // get("GradeStats").pan()     // OK
 
