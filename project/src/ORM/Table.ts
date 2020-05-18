@@ -40,9 +40,28 @@ type StudentsReturn<T,U extends string> =  <k extends keyof Students>(...i:k[]) 
 type GradesReturn<T,U extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
 type GradeStatsReturn<T,U extends string> =  <k extends keyof GradeStats>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
 type EducationsReturn<T,U extends string> =  <k extends keyof Educations>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
-type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn<T,U> | GradeStatsReturn<T,U> | EducationsReturn<T,U>
+type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn<T,U> | GradeStatsReturn<T,U> | EducationsReturn<T,U> 
 
-let IncludeTable = function<T,U extends string>(name:string,TableData:tableData<T,any>) : combineReturnTypes<T,U> 
+
+type IncludeReturnTypes<S,T,U extends string> = 
+    S extends "Students" ? () => StudentsReturn<T,U> :
+    S extends "GradeStats" ? GradesReturn<T,U> :
+    S extends "Grades" ? GradeStatsReturn<T,U> :
+    S extends "Educations" ? EducationsReturn<T,U>:
+    never //for now this is the default value
+
+type tmp1 = "barcode" | "mqtt"
+function get<S extends tmp1>(s: S):  S extends "barcode" ? { scan: () => string } : { pan: () => string }
+function get(s: tmp1): { scan: () => string } | { pan: () => string } {
+    return s === "barcode" ?
+        { scan: () => "we are scanning" } :
+        { pan: () => "we are panning" }
+}
+
+get("barcode").scan() // OK
+get("mqtt").pan()     // OK
+
+let IncludeTable = function<S extends string,T,U extends string>(name:S,TableData:tableData<T,any>) : IncludeReturnTypes<S,T,U>
   {
     switch(name){
         case 'Students':

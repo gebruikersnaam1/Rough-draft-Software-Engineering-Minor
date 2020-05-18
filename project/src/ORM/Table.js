@@ -3,6 +3,13 @@ exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data");
+function get(s) {
+    return s === "barcode" ?
+        { scan: function () { return "we are scanning"; } } :
+        { pan: function () { return "we are panning"; } };
+}
+get("barcode").scan(); // OK
+get("mqtt").pan(); // OK
 var IncludeTable = function (name, TableData) {
     switch (name) {
         case 'Students':
