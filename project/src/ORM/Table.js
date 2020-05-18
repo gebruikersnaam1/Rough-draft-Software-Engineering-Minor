@@ -4,12 +4,20 @@ var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data");
 function get(s) {
-    return s === "barcode" ?
-        { scan: function () { return "we are scanning"; } } :
+    return s === "Students" ?
+        { scan: function () {
+                return function () {
+                    var i = [];
+                    for (var _i = 0; _i < arguments.length; _i++) {
+                        i[_i] = arguments[_i];
+                    }
+                    return IncludeLambda(data_1.ListStudents, null, i);
+                };
+            } } :
         { pan: function () { return "we are panning"; } };
 }
-get("barcode").scan(); // OK
-get("mqtt").pan(); // OK
+get("Students").scan(); // OK
+get("GradeStats").pan(); // OK
 var IncludeTable = function (name, TableData) {
     switch (name) {
         case 'Students':
