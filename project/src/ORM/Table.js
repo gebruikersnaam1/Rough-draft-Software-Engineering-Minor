@@ -5,57 +5,41 @@ var models_1 = require("../data/models");
 var data_1 = require("../data/data");
 function get(s) {
     return s === "Students" ?
-        { scan: function () {
-                return function () {
-                    var i = [];
-                    for (var _i = 0; _i < arguments.length; _i++) {
-                        i[_i] = arguments[_i];
-                    }
-                    return IncludeLambda(data_1.ListStudents, null, i);
-                };
-            } } :
-        { pan: function () { return "we are panning"; } };
+        { IncludeStudents: function () { return (function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return (IncludeLambda(data_1.ListStudents, null, i));
+            }); }
+        } : s === "Grades" ?
+        { IncludeGrades: function () { return (function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return ((IncludeLambda(data_1.RandomGrades, null, i)));
+            }); }
+        } : s === "GradeStats" ?
+        { IncludeGradeStats: function () { return (function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return (IncludeLambda(data_1.ListGrades, null, i));
+            }); }
+        } :
+        { IncludeEducation: function () { return (function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return (IncludeLambda(data_1.ListEducations, null, i));
+            }); }
+        };
 }
-get("Students").scan(); // OK
-get("GradeStats").pan(); // OK
-var IncludeTable = function (name, TableData) {
-    switch (name) {
-        case 'Students':
-            return function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return IncludeLambda(data_1.ListStudents, TableData, i);
-            };
-        case 'GradeStats':
-            return function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return IncludeLambda(data_1.ListGrades, TableData, i);
-            };
-        case 'Grades':
-            return function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return IncludeLambda(data_1.RandomGrades, TableData, i);
-            };
-        case 'Educations':
-        default: //NOTE: should have another default value
-            return function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return IncludeLambda(data_1.ListEducations, TableData, i);
-            };
-    }
-    // return ListEducations
-};
+var z = get("Students").IncludeStudents()("Grades", "Id"); // OK
+// get("GradeStats").pan()     // OK
 var IncludeLambda = function (incData, tableData, Props) {
     var fData = [];
     Props.map(function (x) { fData.push(String(x)); });
@@ -79,7 +63,7 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
-            return IncludeTable(String(tableName), tableData);
+            return null;
         },
         Where: function () {
             return exports.Table(tableData, filterData);
