@@ -3,25 +3,48 @@ exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data");
-//function to get data for the Union had to be in this file.
-var GetTableData = function (name) {
+var IncludeTable = function (name, TableData) {
     switch (name) {
         case 'Students':
-            return data_1.ListStudents;
+            return function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return IncludeLambda(data_1.ListStudents, TableData, i);
+            };
         case 'GradeStats':
-            return data_1.ListGrades;
+            return function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return IncludeLambda(data_1.ListGrades, TableData, i);
+            };
         case 'Grades':
-            return data_1.RandomGrades;
+            return function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return IncludeLambda(data_1.RandomGrades, TableData, i);
+            };
         case 'Educations':
-            return data_1.ListEducations;
+        default: //NOTE: should have another default value
+            return function () {
+                var i = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                    i[_i] = arguments[_i];
+                }
+                return IncludeLambda(data_1.ListEducations, TableData, i);
+            };
     }
-    return data_1.ListEducations;
+    // return ListEducations
 };
-var IncludeLambda = function (tableName, tableData, Props) {
-    var tempList = GetTableData(tableName);
+var IncludeLambda = function (incData, tableData, Props) {
     var fData = [];
     Props.map(function (x) { fData.push(String(x)); });
-    var newList = exports.Table({ fst: tempList, snd: null }, fData).Commit().data;
+    var newList = exports.Table({ fst: incData, snd: null }, fData).Commit().data;
     return exports.Table({ fst: tableData.fst, snd: newList }, fData);
 };
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
@@ -41,14 +64,7 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
-            //(i:a) =>b
-            return function () {
-                var Props = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    Props[_i] = arguments[_i];
-                }
-                return IncludeLambda(String(tableName), tableData, Props);
-            };
+            return IncludeTable(String(tableName), tableData);
         },
         Where: function () {
             return exports.Table(tableData, filterData);
