@@ -1,11 +1,8 @@
 import {map_table,Fun,Unit, StringUnit, tableData as tableFactory} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
-import {Grades} from  "../data/models"//import model
-import {RandomGrades} from  "../data/data"//import model
-
-
-
+import {Grades,Educations} from  "../data/models"//import model
+import {RandomGrades,ListEducations} from  "../data/data"//import model
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 
@@ -25,6 +22,7 @@ export interface Execute{
 export interface PrepareSelect<T,U extends string,M ,N> extends TableData<T,N>{
     Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
 }
+
 interface IncludeSelect<T,U extends string,M extends string,N> extends TableData<T,N>{
     Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
 }
@@ -56,7 +54,7 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : IncludeSelect<Unit,StringUnit,U,T> {          
+        Include:function<k extends keyof M>(tableName:k) : IncludeSelect<Unit,StringUnit,U,T> { 
             return Table<Grades,StringUnit,U,T>(tableFactory(RandomGrades,tableData.fst),[])
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
