@@ -2,6 +2,7 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
+var Database_1 = require("./Database");
 // let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
 //     let fData : string[] = []
 //     Props.map(x=> {fData.push(String(x))})
@@ -25,6 +26,20 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
+            switch (String(tableName)) {
+                case 'Students':
+                    Database_1.dbTables.Students();
+                    break;
+                case 'GradeStats':
+                    Database_1.dbTables.GradeStats();
+                    break;
+                case 'Grades':
+                    Database_1.dbTables.Grades();
+                    break;
+                case 'Educations':
+                    Database_1.dbTables.Educations();
+                    break;
+            }
             return null;
         },
         Where: function () {

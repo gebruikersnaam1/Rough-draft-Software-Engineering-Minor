@@ -1,7 +1,8 @@
-import {map_table,Fun,Unit, StringUnit, tableData,List, Empty} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
-import {Column, Row,QueryResult,Students, Grades,GradeStats,Educations} from "../data/models"
-import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
+import {Column, Row,QueryResult} from "../data/models"
+import {dbTables} from './Database'
+
 
 
 
@@ -57,6 +58,20 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             return Table(tableData,filterData)
         },
         Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> {
+            switch(String(tableName)){
+                case 'Students':
+                    dbTables.Students()
+                    break;
+                case 'GradeStats':
+                    dbTables.GradeStats()
+                    break;
+                case 'Grades':
+                    dbTables.Grades()
+                    break;
+                case 'Educations':
+                    dbTables.Educations()
+                    break;
+            }
             return null!
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
