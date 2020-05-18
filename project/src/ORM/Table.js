@@ -2,50 +2,12 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
-var data_1 = require("../data/data");
-function get(s) {
-    return s === "Students" ?
-        { IncludeStudents: function (l) { return (function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return IncludeLambda(data_1.ListStudents, null, i);
-            }); }
-        } : s === "Grades" ?
-        { IncludeGrades: function () { return (function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return ((IncludeLambda(data_1.RandomGrades, null, i)));
-            }); }
-        } : s === "GradeStats" ?
-        { IncludeGradeStats: function () { return (function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return (IncludeLambda(data_1.ListGrades, null, i));
-            }); }
-        } :
-        { IncludeEducation: function () { return (function () {
-                var i = [];
-                for (var _i = 0; _i < arguments.length; _i++) {
-                    i[_i] = arguments[_i];
-                }
-                return (IncludeLambda(data_1.ListEducations, null, i));
-            }); }
-        };
-}
-get("Students").IncludeStudents()("Grades", "Id").Commit().printRows(); // OK
-// get("GradeStats").pan()     // OK
-var IncludeLambda = function (incData, tableData, Props) {
-    var fData = [];
-    Props.map(function (x) { fData.push(String(x)); });
-    var newList = exports.Table({ fst: incData, snd: null }, fData).Commit().data;
-    return exports.Table({ fst: tableData.fst, snd: newList }, fData);
-};
+// let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+//     let fData : string[] = []
+//     Props.map(x=> {fData.push(String(x))})
+//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
+// }
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
@@ -102,4 +64,42 @@ exports.Table = function (tableData, filterData) {
         t = Table()
 
     }
+    legacy code
+    //interfaces to have mulitple returns types, as Typescript otherwise don't allow it...
+type StudentsReturn<T,U extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type GradesReturn<T,U extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type GradeStatsReturn<T,U extends string> =  <k extends keyof GradeStats>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type EducationsReturn<T,U extends string> =  <k extends keyof Educations>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn<T,U> | GradeStatsReturn<T,U> | EducationsReturn<T,U>
+
+
+type IncludeReturnTypes = "Students" |"GradeStats" | "Grades" | "Educations"
+
+// type tmp1 = "barcode" | "mqtt"
+function get<S extends IncludeReturnTypes>(s: S):
+    S extends "Students" ? { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => StudentsReturn<T,U> } :
+    S extends "Grades" ? { IncludeGrades: <T,U extends string>() => GradesReturn<T,U> } :
+    S extends "GradeStats" ? { IncludeGradeStats:<T,U extends string>() => GradeStatsReturn<T,U> } :
+    { IncludeEducation:<T,U extends string> () => EducationsReturn<T,U> }
+function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> (l: TableData<T,any>) => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
+    return s === "Students" ?
+        { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => (
+             <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> =>
+                { return IncludeLambda<T,U,Students,k>(ListStudents,null!,i) }
+        } : s === "Grades" ?
+        { IncludeGrades: <T,U extends string>() => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+                (IncludeLambda<T,U,Grades,k>(RandomGrades,null!,i))
+            ))
+        } : s === "GradeStats" ?
+        { IncludeGradeStats:<T,U extends string> () => (<k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+               IncludeLambda<T,U,GradeStats,k>(ListGrades,null!,i)))
+        } :
+        { IncludeEducation:<T,U extends string>() => (<k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+                 IncludeLambda<T,U,Educations,k>(ListEducations,null!,i)))
+        }
+}
+
+get("Students").IncludeStudents()("Grades","Id").Commit().printRows()  // OK
+// get("GradeStats").pan()     // OK
+
 */ 

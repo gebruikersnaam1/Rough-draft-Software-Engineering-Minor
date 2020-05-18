@@ -26,7 +26,7 @@ export interface PrepareSelect<T,U extends string,M ,N> extends TableData<T,N>{
 
 export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) => combineReturnTypes<T,U> 
+    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> 
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -35,50 +35,14 @@ export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
 
-//interfaces to have mulitple returns types, as Typescript otherwise don't allow it...
-type StudentsReturn<T,U extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
-type GradesReturn<T,U extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
-type GradeStatsReturn<T,U extends string> =  <k extends keyof GradeStats>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
-type EducationsReturn<T,U extends string> =  <k extends keyof Educations>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
-type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn<T,U> | GradeStatsReturn<T,U> | EducationsReturn<T,U> 
 
 
-type IncludeReturnTypes = "Students" |"GradeStats" | "Grades" | "Educations"  
-
-// type tmp1 = "barcode" | "mqtt"
-function get<S extends IncludeReturnTypes>(s: S):  
-    S extends "Students" ? { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => StudentsReturn<T,U> } :
-    S extends "Grades" ? { IncludeGrades: <T,U extends string>() => GradesReturn<T,U> } : 
-    S extends "GradeStats" ? { IncludeGradeStats:<T,U extends string>() => GradeStatsReturn<T,U> } : 
-    { IncludeEducation:<T,U extends string> () => EducationsReturn<T,U> }
-function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> (l: TableData<T,any>) => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
-    return s === "Students" ?
-        { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => (
-             <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => 
-                { return IncludeLambda<T,U,Students,k>(ListStudents,null!,i) }
-        } : s === "Grades" ?
-        { IncludeGrades: <T,U extends string>() => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
-                (IncludeLambda<T,U,Grades,k>(RandomGrades,null!,i))
-            ))
-        } : s === "GradeStats" ?
-        { IncludeGradeStats:<T,U extends string> () => (<k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
-               IncludeLambda<T,U,GradeStats,k>(ListGrades,null!,i)))
-        } : 
-        { IncludeEducation:<T,U extends string>() => (<k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
-                 IncludeLambda<T,U,Educations,k>(ListEducations,null!,i)))
-        }
-}
-
-get("Students").IncludeStudents()("Grades","Id").Commit().printRows()  // OK
-// get("GradeStats").pan()     // OK
-
-
-let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
-    let fData : string[] = []
-    Props.map(x=> {fData.push(String(x))})
-    let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
-    return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
-}
+// let IncludeLambda = function<T,U extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+//     let fData : string[] = []
+//     Props.map(x=> {fData.push(String(x))})
+//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
+// }
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
@@ -92,7 +56,7 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : combineReturnTypes<T,U> {
+        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> {
             return null!
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
@@ -134,4 +98,42 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
         t = Table()
 
     }
+    legacy code
+    //interfaces to have mulitple returns types, as Typescript otherwise don't allow it...
+type StudentsReturn<T,U extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type GradesReturn<T,U extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type GradeStatsReturn<T,U extends string> =  <k extends keyof GradeStats>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type EducationsReturn<T,U extends string> =  <k extends keyof Educations>(...i:k[]) => Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">
+type combineReturnTypes<T,U extends string> = StudentsReturn<T,U> | GradesReturn<T,U> | GradeStatsReturn<T,U> | EducationsReturn<T,U> 
+
+
+type IncludeReturnTypes = "Students" |"GradeStats" | "Grades" | "Educations"  
+
+// type tmp1 = "barcode" | "mqtt"
+function get<S extends IncludeReturnTypes>(s: S):  
+    S extends "Students" ? { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => StudentsReturn<T,U> } :
+    S extends "Grades" ? { IncludeGrades: <T,U extends string>() => GradesReturn<T,U> } : 
+    S extends "GradeStats" ? { IncludeGradeStats:<T,U extends string>() => GradeStatsReturn<T,U> } : 
+    { IncludeEducation:<T,U extends string> () => EducationsReturn<T,U> }
+function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> (l: TableData<T,any>) => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
+    return s === "Students" ?
+        { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => (
+             <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => 
+                { return IncludeLambda<T,U,Students,k>(ListStudents,null!,i) }
+        } : s === "Grades" ?
+        { IncludeGrades: <T,U extends string>() => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+                (IncludeLambda<T,U,Grades,k>(RandomGrades,null!,i))
+            ))
+        } : s === "GradeStats" ?
+        { IncludeGradeStats:<T,U extends string> () => (<k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+               IncludeLambda<T,U,GradeStats,k>(ListGrades,null!,i)))
+        } : 
+        { IncludeEducation:<T,U extends string>() => (<k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
+                 IncludeLambda<T,U,Educations,k>(ListEducations,null!,i)))
+        }
+}
+
+get("Students").IncludeStudents()("Grades","Id").Commit().printRows()  // OK
+// get("GradeStats").pan()     // OK
+
 */
