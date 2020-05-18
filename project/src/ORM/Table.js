@@ -20,8 +20,7 @@ exports.Table = function (tableData, filterData) {
             return exports.Table(tableData, filterData);
         },
         Include: function (tableName) {
-            exports.Table(utils_1.tableData(data_1.RandomGrades, tableData.fst), null);
-            return null;
+            return exports.Table(utils_1.tableData(data_1.RandomGrades, tableData.fst), []);
         },
         Where: function () {
             return exports.Table(tableData, filterData);

@@ -28,12 +28,15 @@ export interface PrepareSelect<T,U extends string,M ,N> extends TableData<T,N>{
 
 export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> 
+    Include:<k extends keyof M> (tableName:k) =>  IncludeSelect<Unit,StringUnit,U,T>
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
 
+interface IncludeSelect<T,U extends string,M extends string,N>{
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
+}
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
 
@@ -52,9 +55,8 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> {
-            Table<Grades,StringUnit,U,T>(tableFactory(RandomGrades,tableData.fst),null!)
-            return null!
+        Include:function<k extends keyof M>(tableName:k) : IncludeSelect<Unit,StringUnit,U,T> {          
+            return Table<Grades,StringUnit,U,T>(tableFactory(RandomGrades,tableData.fst),[])
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
             return Table<T,U | "Where",M,N>(tableData,filterData)
