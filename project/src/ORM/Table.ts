@@ -47,15 +47,15 @@ type IncludeReturnTypes = "Students" |"GradeStats" | "Grades" | "Educations"
 
 // type tmp1 = "barcode" | "mqtt"
 function get<S extends IncludeReturnTypes>(s: S):  
-    S extends "Students" ? { IncludeStudents: <T,U extends string>() => StudentsReturn<T,U> } :
+    S extends "Students" ? { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => StudentsReturn<T,U> } :
     S extends "Grades" ? { IncludeGrades: <T,U extends string>() => GradesReturn<T,U> } : 
     S extends "GradeStats" ? { IncludeGradeStats:<T,U extends string>() => GradeStatsReturn<T,U> } : 
     { IncludeEducation:<T,U extends string> () => EducationsReturn<T,U> }
-function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> () => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
+function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> (l: TableData<T,any>) => StudentsReturn<T,U> } |  { IncludeGrades: <T,U extends string> () => GradesReturn<T,U> } | { IncludeGradeStats: <T,U extends string> () => GradeStatsReturn<T,U> } |  { IncludeEducation: <T,U extends string> () => EducationsReturn<T,U> }{
     return s === "Students" ?
-        { IncludeStudents: <T,U extends string>() => (
+        { IncludeStudents: <T,U extends string>(l: TableData<T,any>) => (
              <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => 
-                ( IncludeLambda<T,U,Students,k>(ListStudents,null!,i)))
+                { return IncludeLambda<T,U,Students,k>(ListStudents,null!,i) }
         } : s === "Grades" ?
         { IncludeGrades: <T,U extends string>() => (<k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include"> => (
                 (IncludeLambda<T,U,Grades,k>(RandomGrades,null!,i))
@@ -69,7 +69,7 @@ function get(s: IncludeReturnTypes): { IncludeStudents: <T,U extends string> () 
         }
 }
 
-get("Students").IncludeStudents<Students,StringUnit>()("Grades","Id").Commit().printRows()  // OK
+get("Students").IncludeStudents()("Grades","Id").Commit().printRows()  // OK
 // get("GradeStats").pan()     // OK
 
 

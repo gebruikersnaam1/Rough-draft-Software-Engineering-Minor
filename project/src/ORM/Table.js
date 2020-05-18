@@ -5,12 +5,12 @@ var models_1 = require("../data/models");
 var data_1 = require("../data/data");
 function get(s) {
     return s === "Students" ?
-        { IncludeStudents: function () { return (function () {
+        { IncludeStudents: function (l) { return (function () {
                 var i = [];
                 for (var _i = 0; _i < arguments.length; _i++) {
                     i[_i] = arguments[_i];
                 }
-                return (IncludeLambda(data_1.ListStudents, null, i));
+                return IncludeLambda(data_1.ListStudents, null, i);
             }); }
         } : s === "Grades" ?
         { IncludeGrades: function () { return (function () {
