@@ -1,6 +1,6 @@
-import {map_table,Fun,Unit,tableData,List} from  "../utils/utils"//import tool
-import {ExcludeProps,Filter} from  "./Tools" //import 'tools'
-import {Column, Row,QueryResult,Students, Grades} from "../data/models"
+import {map_table,Fun,Unit, StringUnit, tableData,List} from  "../utils/utils"//import tool
+import {ExcludeProps} from  "./Tools" //import 'tools'
+import {Column, Row,QueryResult,Students, Grades,GradeStats,Educations} from "../data/models"
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from '../data/data'
 
 
@@ -20,13 +20,13 @@ export interface Execute{
 }
 
 //the user can only select something before commit
-export interface PrepareSelect<T,U extends string,M,N> extends TableData<T,N>{
+export interface PrepareSelect<T,U extends string,M extends string ,N> extends TableData<T,N>{
     Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
 }
 
-export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
+export interface Operators<T,U extends string,M extends string,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  <z extends keyof Students>(...Props:z[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">,
+    Include:<k extends keyof M> (tableName:k) => combineReturnTypes<T,U,M> 
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -35,53 +35,41 @@ export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
 
 
-//function to get data for the Union had to be in this file.
-let GetTableData = function(name:string): List<any>{
+//interfaces to have mulitple returns types, as Typescript otherwise don't allow it...
+type StudentsReturn<T,U extends string,M extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+type GradesReturn<T,U extends string,M extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+type GradeStatsReturn<T,U extends string,M extends string> =  <k extends keyof GradeStats>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+type EducationsReturn<T,U extends string,M extends string> =  <k extends keyof Educations>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
+type combineReturnTypes<T,U extends string,M extends string> = StudentsReturn<T,U,M> | GradesReturn<T,U,M> | GradeStatsReturn<T,U,M> | EducationsReturn<T,U,M>
+
+let IncludeTable = function<T,U extends string,M extends string>(name:string,TableData:tableData<T,any>) : combineReturnTypes<T,U,M> 
+  {
     switch(name){
         case 'Students':
-            return ListStudents
+            return <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+                return IncludeLambda<T,U,M,Students,k>(ListStudents,TableData,i)
+            }
         case 'GradeStats':
-            return ListGrades
+            return <k extends keyof GradeStats>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+                return IncludeLambda<T,U,M,GradeStats,k>(ListGrades,TableData,i)
+            }
         case 'Grades':
-            return RandomGrades
+            return <k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+                return IncludeLambda<T,U,M,Grades,k>(RandomGrades,TableData,i)
+            }
         case 'Educations':
-            return ListEducations
+        default: //NOTE: should have another default value
+            return <k extends keyof Educations>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
+                return IncludeLambda<T,U,M,Educations,k>(ListEducations,TableData,i)
+            }
     }
-    return ListEducations
-}
-type StudentsIE<T,U extends string,M extends string> =  <k extends keyof Students>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
-type GradesIE<T,U extends string,M extends string> =  <k extends keyof Grades>(...i:k[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">
-
-//<T,U extends string,M extends string,N>
-let temp = function<T,U extends string,M extends string,N>(name:string) : StudentsIE<T,U,M> | GradesIE<T,U,M>
-{
-    if(name == "test"){
-        return <k extends keyof Students>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
-            return IncludeLambda<T,U,M,N,k>(String(""),null!,null!)
-        }
-    }else{
-        return <k extends keyof Grades>(...i:k[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include"> => {
-            return IncludeLambda<T,U,M,N,k>(String(""),null!,null!)
-        }
-    }
-    // switch(name){
-    //     case 'Students':
-    //         return ListStudents
-    //     case 'GradeStats':
-    //         return ListGrades
-    //     case 'Grades':
-    //         return RandomGrades
-    //     case 'Educations':
-    //         return ListEducations
-    // }
     // return ListEducations
 }
 
-let IncludeLambda = function<T,U extends string,M extends string,N,a>(tableName:string,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
-    let tempList : List<a>= GetTableData(tableName)
+let IncludeLambda = function<T,U extends string,M extends string,N,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
     let fData : string[] = []
     Props.map(x=> {fData.push(String(x))})
-    let newList : List<Unit> = Table<a,U,M,N>({fst: tempList,snd:null!},fData).Commit().data
+    let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
     return Table<T,U | "Include",M,Unit>({fst: tableData.fst,snd:newList},fData)
 }
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
@@ -97,11 +85,8 @@ export let Table = function<T,U extends string,M extends string,N>(tableData: ta
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(tableData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : <z extends  keyof Students>(...Props:z[]) => Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
-            //(i:a) =>b
-            return function<z extends keyof Students>(...Props:z[]) : Omit<Operators<T,U | "Include",M,Unit>,U | "Include">{
-                return IncludeLambda<T,U,M,N,z>(String(tableName),tableData,Props)
-            }
+        Include:function<k extends keyof M>(tableName:k) : combineReturnTypes<T,U,M> {
+            return IncludeTable<T,U,M>(String(tableName),tableData)
         },
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
             return Table<T,U | "Where",M,N>(tableData,filterData)
