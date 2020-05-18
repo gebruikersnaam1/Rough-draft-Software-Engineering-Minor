@@ -1,8 +1,8 @@
 import {map_table,Fun,Unit, StringUnit, tableData as tableFactory} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
-import {Students,GradeStats,Grades,Educations, Models} from  "../data/models"//import model
-import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
+import {Grades} from  "../data/models"//import model
+import {RandomGrades} from  "../data/data"//import model
 
 
 
@@ -25,6 +25,9 @@ export interface Execute{
 export interface PrepareSelect<T,U extends string,M ,N> extends TableData<T,N>{
     Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
 }
+interface IncludeSelect<T,U extends string,M extends string,N> extends TableData<T,N>{
+    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
+}
 
 export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
@@ -34,10 +37,8 @@ export interface Operators<T,U extends string,M,N> extends Execute,TableData<T,N
     //TODO: implement ^ stuff
 }
 
-interface IncludeSelect<T,U extends string,M extends string,N>{
-    Select: <k extends keyof T>(...Props:k[])=> Operators<ExcludeProps<T,k>,U,M,N>
-}
-interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>{}
+
+interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>, IncludeSelect<T,U,M,N>{}
 
 
 
