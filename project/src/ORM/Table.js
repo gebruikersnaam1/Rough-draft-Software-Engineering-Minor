@@ -42,19 +42,26 @@ var IncludeLambda = function (newData, Props, fData) {
     Props.map(function (x) { fData.snd.push(String(x)); });
     return exports.Table(newData, fData);
 };
-var GetFirstList = function (dataDB, FilterData) {
+/*******************************************************************************
+    * @ListLambda
+    * Note: trying to use Fun, but I'm not going to do Fun in Fun
+*******************************************************************************/
+var GetRows = function (dataDB, FilterData, maxColumns) {
     return utils_1.map_table(dataDB, utils_1.Fun(function (obj) {
         //the lambda turns obj into json-format, otherwicse a problem occurs  
         var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
         var newBody = [];
         Object.getOwnPropertyNames(obj).map(function (y) {
+            var count = 0;
             FilterData.map(function (x) {
                 //loops through all objects and looks if it is selected with another loop
                 //Foreign key can be selected, but will not be shown just like normal SQL
-                if (String(x) == String(y)) {
+                if (String(x) == String(y) && count < maxColumns) {
                     newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
                 }
+                count++;
             });
+            console.log(count);
         });
         return models_1.Row(newBody);
     }));
@@ -87,7 +94,7 @@ exports.Table = function (dbData, filterData) {
         },
         Commit: function () {
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(GetFirstList(this.dataDB.fst, filterData.fst));
+            return models_1.QueryResult(GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length));
         }
     };
 };

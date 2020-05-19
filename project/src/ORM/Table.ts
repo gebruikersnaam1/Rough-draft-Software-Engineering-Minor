@@ -75,19 +75,27 @@ let IncludeLambda = function<T,U extends string,M extends string,N,k>(newData:ta
     Props.map(x=> {fData.snd.push(String(x))})
     return Table<T,U | "Include",M,N>(newData,fData)
 }
-let GetFirstList = function<T>(dataDB:List<T>,FilterData : string[]) : List<Row<Unit>>{
-    return map_table<T,Unit>(dataDB,Fun<T,Row<Unit>>((obj:T)=>{
+
+/******************************************************************************* 
+    * @ListLambda
+    * Note: trying to use Fun, but I'm not going to do Fun in Fun
+*******************************************************************************/
+let GetRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: number) : List<Row<Unit>>{
+    return map_table<X,Unit>(dataDB,Fun<X,Row<Unit>>((obj:X)=>{
         //the lambda turns obj into json-format, otherwicse a problem occurs  
         let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
         let newBody : Column<Unit>[] = []
         Object.getOwnPropertyNames(obj).map(y =>{
+                let count = 0
                 FilterData.map(x=> { 
                     //loops through all objects and looks if it is selected with another loop
                     //Foreign key can be selected, but will not be shown just like normal SQL
-                    if(String(x) == String(y)){  
+                    if(String(x) == String(y) && count < maxColumns){  
                         newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
                     }
+                    count++;
                 })
+                console.log(count)
         })
         return Row(newBody)
     }))
@@ -117,7 +125,7 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(GetFirstList<T>(this.dataDB.fst,filterData.fst))
+            return QueryResult(GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length))
         }
     }
 }
