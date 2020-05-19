@@ -2,46 +2,46 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
+var data_1 = require("../data/data"); //import model
 //{RandomGrades,ListEducations,ListGrades,ListStudents}
-var IncludeTable = function () {
+var IncludeTable = function (dbData, filterData) {
     return {
+        dataDB: dbData,
+        FilterData: filterData,
         SelectStudents: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            // return IncludeLambda<T,U,ExcludeProps<Students,k>,A>(ListStudents,Props,)
-            return null;
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListStudents }, Props, filterData);
         },
         SelectEducations: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return null;
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListEducations }, Props, filterData);
         },
         SelectGrades: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return null;
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.RandomGrades }, Props, filterData);
         },
         SelectGradeStates: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return null;
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListGrades }, Props, filterData);
         }
     };
 };
-// let IncludeLambda = function<T,U extends string,N extends string,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
-//     let fData : string[] = []
-//     Props.map(x=> {fData.push(String(x))})
-//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
-//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
-// }
+var IncludeLambda = function (newData, Props, fData) {
+    Props.map(function (x) { fData.snd.push(String(x)); });
+    return exports.Table(newData, fData);
+};
 /*******************************************************************************
  * @Table
 *******************************************************************************/
@@ -61,7 +61,9 @@ exports.Table = function (dbData, filterData) {
             Props.map(function (x) { _this.FilterData.fst.push(String(x)); });
             return exports.Table(dbData, filterData);
         },
-        Include: function () { return (IncludeTable()); },
+        Include: function () {
+            return IncludeTable(this.dataDB, this.FilterData);
+        },
         Where: function () {
             return exports.Table(this.dataDB, filterData);
         },
