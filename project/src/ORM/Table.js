@@ -3,12 +3,47 @@ exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data"); //import model
+var IncludeTable = function () {
+    return {
+        SelectStudents: function () {
+            var Props = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                Props[_i] = arguments[_i];
+            }
+            return null;
+        },
+        SelectEducations: function () {
+            var Props = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                Props[_i] = arguments[_i];
+            }
+            return null;
+        },
+        SelectGrades: function () {
+            var Props = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                Props[_i] = arguments[_i];
+            }
+            return null;
+        },
+        SelectGradeStates: function () {
+            var Props = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                Props[_i] = arguments[_i];
+            }
+            return null;
+        }
+    };
+};
+/*******************************************************************************
+ * @Table
+*******************************************************************************/
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
-exports.Table = function (tableData, filterData) {
+exports.Table = function (dbData, filterData) {
     return {
-        tableData: tableData,
+        dataDB: dbData,
         FilterData: filterData,
         Select: function () {
             var _this = this;
@@ -17,18 +52,18 @@ exports.Table = function (tableData, filterData) {
                 Props[_i] = arguments[_i];
             }
             Props.map(function (x) { _this.FilterData.push(String(x)); });
-            return exports.Table(tableData, filterData);
+            return exports.Table(dbData, filterData);
         },
         Include: function (tableName) {
-            return exports.Table(utils_1.tableData(data_1.RandomGrades, tableData.fst), []);
+            return exports.Table(utils_1.tableData(data_1.RandomGrades, this.dataDB.fst), []);
         },
         Where: function () {
-            return exports.Table(tableData, filterData);
+            return exports.Table(this.dataDB, filterData);
         },
         Commit: function () {
             var _this = this;
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.map_table(tableData.fst, utils_1.Fun(function (obj) {
+            return models_1.QueryResult(utils_1.map_table(this.dataDB.fst, utils_1.Fun(function (obj) {
                 //the lambda turns obj into json-format, otherwise a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
