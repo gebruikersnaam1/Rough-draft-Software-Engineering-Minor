@@ -121,8 +121,12 @@ let WhereClauses = function(columnName:string,value:string) : WhereClauses{
         GreaterThan:(list:List<Row<Unit>>) => {
             return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringToNumber(x,value)
-                if(i[0] != NaN && i[1] != NaN && i[0] > i[1]){
-                    return true
+                if(i[0] != NaN && i[1] != NaN){
+                    if(i[0] > i[1]){ //needed a nested if...why???????
+                        return true 
+                    }else{
+                        return false
+                    }
                 }
                 else if(x > value){
                     return true
