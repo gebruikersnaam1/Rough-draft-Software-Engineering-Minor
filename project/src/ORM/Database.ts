@@ -1,7 +1,7 @@
-import {PrepareSelect,Table} from './Table'
+import {PrepareSelect,TableInit} from './Table'
 import {Students,GradeStats,Grades,Educations} from  "../data/models"//import model
 import {ListStudents,ListGrades,RandomGrades,ListEducations} from  "../data/data"//import model
-import {StringUnit,tableData, Unit, Empty,FilterPairUnit} from '../utils/utils'
+import {StringUnit, Unit} from '../utils/utils'
 
 
 /*
@@ -19,16 +19,16 @@ export type dbEnv = {
 let dbEnv = () : dbEnv => {
     return{
         Students: function(){  
-            return Table(tableData(ListStudents,Empty()),FilterPairUnit) 
+            return TableInit(ListStudents)
         },
         GradeStats: function(){ 
-            return Table(tableData(ListGrades,Empty()),FilterPairUnit) 
+            return TableInit(ListGrades) 
         },
         Grades: function() { 
-            return Table(tableData(RandomGrades,Empty()),FilterPairUnit) 
+            return TableInit(RandomGrades)
         },
         Educations: function() { 
-            return Table(tableData(ListEducations,Empty()),FilterPairUnit) 
+            return TableInit(ListEducations) 
         }
     }
 }

@@ -4,43 +4,55 @@ var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
 var data_1 = require("../data/data"); //import model
 //{RandomGrades,ListEducations,ListGrades,ListStudents}
-var IncludeTable = function (dbData, filterData) {
+var IncludeTable = function (dbData, filterData, tbOperations) {
     return {
         dataDB: dbData,
         FilterData: filterData,
+        tbOperations: tbOperations,
         SelectStudents: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListStudents }, Props, filterData);
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListStudents }, Props, filterData, tbOperations);
         },
         SelectEducations: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListEducations }, Props, filterData);
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListEducations }, Props, filterData, tbOperations);
         },
         SelectGrades: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.RandomGrades }, Props, filterData);
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.RandomGrades }, Props, filterData, tbOperations);
         },
         SelectGradeStates: function () {
             var Props = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListGrades }, Props, filterData);
+            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListGrades }, Props, filterData, tbOperations);
         }
     };
 };
-var IncludeLambda = function (newData, Props, fData) {
+var IncludeLambda = function (newData, Props, fData, tb) {
     Props.map(function (x) { fData.snd.push(String(x)); });
-    return exports.Table(newData, fData);
+    return Table(newData, fData, tb);
+};
+var OperationExecute = function (w, g, o) {
+    return {
+        Where: w,
+        GroupBy: g,
+        Orderby: o
+    };
+};
+var OperationUnit = function () {
+    var unit = function (i) { return i; };
+    return OperationExecute(unit, unit, unit);
 };
 /*******************************************************************************
     * @ListLambda
@@ -77,10 +89,11 @@ var GetRows = function (dataDB, FilterData, maxColumns) {
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is the T of list2 (that is the include)
-exports.Table = function (dbData, filterData) {
+var Table = function (dbData, filterData, opType) {
     return {
         dataDB: dbData,
         FilterData: filterData,
+        tbOperations: opType,
         Select: function () {
             var _this = this;
             var Props = [];
@@ -88,19 +101,25 @@ exports.Table = function (dbData, filterData) {
                 Props[_i] = arguments[_i];
             }
             Props.map(function (x) { _this.FilterData.fst.push(String(x)); });
-            return exports.Table(dbData, filterData);
+            return Table(dbData, filterData, this.tbOperations);
         },
         Include: function () {
-            return IncludeTable(this.dataDB, this.FilterData);
+            return IncludeTable(this.dataDB, this.FilterData, this.tbOperations);
         },
         Where: function (x) {
-            return exports.Table(this.dataDB, filterData);
+            return Table(this.dataDB, filterData, this.tbOperations);
         },
         Commit: function () {
             //return the result of map_table in datatype "Query result"
             return models_1.QueryResult(utils_1.PlusList((GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (GetRows(this.dataDB.snd, filterData.snd, filterData.fst.length))));
         }
     };
+};
+/*******************************************************************************
+ * @InitTable
+*******************************************************************************/
+exports.TableInit = function (l) {
+    return Table(utils_1.tableData(l, utils_1.Empty()), utils_1.FilterPairUnit, OperationUnit());
 };
 /*
  *notes
