@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, StringUnit, tableData, List} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData, List,FilterPair} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {Grades,Educations, GradeStats,Students} from  "../data/models"//import model
@@ -13,7 +13,7 @@ import {RandomGrades,ListEducations,ListGrades,ListStudents} from  "../data/data
 //base interface that contens tables
 export interface dataInterface<T,N>{
     dataDB: tableData<T,N>
-    FilterData: string[]
+    FilterData: FilterPair
 }
 
 //base execute something
@@ -70,26 +70,26 @@ let IncludeTable = function<T,U extends string,M extends string,N>():IncludeTabl
     }
 
 }
-let IncludeLambda = function<T,U extends string,N extends string,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
-    let fData : string[] = []
-    Props.map(x=> {fData.push(String(x))})
-    let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
-    return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
-}
+// let IncludeLambda = function<T,U extends string,N extends string,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+//     let fData : string[] = []
+//     Props.map(x=> {fData.push(String(x))})
+//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
+// }
 /******************************************************************************* 
  * @Table
 *******************************************************************************/
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is to say the includes possible are X,Y and Z
-export let Table = function<T,U extends string,M extends string,N>(dbData: tableData<T,N>, filterData: string[]) : Table<T,U,M,N> {
+export let Table = function<T,U extends string,M extends string,N>(dbData: tableData<T,N>, filterData: FilterPair) : Table<T,U,M,N> {
     return {
         dataDB: dbData,
         FilterData : filterData,
 
         
         Select: function<k extends keyof T>(...Props:k[]) : Operators<ExcludeProps<T,k>,U,M,N>{
-            Props.map(x=> {this.FilterData.push(String(x))})
+            Props.map(x=> {this.FilterData.fst.push(String(x))})
             return Table(dbData,filterData)
         },
         
@@ -105,7 +105,7 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []
                 Object.getOwnPropertyNames(obj).map(y =>{
-                        this.FilterData.map(x=> { 
+                        this.FilterData.fst.map(x=> { 
                             //loops through all objects and looks if it is selected with another loop
                             //Foreign key can be selected, but will not be shown just like normal SQL
                             if(String(x) == String(y)){  

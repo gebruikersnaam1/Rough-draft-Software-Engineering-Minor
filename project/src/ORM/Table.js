@@ -36,12 +36,12 @@ var IncludeTable = function () {
         }
     };
 };
-var IncludeLambda = function (incData, tableData, Props) {
-    var fData = [];
-    Props.map(function (x) { fData.push(String(x)); });
-    var newList = exports.Table({ fst: incData, snd: null }, fData).Commit().data;
-    return exports.Table({ fst: tableData.fst, snd: newList }, fData);
-};
+// let IncludeLambda = function<T,U extends string,N extends string,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+//     let fData : string[] = []
+//     Props.map(x=> {fData.push(String(x))})
+//     let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+//     return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
+// }
 /*******************************************************************************
  * @Table
 *******************************************************************************/
@@ -58,7 +58,7 @@ exports.Table = function (dbData, filterData) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
-            Props.map(function (x) { _this.FilterData.push(String(x)); });
+            Props.map(function (x) { _this.FilterData.fst.push(String(x)); });
             return exports.Table(dbData, filterData);
         },
         Include: function () { return (IncludeTable()); },
@@ -73,7 +73,7 @@ exports.Table = function (dbData, filterData) {
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
                 Object.getOwnPropertyNames(obj).map(function (y) {
-                    _this.FilterData.map(function (x) {
+                    _this.FilterData.fst.map(function (x) {
                         //loops through all objects and looks if it is selected with another loop
                         //Foreign key can be selected, but will not be shown just like normal SQL
                         if (String(x) == String(y)) {

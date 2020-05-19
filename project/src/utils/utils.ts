@@ -90,8 +90,13 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
 
   export type Pair<a,b> = {fst:a, snd: b}
   export type tableData<T,N> = Pair<List<T>,List<N>>
+  export type FilterPair = Pair<string[],string[]>
+
 
   export let tableData = <T,N> (dbData: List<T>, newData: List<N>) : tableData<T,N> => ({fst:dbData, snd: newData})
+  export let FilterPair = (tabledata: string[], includeData: string[]) : FilterPair => ({fst:tabledata, snd: includeData})
+
+  export let FilterPairUnit = FilterPair([],[])
 
   export type StringUnit = ""
 

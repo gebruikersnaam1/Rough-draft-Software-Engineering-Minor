@@ -57,6 +57,8 @@ exports.map_table = function (l, f) {
     return l.kind == "Cons" ? exports.Cons(f.f(l.head), exports.map_table(l.tail, f)) : exports.Empty();
 };
 exports.tableData = function (dbData, newData) { return ({ fst: dbData, snd: newData }); };
+exports.FilterPair = function (tabledata, includeData) { return ({ fst: tabledata, snd: includeData }); };
+exports.FilterPairUnit = exports.FilterPair([], []);
 exports.PrintQueryValues = function (l) {
     if (l.kind == "Cons") {
         console.log(l.head.getValues);
