@@ -17,4 +17,4 @@ var Database_1 = require("./ORM/Database");
 //showing the SELECT and Union
 var query2 = Database_1.dbTables.Students().Select("Id", "Firstname", "Prefix", "Gender").Include().SelectGradeStates("Course_Name", "Teacher").Commit();
 query2.printRows();
-// let query3 = dbTables.Grades().Select("Id").Where("Id")
+// let query3 = dbTables.Grades().Select("Id").Where("O")

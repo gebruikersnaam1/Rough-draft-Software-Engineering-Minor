@@ -10,10 +10,10 @@ import {StringUnit,tableData, Unit, Empty,FilterPairUnit} from '../utils/utils'
 */
 
 export type dbEnv = { 
-    Students: () => PrepareSelect<Students,StringUnit,StringUnit,Unit> 
-    GradeStats: () => PrepareSelect<GradeStats,StringUnit,StringUnit,Unit> 
-    Grades: () => PrepareSelect<Grades,StringUnit,StringUnit,Unit>
-    Educations: () => PrepareSelect<Educations,StringUnit,StringUnit,Unit>
+    Students: () => PrepareSelect<Students,StringUnit,Unit> 
+    GradeStats: () => PrepareSelect<GradeStats,StringUnit,Unit> 
+    Grades: () => PrepareSelect<Grades,StringUnit,Unit>
+    Educations: () => PrepareSelect<Educations,StringUnit,Unit>
 }
 
 let dbEnv = () : dbEnv => {

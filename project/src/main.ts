@@ -19,4 +19,4 @@ import {dbTables} from './ORM/Database'
 let query2 = dbTables.Students().Select("Id","Firstname","Prefix","Gender").Include().SelectGradeStates("Course_Name","Teacher").Commit()
 query2.printRows()
 
-// let query3 = dbTables.Grades().Select("Id").Where("Id")
+// let query3 = dbTables.Grades().Select("Id").Where("O")

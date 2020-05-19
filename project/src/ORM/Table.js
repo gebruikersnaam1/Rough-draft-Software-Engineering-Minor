@@ -77,7 +77,6 @@ var GetRows = function (dataDB, FilterData, maxColumns) {
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is the T of list2 (that is the include)
-//N is the U of list2 (that is the include)
 exports.Table = function (dbData, filterData) {
     return {
         dataDB: dbData,
