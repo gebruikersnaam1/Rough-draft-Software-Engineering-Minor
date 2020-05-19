@@ -1,6 +1,5 @@
-import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty} from  "../utils/utils"//import tool
-import {Column, Row,QueryResult} from "../data/models"
-import {Grades,Educations, GradeStats,Students} from  "../data/models"//import model
+import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty,Cons} from  "../utils/utils"//import tool
+import {Column, Row,QueryResult, Grades,Educations, GradeStats,Students} from "../data/models"
 import {RandomGrades,ListEducations,ListGrades,ListStudents} from  "../data/data"//import model
 
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
@@ -27,7 +26,7 @@ export interface PrepareSelect<T,U extends string ,N> extends dataInterface<T,N>
 }
 
 export interface Operators<T,U extends string,N> extends Execute,dataInterface<T,N>{
-    Where:<k extends keyof T>(x:k) => Omit<Operators<T,U | "Where",N>,U | "Where">,
+    Where:<k extends keyof T, z extends keyof WhereClauses>(x:k, operator:z,value:string) => Omit<Operators<T,U | "Where",N>,U | "Where">,
     Include: ()=>IncludeTable<T,U,N>
     // OrderBy: null,
     // GroupBy: null
@@ -75,7 +74,7 @@ let IncludeLambda = function<T,U extends string,N,k>(newData:tableData<T,N>,Prop
 }
 
 /******************************************************************************* 
-    * @Where
+    * @Operations like where, oderby and groupby
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
 *******************************************************************************/
 
@@ -98,6 +97,89 @@ let OperationUnit = function() : OperationType{
     return OperationExecute(unit,unit,unit)
 }
 
+/******************************************************************************* 
+    * @Whereclause
+    * Note: trying to use Fun, but I'm not going to do Fun in Fun
+*******************************************************************************/
+interface WhereClauses{
+    Equal: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+    GreaterThan: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+    LessThan: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+    NotEqual: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+}
+let WhereClauses = function(columnName:string,value:string) : WhereClauses{
+    return{
+        Equal:(list:List<Row<Unit>>) => {
+              return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+                    if(x == value){
+                        return true
+                    }else{
+                        return false
+                    }
+            }))
+        },
+        GreaterThan:(list:List<Row<Unit>>) => {
+            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+                let i = ConvertStringToNumber(x,value)
+                if(i[0] != NaN && i[1] != NaN && i[0] > i[1]){
+                    return true
+                }
+                else if(x > value){
+                    return true
+                }else{
+                    return false
+                }
+            }))
+        },
+        LessThan:(list:List<Row<Unit>>) => {
+            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+                let i = ConvertStringToNumber(x,value)
+                if(i[0] != NaN && i[1] != NaN && i[0] < i[1]){
+                    return true
+                }
+                else if(x < value){
+                    return true
+                }
+                return false
+            }))
+        },
+        NotEqual:(list:List<Row<Unit>>) => {
+            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+                if(x != value){
+                    return true
+                }else{
+                    return false
+                }
+            }))
+        }
+    }
+}
+
+let ConvertStringToNumber = function(x :string,v: string) : [number, number]{
+    return [Number(x),Number(v)]
+}
+
+let WhereLambda =  function(i:List<Row<Unit>>,columnName:string,targetvalue:Fun<string,boolean>) : List<Row<Unit>>{
+    if(i.kind == "Cons"){
+        let found = 0
+        let row : List<Row<Unit>> = null!
+        i.head.columns.map(x=>
+            {
+                if(x.name == columnName){
+                    if(targetvalue.f(String(x.value))){
+                        found++;
+                        row = Cons(i.head,WhereLambda(i.tail,columnName,targetvalue)) 
+                    }
+                }
+            })
+        if(found != 0){
+            return row 
+        }
+        return WhereLambda(i.tail,columnName,targetvalue)
+    }else{
+        return Empty()
+    }
+}
 /******************************************************************************* 
     * @ListLambda
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
@@ -147,15 +229,34 @@ let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filterData: F
         Include:function(){
             return IncludeTable<T,U,N>(this.dataDB,this.FilterData,this.tbOperations)
         },
-        Where:function<k extends keyof T>(x:k): Omit<Operators<T,U | "Where",N>,U | "Where">{
+        Where:function<k extends keyof T, z extends keyof WhereClauses>(columnT:k, operator:z,value:string): Omit<Operators<T,U | "Where",N>,U | "Where">{
+            let column = String(columnT)
+            let w = WhereClauses(column,value)
+            switch(String(operator)){
+                case 'Equal':
+                    return Table<T,U | "Where",N>(this.dataDB,filterData,{...this.tbOperations, Where: w.Equal  })
+                case 'GreaterThan':
+                    return Table<T,U | "Where",N>(this.dataDB,filterData,{...this.tbOperations, Where: w.GreaterThan  })
+                case 'LessThan':
+                    return Table<T,U | "Where",N>(this.dataDB,filterData,{...this.tbOperations, Where: w.LessThan  })
+                case 'NotEqual':
+                    return Table<T,U | "Where",N>(this.dataDB,filterData,{...this.tbOperations, Where: w.NotEqual  })
+            }
             return Table<T,U | "Where",N>(this.dataDB,filterData,this.tbOperations)
         },
         Commit: function(this) { //this is to get the list
-            //return the result of map_table in datatype "Query result"
+           let t = this.tbOperations //to shorten the name
+           //return the result of map_table in datatype "Query result"
            return QueryResult(
-                PlusList<Row<Unit>>(
-                        (GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
-                        (GetRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))
+                t.Orderby(
+                    t.GroupBy(
+                        t.Where( 
+                            PlusList<Row<Unit>>(
+                                    (GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
+                                    (GetRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))
+                            )
+                        )
+                    )
                 )
             )
         }

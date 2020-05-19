@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
@@ -54,6 +65,80 @@ var OperationUnit = function () {
     var unit = function (i) { return i; };
     return OperationExecute(unit, unit, unit);
 };
+var WhereClauses = function (columnName, value) {
+    return {
+        Equal: function (list) {
+            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+                if (x == value) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }));
+        },
+        GreaterThan: function (list) {
+            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+                var i = ConvertStringToNumber(x, value);
+                if (i[0] != NaN && i[1] != NaN && i[0] > i[1]) {
+                    return true;
+                }
+                else if (x > value) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }));
+        },
+        LessThan: function (list) {
+            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+                var i = ConvertStringToNumber(x, value);
+                if (i[0] != NaN && i[1] != NaN && i[0] < i[1]) {
+                    return true;
+                }
+                else if (x < value) {
+                    return true;
+                }
+                return false;
+            }));
+        },
+        NotEqual: function (list) {
+            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+                if (x != value) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }));
+        }
+    };
+};
+var ConvertStringToNumber = function (x, v) {
+    return [Number(x), Number(v)];
+};
+var WhereLambda = function (i, columnName, targetvalue) {
+    if (i.kind == "Cons") {
+        var found_1 = 0;
+        var row_1 = null;
+        i.head.columns.map(function (x) {
+            if (x.name == columnName) {
+                if (targetvalue.f(String(x.value))) {
+                    found_1++;
+                    row_1 = utils_1.Cons(i.head, WhereLambda(i.tail, columnName, targetvalue));
+                }
+            }
+        });
+        if (found_1 != 0) {
+            return row_1;
+        }
+        return WhereLambda(i.tail, columnName, targetvalue);
+    }
+    else {
+        return utils_1.Empty();
+    }
+};
 /*******************************************************************************
     * @ListLambda
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
@@ -106,12 +191,25 @@ var Table = function (dbData, filterData, opType) {
         Include: function () {
             return IncludeTable(this.dataDB, this.FilterData, this.tbOperations);
         },
-        Where: function (x) {
+        Where: function (columnT, operator, value) {
+            var column = String(columnT);
+            var w = WhereClauses(column, value);
+            switch (String(operator)) {
+                case 'Equal':
+                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.Equal }));
+                case 'GreaterThan':
+                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.GreaterThan }));
+                case 'LessThan':
+                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.LessThan }));
+                case 'NotEqual':
+                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.NotEqual }));
+            }
             return Table(this.dataDB, filterData, this.tbOperations);
         },
         Commit: function () {
+            var t = this.tbOperations; //to shorten the name
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.PlusList((GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (GetRows(this.dataDB.snd, filterData.snd, filterData.fst.length))));
+            return models_1.QueryResult(t.Orderby(t.GroupBy(t.Where(utils_1.PlusList((GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (GetRows(this.dataDB.snd, filterData.snd, filterData.fst.length)))))));
         }
     };
 };

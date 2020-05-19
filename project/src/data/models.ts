@@ -1,4 +1,4 @@
-import {List,PrintQueryValues} from  "../utils/utils"//import list
+import {List,PrintQueryValues,Unit} from  "../utils/utils"//import list
 
 //'enums'/array to  define genders 
 export type Gender = {
@@ -122,6 +122,9 @@ export type Row<T> = {
     getHeader: string[]
     getValues: string[]
 } 
+
+
+
 // | {
 //     rows: Row<T>[]
 // }
