@@ -99,12 +99,12 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(map_table<N,Unit>(this.dataDB.snd,Fun<N,Row<Unit>>((obj:N)=>{
+            return QueryResult(map_table<T,Unit>(this.dataDB.fst,Fun<T,Row<Unit>>((obj:T)=>{
                 //the lambda turns obj into json-format, otherwicse a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []
                 Object.getOwnPropertyNames(obj).map(y =>{
-                        this.FilterData.snd.map(x=> { 
+                        this.FilterData.fst.map(x=> { 
                             //loops through all objects and looks if it is selected with another loop
                             //Foreign key can be selected, but will not be shown just like normal SQL
                             if(String(x) == String(y)){  

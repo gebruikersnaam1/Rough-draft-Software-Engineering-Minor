@@ -70,12 +70,12 @@ exports.Table = function (dbData, filterData) {
         Commit: function () {
             var _this = this;
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.map_table(this.dataDB.snd, utils_1.Fun(function (obj) {
+            return models_1.QueryResult(utils_1.map_table(this.dataDB.fst, utils_1.Fun(function (obj) {
                 //the lambda turns obj into json-format, otherwicse a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
                 Object.getOwnPropertyNames(obj).map(function (y) {
-                    _this.FilterData.snd.map(function (x) {
+                    _this.FilterData.fst.map(function (x) {
                         //loops through all objects and looks if it is selected with another loop
                         //Foreign key can be selected, but will not be shown just like normal SQL
                         if (String(x) == String(y)) {
