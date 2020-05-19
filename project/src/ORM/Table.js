@@ -2,7 +2,7 @@
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
-var data_1 = require("../data/data"); //import model
+//{RandomGrades,ListEducations,ListGrades,ListStudents}
 var IncludeTable = function () {
     return {
         SelectStudents: function () {
@@ -10,6 +10,7 @@ var IncludeTable = function () {
             for (var _i = 0; _i < arguments.length; _i++) {
                 Props[_i] = arguments[_i];
             }
+            // return IncludeLambda<T,U,ExcludeProps<Students,k>,A>(ListStudents,Props,)
             return null;
         },
         SelectEducations: function () {
@@ -35,6 +36,12 @@ var IncludeTable = function () {
         }
     };
 };
+var IncludeLambda = function (incData, tableData, Props) {
+    var fData = [];
+    Props.map(function (x) { fData.push(String(x)); });
+    var newList = exports.Table({ fst: incData, snd: null }, fData).Commit().data;
+    return exports.Table({ fst: tableData.fst, snd: newList }, fData);
+};
 /*******************************************************************************
  * @Table
 *******************************************************************************/
@@ -54,9 +61,7 @@ exports.Table = function (dbData, filterData) {
             Props.map(function (x) { _this.FilterData.push(String(x)); });
             return exports.Table(dbData, filterData);
         },
-        Include: function (tableName) {
-            return exports.Table(utils_1.tableData(data_1.RandomGrades, this.dataDB.fst), []);
-        },
+        Include: function () { return (IncludeTable()); },
         Where: function () {
             return exports.Table(this.dataDB, filterData);
         },
@@ -64,7 +69,7 @@ exports.Table = function (dbData, filterData) {
             var _this = this;
             //return the result of map_table in datatype "Query result"
             return models_1.QueryResult(utils_1.map_table(this.dataDB.fst, utils_1.Fun(function (obj) {
-                //the lambda turns obj into json-format, otherwise a problem occurs  
+                //the lambda turns obj into json-format, otherwicse a problem occurs  
                 var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
                 var newBody = [];
                 Object.getOwnPropertyNames(obj).map(function (y) {

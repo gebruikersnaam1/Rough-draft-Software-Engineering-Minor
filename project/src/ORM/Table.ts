@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, StringUnit, tableData} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData, List} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {Grades,Educations, GradeStats,Students} from  "../data/models"//import model
@@ -32,7 +32,7 @@ interface IncludeSelect<T,U extends string,M extends string,N> extends dataInter
 
 export interface Operators<T,U extends string,M,N> extends Execute,dataInterface<T,N>{
     Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
-    Include:<k extends keyof M> (tableName:k) =>  IncludeSelect<Unit,StringUnit,U,T>
+    Include: ()=>IncludeTable<T,U,StringUnit,N>
     // OrderBy: null,
     // GroupBy: null
     //TODO: implement ^ stuff
@@ -51,10 +51,11 @@ interface IncludeTable<T,U extends string,M extends string,N>{
     SelectGrades: <k extends keyof Grades>(...Props:k[])=> Operators<T,U,M,ExcludeProps<N,k>>
     SelectGradeStates: <k extends keyof GradeStats>(...Props:k[])=> Operators<T,U,M,ExcludeProps<N,k>>
 }
-
+//{RandomGrades,ListEducations,ListGrades,ListStudents}
 let IncludeTable = function<T,U extends string,M extends string,N>():IncludeTable<T,U,M,N>{
     return{
         SelectStudents: function<k extends keyof Students>(...Props:k[]){
+            // return IncludeLambda<T,U,ExcludeProps<Students,k>,A>(ListStudents,Props,)
             return null!
         },
         SelectEducations: function<k extends keyof Educations>(...Props:k[]){
@@ -68,6 +69,12 @@ let IncludeTable = function<T,U extends string,M extends string,N>():IncludeTabl
         }
     }
 
+}
+let IncludeLambda = function<T,U extends string,N extends string,a>(incData:List<N>,tableData:tableData<T,any>,Props:a[]) : Omit<Operators<T,U | "Include",StringUnit,Unit>,U | "Include">{
+    let fData : string[] = []
+    Props.map(x=> {fData.push(String(x))})
+    let newList : List<Unit> = Table<N,U,StringUnit,Unit>({fst: incData,snd:null!},fData).Commit().data
+    return Table<T,U | "Include",StringUnit,Unit>({fst: tableData.fst,snd:newList},fData)
 }
 /******************************************************************************* 
  * @Table
@@ -85,16 +92,16 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
             Props.map(x=> {this.FilterData.push(String(x))})
             return Table(dbData,filterData)
         },
-        Include:function<k extends keyof M>(tableName:k) : IncludeSelect<Unit,StringUnit,U,T> { 
-            return Table<Grades,StringUnit,U,T>(tableData(RandomGrades,this.dataDB.fst),[])
-        },
+        
+        Include:()=>(IncludeTable<T,U,M,N>()),
+
         Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
             return Table<T,U | "Where",M,N>(this.dataDB,filterData)
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
             return QueryResult(map_table<T,Unit>(this.dataDB.fst,Fun<T,Row<Unit>>((obj:T)=>{
-                //the lambda turns obj into json-format, otherwise a problem occurs  
+                //the lambda turns obj into json-format, otherwicse a problem occurs  
                 let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
                 let newBody : Column<Unit>[] = []
                 Object.getOwnPropertyNames(obj).map(y =>{
