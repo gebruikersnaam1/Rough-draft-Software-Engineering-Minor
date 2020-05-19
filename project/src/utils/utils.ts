@@ -23,6 +23,10 @@ export let Empty = <a>() : List<a> =>({
     kind: "Empty"
 }) 
 
+export let PlusList = function<a>(list1:List<a>,list2:List<a>) : List<a>{
+  return list1.kind == "Cons"? Cons(list1.head,PlusList(list1.tail,list2)) : list2
+}
+
 /******************************************* 
  * Fun
 *******************************************/

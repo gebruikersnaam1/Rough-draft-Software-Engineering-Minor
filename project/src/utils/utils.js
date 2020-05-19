@@ -8,6 +8,9 @@ exports.Cons = function (head, tail) { return ({
 exports.Empty = function () { return ({
     kind: "Empty"
 }); };
+exports.PlusList = function (list1, list2) {
+    return list1.kind == "Cons" ? exports.Cons(list1.head, exports.PlusList(list1.tail, list2)) : list2;
+};
 var then = function (f, g) {
     return exports.Fun(function (x) { return g.f(f.f(x)); });
 };

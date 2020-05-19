@@ -56,13 +56,18 @@ var GetRows = function (dataDB, FilterData, maxColumns) {
             FilterData.map(function (x) {
                 //loops through all objects and looks if it is selected with another loop
                 //Foreign key can be selected, but will not be shown just like normal SQL
-                if (String(x) == String(y) && count < maxColumns) {
+                if (String(x) == String(y) && count < maxColumns) { //to ensure that list 2 is bigger than list 1
                     newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
                 }
                 count++;
             });
-            console.log(count);
         });
+        //if second filter is smaller it creates empty columns to match the column amount
+        if (FilterData.length < maxColumns) {
+            for (var i = FilterData.length; i <= (maxColumns - 1); i++) {
+                newBody.push(models_1.Column("", ""));
+            }
+        }
         return models_1.Row(newBody);
     }));
 };
@@ -94,7 +99,7 @@ exports.Table = function (dbData, filterData) {
         },
         Commit: function () {
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length));
+            return models_1.QueryResult(utils_1.PlusList((GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (GetRows(this.dataDB.snd, filterData.snd, filterData.fst.length))));
         }
     };
 };

@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, StringUnit, tableData,FilterPair,List} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData,FilterPair,List, PlusList} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {Grades,Educations, GradeStats,Students} from  "../data/models"//import model
@@ -42,9 +42,9 @@ export interface Operators<T,U extends string,M,N> extends Execute,dataInterface
 interface Table<T,U extends string,M extends string,N> extends Operators<T,U,M,N>,PrepareSelect<T,U,M,N>, IncludeSelect<T,U,M,N>{}
 
 /******************************************************************************* 
- * @description Include
- * @Note:Could it be more dynamic? Probably, but creating a generic include almost seemed impossible. Hence this approach was chosen. Refactoring may be needed 
-*******************************************************************************/
+ * @description Include - that works as a UNION ALL
+ * @Note:Could it be more dynamic? Probably, but creating a generic include almost seemed impossible. Hence this approach was chosen. Refactoring may be needed  
+ *******************************************************************************/
 interface IncludeTable<T,U extends string,M extends string,N>{
     SelectStudents: <k extends keyof Students>(...Props:k[])=> Omit<Operators<T,U | "Include",M,Students>,U | "Include">
     SelectEducations: <k extends keyof Educations>(...Props:k[])=> Omit<Operators<T,U | "Include",M,Educations>,U | "Include">
@@ -90,13 +90,18 @@ let GetRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: numbe
                 FilterData.map(x=> { 
                     //loops through all objects and looks if it is selected with another loop
                     //Foreign key can be selected, but will not be shown just like normal SQL
-                    if(String(x) == String(y) && count < maxColumns){  
+                    if(String(x) == String(y) && count < maxColumns){ //to ensure that list 2 is bigger than list 1
                         newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
                     }
                     count++;
                 })
-                console.log(count)
         })
+        //if second filter is smaller it creates empty columns to match the column amount
+        if(FilterData.length < maxColumns){
+            for(let i = FilterData.length; i <= (maxColumns-1); i++){
+                newBody.push(Column("",""))
+            }
+        }
         return Row(newBody)
     }))
 }
@@ -125,7 +130,12 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length))
+           return QueryResult(
+                PlusList<Row<Unit>>(
+                        (GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
+                        (GetRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))
+                )
+            )
         }
     }
 }
