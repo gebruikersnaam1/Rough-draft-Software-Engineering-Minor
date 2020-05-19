@@ -65,7 +65,7 @@ var GetRows = function (dataDB, FilterData, maxColumns) {
         //if second filter is smaller it creates empty columns to match the column amount
         if (FilterData.length < maxColumns) {
             for (var i = FilterData.length; i <= (maxColumns - 1); i++) {
-                newBody.push(models_1.Column("", ""));
+                newBody.push(models_1.Column("Empty", ""));
             }
         }
         return models_1.Row(newBody);
@@ -94,7 +94,7 @@ exports.Table = function (dbData, filterData) {
         Include: function () {
             return IncludeTable(this.dataDB, this.FilterData);
         },
-        Where: function () {
+        Where: function (x) {
             return exports.Table(this.dataDB, filterData);
         },
         Commit: function () {

@@ -31,7 +31,7 @@ interface IncludeSelect<T,U extends string,M extends string,N> extends dataInter
 }
 
 export interface Operators<T,U extends string,M,N> extends Execute,dataInterface<T,N>{
-    Where:() => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
+    Where:<k extends keyof T  | U>(x:k) => Omit<Operators<T,U | "Where",M,N>,U | "Where">,
     Include: ()=>IncludeTable<T,U,StringUnit,N>
     // OrderBy: null,
     // GroupBy: null
@@ -99,7 +99,7 @@ let GetRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: numbe
         //if second filter is smaller it creates empty columns to match the column amount
         if(FilterData.length < maxColumns){
             for(let i = FilterData.length; i <= (maxColumns-1); i++){
-                newBody.push(Column("",""))
+                newBody.push(Column("Empty",""))
             }
         }
         return Row(newBody)
@@ -125,7 +125,7 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
         Include:function(){
             return IncludeTable<T,U,M,N>(this.dataDB,this.FilterData)
         },
-        Where:function(): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
+        Where:function<k extends keyof T | U>(x:k): Omit<Operators<T,U | "Where",M,N>,U | "Where">{
             return Table<T,U | "Where",M,N>(this.dataDB,filterData)
         },
         Commit: function(this) { //this is to get the list
