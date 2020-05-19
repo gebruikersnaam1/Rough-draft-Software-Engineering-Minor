@@ -42,12 +42,30 @@ var IncludeLambda = function (newData, Props, fData) {
     Props.map(function (x) { fData.snd.push(String(x)); });
     return exports.Table(newData, fData);
 };
+var GetFirstList = function (dataDB, FilterData) {
+    return utils_1.map_table(dataDB, utils_1.Fun(function (obj) {
+        //the lambda turns obj into json-format, otherwicse a problem occurs  
+        var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
+        var newBody = [];
+        Object.getOwnPropertyNames(obj).map(function (y) {
+            FilterData.map(function (x) {
+                //loops through all objects and looks if it is selected with another loop
+                //Foreign key can be selected, but will not be shown just like normal SQL
+                if (String(x) == String(y)) {
+                    newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
+                }
+            });
+        });
+        return models_1.Row(newBody);
+    }));
+};
 /*******************************************************************************
  * @Table
 *******************************************************************************/
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//M is to say the includes possible are X,Y and Z
+//M is the T of list2 (that is the include)
+//N is the U of list2 (that is the include)
 exports.Table = function (dbData, filterData) {
     return {
         dataDB: dbData,
@@ -68,23 +86,8 @@ exports.Table = function (dbData, filterData) {
             return exports.Table(this.dataDB, filterData);
         },
         Commit: function () {
-            var _this = this;
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(utils_1.map_table(this.dataDB.fst, utils_1.Fun(function (obj) {
-                //the lambda turns obj into json-format, otherwicse a problem occurs  
-                var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
-                var newBody = [];
-                Object.getOwnPropertyNames(obj).map(function (y) {
-                    _this.FilterData.fst.map(function (x) {
-                        //loops through all objects and looks if it is selected with another loop
-                        //Foreign key can be selected, but will not be shown just like normal SQL
-                        if (String(x) == String(y)) {
-                            newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
-                        }
-                    });
-                });
-                return models_1.Row(newBody);
-            })));
+            return models_1.QueryResult(GetFirstList(this.dataDB.fst, filterData.fst));
         }
     };
 };

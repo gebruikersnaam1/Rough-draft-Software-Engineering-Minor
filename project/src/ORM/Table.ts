@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, StringUnit, tableData,FilterPair} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, StringUnit, tableData,FilterPair,List} from  "../utils/utils"//import tool
 import {ExcludeProps} from  "./Tools" //import 'tools'
 import {Column, Row,QueryResult} from "../data/models"
 import {Grades,Educations, GradeStats,Students} from  "../data/models"//import model
@@ -75,12 +75,30 @@ let IncludeLambda = function<T,U extends string,M extends string,N,k>(newData:ta
     Props.map(x=> {fData.snd.push(String(x))})
     return Table<T,U | "Include",M,N>(newData,fData)
 }
+let GetFirstList = function<T>(dataDB:List<T>,FilterData : string[]) : List<Row<Unit>>{
+    return map_table<T,Unit>(dataDB,Fun<T,Row<Unit>>((obj:T)=>{
+        //the lambda turns obj into json-format, otherwicse a problem occurs  
+        let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
+        let newBody : Column<Unit>[] = []
+        Object.getOwnPropertyNames(obj).map(y =>{
+                FilterData.map(x=> { 
+                    //loops through all objects and looks if it is selected with another loop
+                    //Foreign key can be selected, but will not be shown just like normal SQL
+                    if(String(x) == String(y)){  
+                        newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
+                    }
+                })
+        })
+        return Row(newBody)
+    }))
+}
 /******************************************************************************* 
  * @Table
 *******************************************************************************/
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
-//M is to say the includes possible are X,Y and Z
+//M is the T of list2 (that is the include)
+//N is the U of list2 (that is the include)
 export let Table = function<T,U extends string,M extends string,N>(dbData: tableData<T,N>, filterData: FilterPair) : Table<T,U,M,N> {
     return {
         dataDB: dbData,
@@ -99,22 +117,7 @@ export let Table = function<T,U extends string,M extends string,N>(dbData: table
         },
         Commit: function(this) { //this is to get the list
             //return the result of map_table in datatype "Query result"
-            return QueryResult(map_table<T,Unit>(this.dataDB.fst,Fun<T,Row<Unit>>((obj:T)=>{
-                //the lambda turns obj into json-format, otherwicse a problem occurs  
-                let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-                let newBody : Column<Unit>[] = []
-                Object.getOwnPropertyNames(obj).map(y =>{
-                        this.FilterData.fst.map(x=> { 
-                            //loops through all objects and looks if it is selected with another loop
-                            //Foreign key can be selected, but will not be shown just like normal SQL
-                            if(String(x) == String(y)){  
-                                newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
-                            }
-                        }
-                    )
-                })
-                return Row(newBody)
-            })))
+            return QueryResult(GetFirstList<T>(this.dataDB.fst,filterData.fst))
         }
     }
 }
