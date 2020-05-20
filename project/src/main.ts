@@ -17,7 +17,7 @@ import {dbTables} from './ORM/Database'
 // query1.printRows()
 
 //showing the SELECT and Union
-let query2 = dbTables.Students().Select("Id","Firstname","Prefix","Gender").Where("Id","GreaterThan","20").Include().SelectGradeStates("Course_Name","Teacher").Commit()
+let query2 = dbTables.Students().Select("Id","Lastname","Prefix","Gender").OrderBy("Lastname","ASC").Where("Id","LessThan","6").Include().SelectGradeStates("Course_Name","Teacher").Commit()
 query2.printRows()
 
 // let query3 = dbTables.Grades().Select("Id").Where("O")

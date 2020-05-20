@@ -138,8 +138,12 @@ let WhereClauses = function(columnName:string,value:string) : WhereClauses{
         LessThan:(list:List<Row<Unit>>) => {
             return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringsToNumber(x,value)
-                if(i[0] != NaN && i[1] != NaN && i[0] < i[1]){
-                    return true
+                if(i[0] != NaN && i[1] != NaN){
+                    if(i[0] < i[1]){ //needed a nested if...why???????
+                        return true 
+                    }else{
+                        return false
+                    }
                 }
                 else if(x < value){
                     return true
@@ -209,6 +213,10 @@ let OrderList = function(list:List<Row<Unit>>, columnName:string, o: OrderByOpti
     if(list.kind == "Cons"){
         if(list.tail.kind == "Cons"){
             let x = OrderRows(list.head,list.tail.head,columnName,o)
+            // console.log("Start")
+            // console.log(x[0])
+            // console.log(x[1])
+
             return Cons(x[0],Cons(x[1],OrderList(list.tail.tail,columnName,o)))
         }
         return Cons(list.head,OrderList(list.tail,columnName,o)) //this wil return empty
@@ -219,15 +227,14 @@ let OrderList = function(list:List<Row<Unit>>, columnName:string, o: OrderByOpti
 //boolean is to say: Hé the values needed to switched!
 let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
     let v1 = GetColumnValue(value1, columnName)
-    let v2 = GetColumnValue(value1, columnName)
+    let v2 = GetColumnValue(value2, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
-
     if(o == "DESC"){
-        if(vN[0] != NaN && vN[0] != NaN && vN[0] < vN[1]){
-            return [value1,value2]
+        if(vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]){
+            return [value2,value1]
         }
         if(v1 < v2){   
-            return [value1,value2]
+            return [value2,value1]
         }
     }else{
         if(vN[0] != NaN && vN[0] != NaN && vN[0] > vN[1]){

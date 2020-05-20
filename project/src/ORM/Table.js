@@ -99,8 +99,13 @@ var WhereClauses = function (columnName, value) {
         LessThan: function (list) {
             return WhereLambda(list, columnName, utils_1.Fun(function (x) {
                 var i = utils_1.ConvertStringsToNumber(x, value);
-                if (i[0] != NaN && i[1] != NaN && i[0] < i[1]) {
-                    return true;
+                if (i[0] != NaN && i[1] != NaN) {
+                    if (i[0] < i[1]) { //needed a nested if...why???????
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
                 }
                 else if (x < value) {
                     return true;
@@ -152,6 +157,9 @@ var OrderList = function (list, columnName, o) {
     if (list.kind == "Cons") {
         if (list.tail.kind == "Cons") {
             var x = OrderRows(list.head, list.tail.head, columnName, o);
+            // console.log("Start")
+            // console.log(x[0])
+            // console.log(x[1])
             return utils_1.Cons(x[0], utils_1.Cons(x[1], OrderList(list.tail.tail, columnName, o)));
         }
         return utils_1.Cons(list.head, OrderList(list.tail, columnName, o)); //this wil return empty
@@ -161,14 +169,14 @@ var OrderList = function (list, columnName, o) {
 //boolean is to say: Hé the values needed to switched!
 var OrderRows = function (value1, value2, columnName, o) {
     var v1 = GetColumnValue(value1, columnName);
-    var v2 = GetColumnValue(value1, columnName);
+    var v2 = GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
     if (o == "DESC") {
-        if (vN[0] != NaN && vN[0] != NaN && vN[0] < vN[1]) {
-            return [value1, value2];
+        if (vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]) {
+            return [value2, value1];
         }
         if (v1 < v2) {
-            return [value1, value2];
+            return [value2, value1];
         }
     }
     else {
