@@ -12,6 +12,7 @@ var Database_1 = require("./ORM/Database");
         - GroupBy = Group by only groups the objects and no extra option like Count or something.
         - Commit  = Commit is the way to execute the query and returns one list.
     @Note:
+        - !This is kind of a Union all only no distinct union is allowed and the amount of columns don't have to match
         - Each operator can only be chosen once in one query
         - The original database design thought that Include has a join on option. Reading the project description better and seeing the example this was not the case. Hence, the foreign keys are on use. But maybe for later design
         - If a mode be added than it needs to be added to ‘dbTables’ and ‘Includetables’.
@@ -30,7 +31,7 @@ var PrintHeader = function (title) {
 // PrintHeader("Showing SELECT")
 // let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
 // query1.printRows()
-// PrintHeader("Showing WHERE")
+PrintHeader("Showing WHERE");
 var query2 = Database_1.dbTables.Students().Select("Id", "Firstname", "Grades").Where("Id", "LessThan", "20").Commit();
 query2.printRows();
 // PrintHeader("Showing Include")
