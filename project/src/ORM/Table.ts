@@ -223,8 +223,6 @@ let OrderList = function(list:List<Row<Unit>>,columnName: string, o: OrderByOpti
 
 let OrderListTool = function(list:List<Row<Unit>>,value : Row<Unit>,columnName: string, o: OrderByOptions): [List<Row<Unit>>,Row<Unit>]{
     if(list.kind == "Cons" && list.tail.kind== "Empty"){
-        console.log(value)
-        console.log("\n=========\n") 
         return [Empty(), value]
     }
     else if(list.kind == "Cons" && list.tail.kind == "Cons"){
@@ -244,14 +242,16 @@ let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: strin
     let vN = ConvertStringsToNumber(v1,v2)
 
     if(o == "DESC"){
-        if(vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]){
+        if(vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]){
             return [value2,value1]
+        }else if(vN[0] != NaN && vN[1] != NaN){ //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting sting
+            return [value1,value2]
         }
         if(v1 < v2){   
             return [value2,value1]
         }
     }else{
-        if(vN[0] != NaN && vN[0] != NaN && vN[0] > vN[1]){
+        if(vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]){
             return [value2,value1]
         }
         if(v1 > v2){   

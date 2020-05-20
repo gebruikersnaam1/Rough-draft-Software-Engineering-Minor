@@ -167,8 +167,6 @@ var OrderList = function (list, columnName, o) {
 };
 var OrderListTool = function (list, value, columnName, o) {
     if (list.kind == "Cons" && list.tail.kind == "Empty") {
-        console.log(value);
-        console.log("\n=========\n");
         return [utils_1.Empty(), value];
     }
     else if (list.kind == "Cons" && list.tail.kind == "Cons") {
@@ -186,15 +184,18 @@ var OrderRows = function (value1, value2, columnName, o) {
     var v2 = GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
     if (o == "DESC") {
-        if (vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]) {
+        if (vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]) {
             return [value2, value1];
+        }
+        else if (vN[0] != NaN && vN[1] != NaN) { //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting sting
+            return [value1, value2];
         }
         if (v1 < v2) {
             return [value2, value1];
         }
     }
     else {
-        if (vN[0] != NaN && vN[0] != NaN && vN[0] > vN[1]) {
+        if (vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]) {
             return [value2, value1];
         }
         if (v1 > v2) {
