@@ -154,23 +154,38 @@ var OrderByclause = function (columnName, o) {
     };
 };
 var OrderList = function (list, columnName, o) {
-    if (list.kind == "Cons") {
-        if (list.tail.kind == "Cons") {
-            var x = OrderRows(list.head, list.tail.head, columnName, o);
-            // console.log("Start")
-            // console.log(x[0])
-            // console.log(x[1])
-            return utils_1.Cons(x[0], utils_1.Cons(x[1], OrderList(list.tail.tail, columnName, o)));
-        }
-        return utils_1.Cons(list.head, OrderList(list.tail, columnName, o)); //this wil return empty
+    if (list.kind == "Cons" && list.tail.kind == "Cons") {
+        var tmp1 = OrderListTool(list, list.tail.head, columnName, o);
+        return utils_1.Cons(tmp1[1], OrderList(tmp1[0], columnName, o));
     }
-    return utils_1.Empty();
+    else if (list.kind == "Cons") {
+        return utils_1.Cons(list.head, utils_1.Empty());
+    }
+    else {
+        return utils_1.Empty();
+    }
+};
+var OrderListTool = function (list, value, columnName, o) {
+    if (list.kind == "Cons" && list.tail.kind == "Empty") {
+        return [utils_1.Empty(), value];
+    }
+    else if (list.kind == "Cons" && list.tail.kind == "Cons") {
+        var x = OrderRows(list.tail.head, value, columnName, o);
+        var tmp1 = OrderListTool(list.tail, x[0], columnName, o);
+        return [utils_1.Cons(x[1], tmp1[0]), tmp1[1]];
+    }
+    else {
+        return [utils_1.Empty(), value];
+    }
 };
 //boolean is to say: Hé the values needed to switched!
 var OrderRows = function (value1, value2, columnName, o) {
     var v1 = GetColumnValue(value1, columnName);
     var v2 = GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
+    // console.log(v1)
+    // console.log(v2)
+    // console.log("t \n\n ")
     if (o == "DESC") {
         if (vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]) {
             return [value2, value1];
