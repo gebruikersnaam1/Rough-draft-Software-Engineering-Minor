@@ -151,13 +151,6 @@ let WhereLambda =  function(i:List<Row<Unit>>,columnName:string,targetvalue:Fun<
     * @OrderByclause
     * Note: 
 *******************************************************************************/
-// interface OrderByClauses{
-//     ASC: (i:List<Row<Unit>>)=> List<Row<Unit>>,
-//     DESC: (i:List<Row<Unit>>)=> List<Row<Unit>>
-// }
-// let OrderByClauses = function(list:List<Row<Unit>>){
-//     if(list.kind == "Cons"){}
-// }
 export type OrderByOptions = "ASC" | "DESC"
 
 export interface OrderByclause{

@@ -1,6 +1,6 @@
 import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty} from  "../utils/utils"//import tool
-import {Column, Row,QueryResult, Grades,Educations, GradeStats,Students} from "../data/models"
-import {RandomGrades,ListEducations,ListGrades,ListStudents} from  "../data/data"//import model
+import {Column, Row,QueryResult} from "../data/models"
+import {IncludeTable} from "./TableInclude"
 import {OperationType, WhereClauses, OrderByOptions, OrderByclause, GroupByClauses, OperationUnit} from './TableOperations'
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 
@@ -33,44 +33,8 @@ export interface Operators<T,U extends string,N> extends Execute,dataInterface<T
 }
 
 
-interface Table<T,U extends string,N> extends Operators<T,U,N>,PrepareSelect<T,U,N>{}
+export interface Table<T,U extends string,N> extends Operators<T,U,N>,PrepareSelect<T,U,N>{}
 
-/******************************************************************************* 
- * @description Include - that works as a UNION ALL
- * @Note:Could it be more dynamic? Probably, but creating a generic include almost seemed impossible. Hence this approach was chosen. Refactoring may be needed  
- *******************************************************************************/
-interface IncludeTable<T,U extends string,N>{
-    SelectStudents: <k extends keyof Students>(...Props:k[])=> Omit<Operators<T,U | "Include",Students>,U | "Include">
-    SelectEducations: <k extends keyof Educations>(...Props:k[])=> Omit<Operators<T,U | "Include",Educations>,U | "Include">
-    SelectGrades: <k extends keyof Grades>(...Props:k[])=> Omit<Operators<T,U | "Include",Grades>,U | "Include">
-    SelectGradeStates: <k extends keyof GradeStats>(...Props:k[])=> Omit<Operators<T,U | "Include",GradeStats>,U | "Include">
-}
-//{RandomGrades,ListEducations,ListGrades,ListStudents}
-let IncludeTable = function<T,U extends string,N>(dbData: tableData<T,any>, filterData: FilterPair, tbOperations: OperationType):IncludeTable<T,U,N> & dataInterface<T,U>{
-    return{
-        dataDB: dbData,
-        FilterData : filterData,
-        tbOperations: tbOperations,
-
-        SelectStudents: function<k extends keyof Students>(...Props:k[]){
-            return IncludeLambda<T,U,Students,k>({fst:dbData.fst, snd:ListStudents},Props,filterData,tbOperations)
-        },
-        SelectEducations: function<k extends keyof Educations>(...Props:k[]){
-            return IncludeLambda<T,U,Educations,k>({fst:dbData.fst, snd:ListEducations},Props,filterData,tbOperations)
-        },
-        SelectGrades: function<k extends keyof Grades>(...Props:k[]){
-            return IncludeLambda<T,U,Grades,k>({fst:dbData.fst, snd:RandomGrades},Props,filterData,tbOperations)
-        },
-        SelectGradeStates: function<k extends keyof GradeStats>(...Props:k[]){
-            return IncludeLambda<T,U,GradeStats,k>({fst:dbData.fst, snd:ListGrades},Props,filterData,tbOperations)
-        }
-    }
-
-}
-let IncludeLambda = function<T,U extends string,N,k>(newData:tableData<T,N>,Props:k[],fData:FilterPair, tb: OperationType) : Omit<Operators<T,U | "Include",N>,U | "Include">{
-    Props.map(x=> {fData.snd.push(String(x))})
-    return Table<T,U | "Include",N>(newData,fData, tb)
-}
 
 
 /******************************************************************************* 
@@ -109,7 +73,7 @@ let GetRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: numbe
 //U contains information which Operators is chosen
 //M is the T of list2 (that is the include)
 
-let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filterData: FilterPair, opType:OperationType) : Table<T,U,N> {
+export let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filterData: FilterPair, opType:OperationType) : Table<T,U,N> {
     return {
         dataDB: dbData,
         FilterData : filterData,

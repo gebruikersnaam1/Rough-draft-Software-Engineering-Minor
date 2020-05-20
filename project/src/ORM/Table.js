@@ -13,48 +13,8 @@ var __assign = (this && this.__assign) || function () {
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
 var models_1 = require("../data/models");
-var data_1 = require("../data/data"); //import model
+var TableInclude_1 = require("./TableInclude");
 var TableOperations_1 = require("./TableOperations");
-//{RandomGrades,ListEducations,ListGrades,ListStudents}
-var IncludeTable = function (dbData, filterData, tbOperations) {
-    return {
-        dataDB: dbData,
-        FilterData: filterData,
-        tbOperations: tbOperations,
-        SelectStudents: function () {
-            var Props = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                Props[_i] = arguments[_i];
-            }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListStudents }, Props, filterData, tbOperations);
-        },
-        SelectEducations: function () {
-            var Props = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                Props[_i] = arguments[_i];
-            }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListEducations }, Props, filterData, tbOperations);
-        },
-        SelectGrades: function () {
-            var Props = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                Props[_i] = arguments[_i];
-            }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.RandomGrades }, Props, filterData, tbOperations);
-        },
-        SelectGradeStates: function () {
-            var Props = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                Props[_i] = arguments[_i];
-            }
-            return IncludeLambda({ fst: dbData.fst, snd: data_1.ListGrades }, Props, filterData, tbOperations);
-        }
-    };
-};
-var IncludeLambda = function (newData, Props, fData, tb) {
-    Props.map(function (x) { fData.snd.push(String(x)); });
-    return Table(newData, fData, tb);
-};
 /*******************************************************************************
     * @ListLambda
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
@@ -90,7 +50,7 @@ var GetRows = function (dataDB, FilterData, maxColumns) {
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
 //U contains information which Operators is chosen
 //M is the T of list2 (that is the include)
-var Table = function (dbData, filterData, opType) {
+exports.Table = function (dbData, filterData, opType) {
     return {
         dataDB: dbData,
         FilterData: filterData,
@@ -102,31 +62,31 @@ var Table = function (dbData, filterData, opType) {
                 Props[_i] = arguments[_i];
             }
             Props.map(function (x) { _this.FilterData.fst.push(String(x)); });
-            return Table(dbData, filterData, this.tbOperations);
+            return exports.Table(dbData, filterData, this.tbOperations);
         },
         Include: function () {
-            return IncludeTable(this.dataDB, this.FilterData, this.tbOperations);
+            return TableInclude_1.IncludeTable(this.dataDB, this.FilterData, this.tbOperations);
         },
         Where: function (columnT, operator, value) {
             var column = String(columnT);
             var w = TableOperations_1.WhereClauses(column, value);
             switch (String(operator)) {
                 case 'Equal':
-                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.Equal }));
+                    return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.Equal }));
                 case 'GreaterThan':
-                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.GreaterThan }));
+                    return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.GreaterThan }));
                 case 'LessThan':
-                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.LessThan }));
+                    return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.LessThan }));
                 case 'NotEqual':
-                    return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.NotEqual }));
+                    return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Where: w.NotEqual }));
             }
-            return Table(this.dataDB, filterData, this.tbOperations);
+            return exports.Table(this.dataDB, filterData, this.tbOperations);
         },
         OrderBy: function (x, option) {
-            return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Orderby: TableOperations_1.OrderByclause(String(x), option).Orderby }));
+            return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Orderby: TableOperations_1.OrderByclause(String(x), option).Orderby }));
         },
         GroupBy: function (x) {
-            return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { GroupBy: TableOperations_1.GroupByClauses(String(x)).GroupBy }));
+            return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { GroupBy: TableOperations_1.GroupByClauses(String(x)).GroupBy }));
         },
         Commit: function () {
             var t = this.tbOperations; //to shorten the name
@@ -139,5 +99,5 @@ var Table = function (dbData, filterData, opType) {
  * @InitTable
 *******************************************************************************/
 exports.TableInit = function (l) {
-    return Table(utils_1.tableData(l, utils_1.Empty()), utils_1.FilterPairUnit, TableOperations_1.OperationUnit());
+    return exports.Table(utils_1.tableData(l, utils_1.Empty()), utils_1.FilterPairUnit, TableOperations_1.OperationUnit());
 };
