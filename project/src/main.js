@@ -3,16 +3,19 @@ exports.__esModule = true;
 var Database_1 = require("./ORM/Database");
 /*
     @description:
-        - Select = Select the wanted columns
-        - Include = works as an Union all, but the selected amount of columns set the amount of columns for the include table
-                    this may result in empty columns or that not all columns are shown of the second list
-        - Where = This is an union all if tableName doesn't exist in the selected columns than nothing will be shown.
-        - OrderBy = Works, but mainly tested on numbers
+        - Select  = contains the columns of the table selected. Are there no columns selected? Then no columns shown.
+        - Include = Union needs to be selected and then a table can be chosen by selecting a method that enables that.
+                    The method also serves as the select method for that table.
+        - Where = The Where statement takes three parameters, the first is the column.
+                  The columns available are only from the original table, so not the include, because this works as a UNION ALL.
+        - OrderBy = Order by takes one column and orders is DESC or ASC
+        - GroupBy = Group by only groups the objects and no extra option like Count or something.
+        - Commit  = Commit is the way to execute the query and returns one list.
     @Note:
-        - one can only select once include and select (in one instance)
-        - Table students has 2 'foreign keys', but one cannot do an INNER JOIN
-        - one has to start with select
-        - Maybe in the future things will be made more dynamic, but for now this is what it is
+        - Each operator can only be chosen once in one query
+        - The original database design thought that Include has a join on option. Reading the project description better and seeing the example this was not the case. Hence, the foreign keys are on use. But maybe for later design
+        - If a mode be added than it needs to be added to ‘dbTables’ and ‘Includetables’.
+          Except that the code is dynamic enough that is SHOULD work fine with only those adjustments. Also, columns should be changeable.
 */
 var PrintHeader = function (title) {
     console.log("NEW: " + title);

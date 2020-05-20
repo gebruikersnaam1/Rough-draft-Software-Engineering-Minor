@@ -14,7 +14,7 @@ export type Students = {
     Id: number
     Firstname:string
     Prefix: string
-    Gender: "Man" | "Women" | "Other"
+    Gender: Gender
     Lastname: string
     Educations: Educations
     Grades: List<Grades>
