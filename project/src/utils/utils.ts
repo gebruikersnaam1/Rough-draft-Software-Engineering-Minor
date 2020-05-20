@@ -114,3 +114,13 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
   export let ConvertStringsToNumber = function(x :string,v: string) : [number, number]{
     return [Number(x),Number(v)]
   }
+
+  export let GetColumnValue =  function(r: Row<Unit>,columnName:string) : string{
+    let x : string = ""
+    r.columns.map(y =>{
+        if(y.name == columnName){
+            x = String(y.value)
+        }
+    })
+    return x
+}

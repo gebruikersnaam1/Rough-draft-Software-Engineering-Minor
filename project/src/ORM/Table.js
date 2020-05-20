@@ -65,6 +65,25 @@ var OperationUnit = function () {
     var unit = function (i) { return i; };
     return OperationExecute(unit, unit, unit);
 };
+/*******************************************************************************
+    * @groupby
+    * Note:
+*******************************************************************************/
+//boolean is to say: Hé the values needed to switched!
+// let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
+//     let v1 = GetColumnValue(value1, columnName)
+var GroupByTool = function (l) {
+    if (l.kind == "Cons") {
+    }
+    else {
+    }
+};
+var FilterOut = function (l) {
+    if (l.kind == "Cons") {
+    }
+    else {
+    }
+};
 var WhereClauses = function (columnName, value) {
     return {
         Equal: function (list) {
@@ -180,8 +199,8 @@ var OrderListTool = function (list, value, columnName, o) {
 };
 //boolean is to say: Hé the values needed to switched!
 var OrderRows = function (value1, value2, columnName, o) {
-    var v1 = GetColumnValue(value1, columnName);
-    var v2 = GetColumnValue(value2, columnName);
+    var v1 = utils_1.GetColumnValue(value1, columnName);
+    var v2 = utils_1.GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
     if (o == "DESC") {
         if (vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]) {
@@ -203,15 +222,6 @@ var OrderRows = function (value1, value2, columnName, o) {
         }
     }
     return [value1, value2];
-};
-var GetColumnValue = function (r, columnName) {
-    var x = "";
-    r.columns.map(function (y) {
-        if (y.name == columnName) {
-            x = String(y.value);
-        }
-    });
-    return x;
 };
 /*******************************************************************************
     * @ListLambda

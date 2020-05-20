@@ -1,4 +1,4 @@
-import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty,Cons, ConvertStringsToNumber} from  "../utils/utils"//import tool
+import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty,Cons, ConvertStringsToNumber,GetColumnValue} from  "../utils/utils"//import tool
 import {Column, Row,QueryResult, Grades,Educations, GradeStats,Students} from "../data/models"
 import {RandomGrades,ListEducations,ListGrades,ListStudents} from  "../data/data"//import model
 
@@ -97,6 +97,27 @@ let OperationUnit = function() : OperationType{
     return OperationExecute(unit,unit,unit)
 }
 
+/******************************************************************************* 
+    * @groupby
+    * Note: 
+*******************************************************************************/
+//boolean is to say: Hé the values needed to switched!
+// let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
+//     let v1 = GetColumnValue(value1, columnName)
+let GroupByTool = function(l:List<Row<Unit>>){
+    if(l.kind == "Cons"){
+
+    }else{
+
+    }
+}
+let FilterOut = function(l:List<Row<Unit>>){
+    if(l.kind == "Cons"){
+        
+    }else{
+
+    }
+}
 /******************************************************************************* 
     * @Whereclause
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
@@ -259,17 +280,6 @@ let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: strin
         }
     }
     return [value1,value2]
-}
-
-
-let GetColumnValue =  function(r: Row<Unit>,columnName:string) : string{
-    let x : string = ""
-    r.columns.map(y =>{
-        if(y.name == columnName){
-            x = String(y.value)
-        }
-    })
-    return x
 }
 /******************************************************************************* 
     * @ListLambda

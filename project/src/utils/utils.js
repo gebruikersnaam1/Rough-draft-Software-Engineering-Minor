@@ -71,3 +71,12 @@ exports.PrintQueryValues = function (l) {
 exports.ConvertStringsToNumber = function (x, v) {
     return [Number(x), Number(v)];
 };
+exports.GetColumnValue = function (r, columnName) {
+    var x = "";
+    r.columns.map(function (y) {
+        if (y.name == columnName) {
+            x = String(y.value);
+        }
+    });
+    return x;
+};
