@@ -28,7 +28,7 @@ export interface PrepareSelect<T,U extends string ,N> extends dataInterface<T,N>
 export interface Operators<T,U extends string,N> extends Execute,dataInterface<T,N>{
     Where:<k extends keyof T, z extends keyof WhereClauses>(x:k, operator:z,value:string) => Omit<Operators<T,U | "Where",N>,U | "Where">,
     Include: ()=>IncludeTable<T,U,N>
-    // OrderBy: null,
+    OrderBy: <k extends keyof T>(x:k, option:OrderByOptions) => Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">,
     // GroupBy: null
     //TODO: implement ^ stuff
 }
@@ -191,32 +191,55 @@ let WhereLambda =  function(i:List<Row<Unit>>,columnName:string,targetvalue:Fun<
 // let OrderByClauses = function(list:List<Row<Unit>>){
 //     if(list.kind == "Cons"){}
 // }
+type OrderByOptions = "ASC" | "DESC"
 
-let OrderList = function(list:List<Row<Unit>>, columnName:string): List<Row<Unit>>{
+interface OrderByclause{
+    Orderby:(list:List<Row<Unit>>) => List<Row<Unit>>
+}
+
+let OrderByclause = function(columnName:string,  o: OrderByOptions) : OrderByclause{
+    return{
+        Orderby:(list:List<Row<Unit>>) : List<Row<Unit>> =>{
+            return OrderList(list,columnName,o)
+        }
+    }
+}
+
+let OrderList = function(list:List<Row<Unit>>, columnName:string, o: OrderByOptions): List<Row<Unit>>{
     if(list.kind == "Cons"){
         if(list.tail.kind == "Cons"){
-            let x = OrderRows(list.head,list.tail.head,columnName)
-            return Cons(x[0],Cons(x[1],OrderList(list.tail.tail,columnName)))
+            let x = OrderRows(list.head,list.tail.head,columnName,o)
+            return Cons(x[0],Cons(x[1],OrderList(list.tail.tail,columnName,o)))
         }
-        return Cons(list.head, OrderList(list.tail,columnName)) //this wil return empty
+        return Cons(list.head,OrderList(list.tail,columnName,o)) //this wil return empty
     }
     return Empty()
 }
 
 //boolean is to say: Hé the values needed to switched!
-let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string) : [Row<Unit>, Row<Unit>,boolean]{
+let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
     let v1 = GetColumnValue(value1, columnName)
     let v2 = GetColumnValue(value1, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
-    
-    if(vN[0] != NaN && vN[0] != NaN && vN[0] < vN[1]){
-        return [value1,value2,false]
+
+    if(o == "DESC"){
+        if(vN[0] != NaN && vN[0] != NaN && vN[0] < vN[1]){
+            return [value1,value2]
+        }
+        if(v1 < v2){   
+            return [value1,value2]
+        }
+    }else{
+        if(vN[0] != NaN && vN[0] != NaN && vN[0] > vN[1]){
+            return [value2,value1]
+        }
+        if(v1 > v2){   
+            return [value2,value1]
+        }
     }
-    if(v1 < v2){ 
-        return [value1,value2,false]
-    }
-    return [value1,value2,true]
+    return [value1,value2]
 }
+
 
 let GetColumnValue =  function(r: Row<Unit>,columnName:string) : string{
     let x : string = ""
@@ -290,6 +313,9 @@ let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filterData: F
                     return Table<T,U | "Where",N>(this.dataDB,filterData,{...this.tbOperations, Where: w.NotEqual  })
             }
             return Table<T,U | "Where",N>(this.dataDB,filterData,this.tbOperations)
+        },
+        OrderBy: function <k extends keyof T>(x:k, option:OrderByOptions) :Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">{
+            return Table<T,U | "OrderBy",N>(this.dataDB,filterData,{...this.tbOperations, Orderby: OrderByclause(String(x),option).Orderby  })
         },
         Commit: function(this) { //this is to get the list
            let t = this.tbOperations //to shorten the name
