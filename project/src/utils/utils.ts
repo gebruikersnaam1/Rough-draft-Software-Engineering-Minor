@@ -110,3 +110,7 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
         PrintQueryValues(l.tail)
     }
   }
+
+  export let ConvertStringsToNumber = function(x :string,v: string) : [number, number]{
+    return [Number(x),Number(v)]
+  }

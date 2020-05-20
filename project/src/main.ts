@@ -5,6 +5,7 @@ import {dbTables} from './ORM/Database'
         - Select = Select the wanted columns
         - Include = works as an Union all, but the selected amount of columns set the amount of columns for the include table
                     this may result in empty columns or that not all columns are shown of the second list
+        - Where = This is an union all if tableName doesn't exist in the selected columns than nothing will be shown. 
     @Note: 
         - one can only select once include and select (in one instance)
         - Table students has 2 'foreign keys', but one cannot do an INNER JOIN

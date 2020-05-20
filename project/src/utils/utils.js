@@ -68,3 +68,6 @@ exports.PrintQueryValues = function (l) {
         exports.PrintQueryValues(l.tail);
     }
 };
+exports.ConvertStringsToNumber = function (x, v) {
+    return [Number(x), Number(v)];
+};

@@ -79,7 +79,7 @@ var WhereClauses = function (columnName, value) {
         },
         GreaterThan: function (list) {
             return WhereLambda(list, columnName, utils_1.Fun(function (x) {
-                var i = ConvertStringToNumber(x, value);
+                var i = utils_1.ConvertStringsToNumber(x, value);
                 if (i[0] != NaN && i[1] != NaN) {
                     if (i[0] > i[1]) { //needed a nested if...why???????
                         return true;
@@ -98,7 +98,7 @@ var WhereClauses = function (columnName, value) {
         },
         LessThan: function (list) {
             return WhereLambda(list, columnName, utils_1.Fun(function (x) {
-                var i = ConvertStringToNumber(x, value);
+                var i = utils_1.ConvertStringsToNumber(x, value);
                 if (i[0] != NaN && i[1] != NaN && i[0] < i[1]) {
                     return true;
                 }
@@ -120,9 +120,6 @@ var WhereClauses = function (columnName, value) {
         }
     };
 };
-var ConvertStringToNumber = function (x, v) {
-    return [Number(x), Number(v)];
-};
 var WhereLambda = function (i, columnName, targetvalue) {
     if (i.kind == "Cons") {
         var found_1 = 0;
@@ -143,6 +140,49 @@ var WhereLambda = function (i, columnName, targetvalue) {
     else {
         return utils_1.Empty();
     }
+};
+/*******************************************************************************
+    * @OrderByclause
+    * Note:
+*******************************************************************************/
+// interface OrderByClauses{
+//     ASC: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+//     DESC: (i:List<Row<Unit>>)=> List<Row<Unit>>
+// }
+// let OrderByClauses = function(list:List<Row<Unit>>){
+//     if(list.kind == "Cons"){}
+// }
+var OrderList = function (list, columnName) {
+    if (list.kind == "Cons") {
+        if (list.tail.kind == "Cons") {
+            var x = OrderRows(list.head, list.tail.head, columnName);
+            return utils_1.Cons(x[0], utils_1.Cons(x[1], OrderList(list.tail.tail, columnName)));
+        }
+        return utils_1.Cons(list.head, OrderList(list.tail, columnName)); //this wil return empty
+    }
+    return utils_1.Empty();
+};
+//boolean is to say: Hé the values needed to switched!
+var OrderRows = function (value1, value2, columnName) {
+    var v1 = GetColumnValue(value1, columnName);
+    var v2 = GetColumnValue(value1, columnName);
+    var vN = utils_1.ConvertStringsToNumber(v1, v2);
+    if (vN[0] != NaN && vN[0] != NaN && vN[0] < vN[1]) {
+        return [value1, value2, false];
+    }
+    if (v1 < v2) {
+        return [value1, value2, false];
+    }
+    return [value1, value2, true];
+};
+var GetColumnValue = function (r, columnName) {
+    var x = "";
+    r.columns.map(function (y) {
+        if (y.name == columnName) {
+            x = String(y.value);
+        }
+    });
+    return x;
 };
 /*******************************************************************************
     * @ListLambda
