@@ -21,6 +21,7 @@ var GroupByTool = function (l, columnName) {
     if (l.kind == "Cons") {
         var searchVal = utils_1.GetColumnValue(l.head, columnName);
         var result = FilterOut(searchVal, l.tail, columnName);
+        //the result contains a list without the search value(l.head), this will be done until no values are left
         return utils_1.Cons(l.head, GroupByTool(result, columnName));
     }
     else {
@@ -44,7 +45,7 @@ var FilterOut = function (searchVal, l, columnName) {
 exports.WhereClauses = function (columnName, value) {
     return {
         Equal: function (list) {
-            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+            return WhereFun(list, columnName, utils_1.Fun(function (x) {
                 if (x == value) {
                     return true;
                 }
@@ -54,7 +55,7 @@ exports.WhereClauses = function (columnName, value) {
             }));
         },
         GreaterThan: function (list) {
-            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+            return WhereFun(list, columnName, utils_1.Fun(function (x) {
                 var i = utils_1.ConvertStringsToNumber(x, value);
                 if (i[0] != NaN && i[1] != NaN) {
                     if (i[0] > i[1]) { //needed a nested if...why???????
@@ -73,7 +74,7 @@ exports.WhereClauses = function (columnName, value) {
             }));
         },
         LessThan: function (list) {
-            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+            return WhereFun(list, columnName, utils_1.Fun(function (x) {
                 var i = utils_1.ConvertStringsToNumber(x, value);
                 if (i[0] != NaN && i[1] != NaN) {
                     if (i[0] < i[1]) { //needed a nested if...why???????
@@ -90,7 +91,7 @@ exports.WhereClauses = function (columnName, value) {
             }));
         },
         NotEqual: function (list) {
-            return WhereLambda(list, columnName, utils_1.Fun(function (x) {
+            return WhereFun(list, columnName, utils_1.Fun(function (x) {
                 if (x != value) {
                     return true;
                 }
@@ -101,22 +102,22 @@ exports.WhereClauses = function (columnName, value) {
         }
     };
 };
-var WhereLambda = function (i, columnName, targetvalue) {
+var WhereFun = function (i, columnName, targetvalue) {
     if (i.kind == "Cons") {
-        var found_1 = 0;
-        var row_1 = null;
+        var found_1 = 0; //this can be seen as a boolean
+        var row_1 = null; //the placeholder is null (yes, reusing a var)
         i.head.columns.map(function (x) {
             if (x.name == columnName) {
                 if (targetvalue.f(String(x.value))) {
-                    found_1++;
-                    row_1 = utils_1.Cons(i.head, WhereLambda(i.tail, columnName, targetvalue));
+                    found_1++; //so, the value is found you say?
+                    row_1 = utils_1.Cons(i.head, WhereFun(i.tail, columnName, targetvalue));
                 }
             }
         });
         if (found_1 != 0) {
-            return row_1;
+            return row_1; //if found return value
         }
-        return WhereLambda(i.tail, columnName, targetvalue);
+        return WhereFun(i.tail, columnName, targetvalue); //if not found go to the next item
     }
     else {
         return utils_1.Empty();
@@ -130,12 +131,12 @@ exports.OrderByclause = function (columnName, o) {
     };
 };
 var OrderList = function (list, columnName, o) {
-    if (list.kind == "Cons" && list.tail.kind == "Cons") {
-        var tmp1 = OrderListTool(list, list.head, columnName, o);
-        return utils_1.Cons(tmp1[1], OrderList(tmp1[0], columnName, o));
+    if (list.kind == "Cons" && list.tail.kind == "Cons") { //if it has two values to switch
+        var tmp1 = OrderListTool(list, list.head, columnName, o); //get the lowest or highest value and a list without that value
+        return utils_1.Cons(tmp1[1], OrderList(tmp1[0], columnName, o)); //return the con
     }
     else if (list.kind == "Cons") {
-        return utils_1.Cons(list.head, utils_1.Empty());
+        return utils_1.Cons(list.head, utils_1.Empty()); //only one value left? So, stop sorting
     }
     else {
         return utils_1.Empty();
@@ -154,7 +155,6 @@ var OrderListTool = function (list, value, columnName, o) {
         return [utils_1.Empty(), value];
     }
 };
-//boolean is to say: Hé the values needed to switched!
 var OrderRows = function (value1, value2, columnName, o) {
     var v1 = utils_1.GetColumnValue(value1, columnName);
     var v2 = utils_1.GetColumnValue(value2, columnName);

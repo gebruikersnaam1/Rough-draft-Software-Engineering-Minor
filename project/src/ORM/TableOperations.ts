@@ -19,16 +19,15 @@ let OperationExecute = function(w: (i:List<Row<Unit>>)=> List<Row<Unit>>,g: (i:L
     }
 }
 
-export let OperationUnit = function() : OperationType{
+export let OperationUnit = function() : OperationType{ //if not selected than just return the row without touching
     let unit = (i:List<Row<Unit>>)=> i
     return OperationExecute(unit,unit,unit)
 }
 
 /******************************************************************************* 
     * @groupby
-    * Note: 
+    * Note: Group by could/should contain more 'aggregate functions' (COUNT, MAX, MIN, SUM, AVG)
 *******************************************************************************/
-//boolean is to say: Hé the values needed to switched!
 export interface GroupByClauses{
     GroupBy: (i:List<Row<Unit>>)=> List<Row<Unit>>,
 }
@@ -43,6 +42,7 @@ let GroupByTool = function(l:List<Row<Unit>>, columnName: string) : List<Row<Uni
     if(l.kind == "Cons"){
         let searchVal = GetColumnValue(l.head, columnName)
         let result = FilterOut(searchVal,l.tail,columnName)
+        //the result contains a list without the search value(l.head), this will be done until no values are left
         return Cons(l.head,GroupByTool(result,columnName))
     }else{
         return Empty()
@@ -73,7 +73,7 @@ export interface WhereClauses{
 export let WhereClauses = function(columnName:string,value:string) : WhereClauses{
     return{
         Equal:(list:List<Row<Unit>>) => {
-              return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+              return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                     if(x == value){
                         return true
                     }else{
@@ -82,7 +82,7 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
             }))
         },
         GreaterThan:(list:List<Row<Unit>>) => {
-            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+            return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringsToNumber(x,value)
                 if(i[0] != NaN && i[1] != NaN){
                     if(i[0] > i[1]){ //needed a nested if...why???????
@@ -99,7 +99,7 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
             }))
         },
         LessThan:(list:List<Row<Unit>>) => {
-            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+            return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringsToNumber(x,value)
                 if(i[0] != NaN && i[1] != NaN){
                     if(i[0] < i[1]){ //needed a nested if...why???????
@@ -115,7 +115,7 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
             }))
         },
         NotEqual:(list:List<Row<Unit>>) => {
-            return WhereLambda(list,columnName,Fun<string,boolean>(x=>{
+            return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                 if(x != value){
                     return true
                 }else{
@@ -126,30 +126,30 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
     }
 }
 
-let WhereLambda =  function(i:List<Row<Unit>>,columnName:string,targetvalue:Fun<string,boolean>) : List<Row<Unit>>{
+let WhereFun =  function(i:List<Row<Unit>>,columnName:string,targetvalue:Fun<string,boolean>) : List<Row<Unit>>{
     if(i.kind == "Cons"){
-        let found = 0
-        let row : List<Row<Unit>> = null!
+        let found = 0 //this can be seen as a boolean
+        let row : List<Row<Unit>> = null!//the placeholder is null (yes, reusing a var)
         i.head.columns.map(x=>
             {
                 if(x.name == columnName){
                     if(targetvalue.f(String(x.value))){
-                        found++;
-                        row = Cons(i.head,WhereLambda(i.tail,columnName,targetvalue)) 
+                        found++; //so, the value is found you say?
+                        row = Cons(i.head,WhereFun(i.tail,columnName,targetvalue)) 
                     }
                 }
             })
         if(found != 0){
-            return row 
+            return row //if found return value
         }
-        return WhereLambda(i.tail,columnName,targetvalue)
+        return WhereFun(i.tail,columnName,targetvalue) //if not found go to the next item
     }else{
         return Empty()
     }
 }
 /******************************************************************************* 
     * @OrderByclause
-    * Note: 
+    * Note: to option ASC and DESC
 *******************************************************************************/
 export type OrderByOptions = "ASC" | "DESC"
 
@@ -166,12 +166,12 @@ export let OrderByclause = function(columnName:string,  o: OrderByOptions) : Ord
 }
 
 let OrderList = function(list:List<Row<Unit>>,columnName: string, o: OrderByOptions): List<Row<Unit>>{
-    if(list.kind == "Cons" && list.tail.kind == "Cons"){
-        let tmp1 =  OrderListTool(list, list.head,columnName,o)
-        return Cons(tmp1[1], OrderList(tmp1[0], columnName, o))
+    if(list.kind == "Cons" && list.tail.kind == "Cons"){ //if it has two values to switch
+        let tmp1 =  OrderListTool(list, list.head,columnName,o) //get the lowest or highest value and a list without that value
+        return Cons(tmp1[1], OrderList(tmp1[0], columnName, o)) //return the con
     }
     else if(list.kind == "Cons"){
-        return Cons(list.head,Empty())
+        return Cons(list.head,Empty()) //only one value left? So, stop sorting
     }else{
         return Empty()
     }
@@ -191,7 +191,6 @@ let OrderListTool = function(list:List<Row<Unit>>,value : Row<Unit>,columnName: 
     }
 }
 
-//boolean is to say: Hé the values needed to switched!
 let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
     let v1 = GetColumnValue(value1, columnName)
     let v2 = GetColumnValue(value2, columnName)

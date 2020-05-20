@@ -36,16 +36,16 @@ let PrintHeader = function(title:string){
 // query1.printRows()
 
 // PrintHeader("Showing WHERE")
-// let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","Equal","20").Commit()
-// query2.printRows()
+let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","LessThan","20").Commit()
+query2.printRows()
 
 // PrintHeader("Showing Include")
 // let query3 = dbTables.Students().Select("Id","Firstname","Grades").Include().SelectEducations("Name").Commit()
 // query3.printRows()
 
-PrintHeader("Showing OrderBy")
-let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Id","DESC").Commit()
-query5.printRows()
+// PrintHeader("Showing OrderBy")
+// let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Id","DESC").Commit()
+// query5.printRows()
 
 // PrintHeader("Showing GroupBy")
 // let query6 = dbTables.Students().Select("Id","Firstname","Grades").GroupBy("Prefix").Commit()
