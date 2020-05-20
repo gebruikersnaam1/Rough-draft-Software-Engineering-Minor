@@ -16,35 +16,6 @@ var models_1 = require("../data/models");
 var TableInclude_1 = require("./TableInclude");
 var TableOperations_1 = require("./TableOperations");
 /*******************************************************************************
-    * @ListLambda
-    * Note: trying to use Fun, but I'm not going to do Fun in Fun
-*******************************************************************************/
-var GetRows = function (dataDB, FilterData, maxColumns) {
-    return utils_1.map_table(dataDB, utils_1.Fun(function (obj) {
-        //the lambda turns obj into json-format, otherwicse a problem occurs  
-        var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
-        var newBody = [];
-        Object.getOwnPropertyNames(obj).map(function (y) {
-            var count = 0;
-            FilterData.map(function (x) {
-                //loops through all objects and looks if it is selected with another loop
-                //Foreign key can be selected, but will not be shown just like normal SQL
-                if (String(x) == String(y) && count < maxColumns) { //to ensure that list 2 is bigger than list 1
-                    newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
-                }
-                count++;
-            });
-        });
-        //if second filter is smaller it creates empty columns to match the column amount
-        if (FilterData.length < maxColumns) {
-            for (var i = FilterData.length; i <= (maxColumns - 1); i++) {
-                newBody.push(models_1.Column("Empty", ""));
-            }
-        }
-        return models_1.Row(newBody);
-    }));
-};
-/*******************************************************************************
  * @Table
 *******************************************************************************/
 //T contains information about the List, also to make Select("Id").("Id") is not possible, if that would happen for an unexpected reason
@@ -91,7 +62,7 @@ exports.Table = function (dbData, filterData, opType) {
         Commit: function () {
             var t = this.tbOperations; //to shorten the name
             //return the result of map_table in datatype "Query result"
-            return models_1.QueryResult(t.Orderby(t.GroupBy(t.Where(utils_1.PlusList((GetRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (GetRows(this.dataDB.snd, filterData.snd, filterData.fst.length)))))));
+            return models_1.QueryResult(t.Orderby(t.GroupBy(t.Where(utils_1.PlusList((CreateRows(this.dataDB.fst, filterData.fst, filterData.fst.length)), (CreateRows(this.dataDB.snd, filterData.snd, filterData.fst.length)))))));
         }
     };
 };
@@ -100,4 +71,33 @@ exports.Table = function (dbData, filterData, opType) {
 *******************************************************************************/
 exports.TableInit = function (l) {
     return exports.Table(utils_1.tableData(l, utils_1.Empty()), utils_1.FilterPairUnit, TableOperations_1.OperationUnit());
+};
+/*******************************************************************************
+    * @ListLambda
+    * Note: trying to use Fun, but I'm not going to do Fun in Fun
+*******************************************************************************/
+var CreateRows = function (dataDB, FilterData, maxColumns) {
+    return utils_1.map_table(dataDB, utils_1.Fun(function (obj) {
+        //the lambda turns obj into json-format, otherwicse a problem occurs  
+        var jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))));
+        var newBody = [];
+        Object.getOwnPropertyNames(obj).map(function (y) {
+            var count = 0;
+            FilterData.map(function (x) {
+                //loops through all objects and looks if it is selected with another loop
+                //Foreign key can be selected, but will not be shown just like normal SQL
+                if (String(x) == String(y) && count < maxColumns) { //to ensure that list 2 is bigger than list 1
+                    newBody.push(models_1.Column(String(x), jObject[y] == "[object Object]" ? "Ref(" + String(x) + ")" : jObject[y]));
+                }
+                count++;
+            });
+        });
+        //if second filter is smaller it creates empty columns to match the column amount
+        if (FilterData.length < maxColumns) {
+            for (var i = FilterData.length; i <= (maxColumns - 1); i++) {
+                newBody.push(models_1.Column("Empty", ""));
+            }
+        }
+        return models_1.Row(newBody);
+    }));
 };

@@ -163,7 +163,8 @@ var OrderRows = function (value1, value2, columnName, o) {
         if (vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]) {
             return [value2, value1];
         }
-        else if (vN[0] != NaN && vN[1] != NaN) { //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting sting
+        else if (vN[0] != NaN && vN[1] != NaN) {
+            //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
             return [value1, value2];
         }
         if (v1 < v2) {

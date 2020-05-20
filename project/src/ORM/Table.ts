@@ -35,37 +35,6 @@ export interface Operators<T,U extends string,N> extends Execute,dataInterface<T
 
 export interface Table<T,U extends string,N> extends Operators<T,U,N>,PrepareSelect<T,U,N>{}
 
-
-
-/******************************************************************************* 
-    * @ListLambda
-    * Note: trying to use Fun, but I'm not going to do Fun in Fun
-*******************************************************************************/
-let GetRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: number) : List<Row<Unit>>{
-    return map_table<X,Unit>(dataDB,Fun<X,Row<Unit>>((obj:X)=>{
-        //the lambda turns obj into json-format, otherwicse a problem occurs  
-        let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
-        let newBody : Column<Unit>[] = []
-        Object.getOwnPropertyNames(obj).map(y =>{
-                let count = 0
-                FilterData.map(x=> { 
-                    //loops through all objects and looks if it is selected with another loop
-                    //Foreign key can be selected, but will not be shown just like normal SQL
-                    if(String(x) == String(y) && count < maxColumns){ //to ensure that list 2 is bigger than list 1
-                        newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
-                    }
-                    count++;
-                })
-        })
-        //if second filter is smaller it creates empty columns to match the column amount
-        if(FilterData.length < maxColumns){
-            for(let i = FilterData.length; i <= (maxColumns-1); i++){
-                newBody.push(Column("Empty",""))
-            }
-        }
-        return Row(newBody)
-    }))
-}
 /******************************************************************************* 
  * @Table
 *******************************************************************************/
@@ -115,8 +84,8 @@ export let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filter
                     t.GroupBy(
                         t.Where( 
                             PlusList<Row<Unit>>(
-                                    (GetRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
-                                    (GetRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))
+                                    (CreateRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
+                                    (CreateRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))
                             )
                         )
                     )
@@ -131,4 +100,34 @@ export let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filter
 *******************************************************************************/
 export let TableInit = function<T,U extends string,N>(l:List<T>) : Table<T,U,N>{
     return Table(tableData(l,Empty()),FilterPairUnit,OperationUnit())
+}
+
+/******************************************************************************* 
+    * @ListLambda
+    * Note: trying to use Fun, but I'm not going to do Fun in Fun
+*******************************************************************************/
+let CreateRows = function<X>(dataDB:List<X>,FilterData : string[],maxColumns: number) : List<Row<Unit>>{
+    return map_table<X,Unit>(dataDB,Fun<X,Row<Unit>>((obj:X)=>{
+        //the lambda turns obj into json-format, otherwicse a problem occurs  
+        let jObject = JSON.parse(JSON.stringify((Object.assign({}, obj))))
+        let newBody : Column<Unit>[] = []
+        Object.getOwnPropertyNames(obj).map(y =>{
+                let count = 0
+                FilterData.map(x=> { 
+                    //loops through all objects and looks if it is selected with another loop
+                    //Foreign key can be selected, but will not be shown just like normal SQL
+                    if(String(x) == String(y) && count < maxColumns){ //to ensure that list 2 is bigger than list 1
+                        newBody.push(Column(String(x), jObject[y] == "[object Object]" ? "Ref("+String(x)+")" : jObject[y]))
+                    }
+                    count++;
+                })
+        })
+        //if second filter is smaller it creates empty columns to match the column amount
+        if(FilterData.length < maxColumns){
+            for(let i = FilterData.length; i <= (maxColumns-1); i++){
+                newBody.push(Column("Empty",""))
+            }
+        }
+        return Row(newBody)
+    }))
 }

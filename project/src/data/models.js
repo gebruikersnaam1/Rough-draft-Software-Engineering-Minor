@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import list
-exports.Gender = function (x) { return (x == "Man" ? { gender: "Man" } : x == "Women" ? { gender: "Women" } : { gender: "Other" }); };
+exports.Gender = function (x) { return (x == "Man" ? "Man" : x == "Women" ? "Women" : "Other"); };
 /*
     * the constructors for the models
 */

@@ -14,13 +14,36 @@ import {dbTables} from './ORM/Database'
         - Maybe in the future things will be made more dynamic, but for now this is what it is
 */
 
-//just showing the SELECT
+let PrintHeader = function(title:string){
+    console.log("NEW: " + title)
+    console.log("\n****************************\n")
+}
+
+
+// PrintHeader("Showing Complete")
+// let query7 = dbTables.Students().Select("Id","Firstname","Grades").
+//                 GroupBy("Prefix").Where("Id","GreaterThan","12")
+//                     .OrderBy("Id","DESC").Include()
+//                         .SelectEducations("Name","Study_Duration").Commit()
+// query7.printRows()
+
+
+// PrintHeader("Showing SELECT")
 // let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
 // query1.printRows()
 
-//showing the SELECT and Union
-let query2 = dbTables.Students().Select("Id","Lastname","Prefix","Gender").GroupBy('Prefix').OrderBy("Id","DESC").Where("Id","LessThan","15").Include().SelectGradeStates("Course_Name","Teacher").Commit()
-query2.printRows()
+// PrintHeader("Showing WHERE")
+// let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","Equal","20").Commit()
+// query2.printRows()
 
-// let query3 = dbTables.Grades().Select("Id").Where("O")
-                
+// PrintHeader("Showing Include")
+// let query3 = dbTables.Students().Select("Id","Firstname","Grades").Include().SelectEducations("Name").Commit()
+// query3.printRows()
+
+PrintHeader("Showing OrderBy")
+let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Id","DESC").Commit()
+query5.printRows()
+
+// PrintHeader("Showing GroupBy")
+// let query6 = dbTables.Students().Select("Id","Firstname","Grades").GroupBy("Prefix").Commit()
+// query6.printRows()

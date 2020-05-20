@@ -1,17 +1,11 @@
 import {List,PrintQueryValues,Unit} from  "../utils/utils"//import list
 
 //'enums'/array to  define genders 
-export type Gender = {
-    gender: "Man"
-} | {
-    gender: "Women"
-} |{
-    gender: "Other"
-}
+export type Gender = "Man" | "Women" | "Other"
 
 
 export let Gender = (x:string) : Gender =>(
-    x == "Man"? {gender: "Man"} : x == "Women" ? {gender: "Women"} : {gender: "Other"}
+    x == "Man"? "Man" : x == "Women" ?  "Women" :  "Other"
 )
 /*
     * the types/interfaces of the models that are going to be used during this project
@@ -20,7 +14,7 @@ export type Students = {
     Id: number
     Firstname:string
     Prefix: string
-    Gender: Gender
+    Gender: "Man" | "Women" | "Other"
     Lastname: string
     Educations: Educations
     Grades: List<Grades>
