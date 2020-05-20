@@ -155,7 +155,7 @@ var OrderByclause = function (columnName, o) {
 };
 var OrderList = function (list, columnName, o) {
     if (list.kind == "Cons" && list.tail.kind == "Cons") {
-        var tmp1 = OrderListTool(list, list.tail.head, columnName, o);
+        var tmp1 = OrderListTool(list, list.head, columnName, o);
         return utils_1.Cons(tmp1[1], OrderList(tmp1[0], columnName, o));
     }
     else if (list.kind == "Cons") {
@@ -167,6 +167,8 @@ var OrderList = function (list, columnName, o) {
 };
 var OrderListTool = function (list, value, columnName, o) {
     if (list.kind == "Cons" && list.tail.kind == "Empty") {
+        console.log(value);
+        console.log("\n=========\n");
         return [utils_1.Empty(), value];
     }
     else if (list.kind == "Cons" && list.tail.kind == "Cons") {
@@ -183,9 +185,6 @@ var OrderRows = function (value1, value2, columnName, o) {
     var v1 = GetColumnValue(value1, columnName);
     var v2 = GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
-    // console.log(v1)
-    // console.log(v2)
-    // console.log("t \n\n ")
     if (o == "DESC") {
         if (vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]) {
             return [value2, value1];

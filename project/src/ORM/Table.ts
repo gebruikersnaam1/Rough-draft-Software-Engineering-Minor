@@ -211,7 +211,7 @@ let OrderByclause = function(columnName:string,  o: OrderByOptions) : OrderBycla
 
 let OrderList = function(list:List<Row<Unit>>,columnName: string, o: OrderByOptions): List<Row<Unit>>{
     if(list.kind == "Cons" && list.tail.kind == "Cons"){
-        let tmp1 =  OrderListTool(list, list.tail.head,columnName,o)
+        let tmp1 =  OrderListTool(list, list.head,columnName,o)
         return Cons(tmp1[1], OrderList(tmp1[0], columnName, o))
     }
     else if(list.kind == "Cons"){
@@ -223,6 +223,8 @@ let OrderList = function(list:List<Row<Unit>>,columnName: string, o: OrderByOpti
 
 let OrderListTool = function(list:List<Row<Unit>>,value : Row<Unit>,columnName: string, o: OrderByOptions): [List<Row<Unit>>,Row<Unit>]{
     if(list.kind == "Cons" && list.tail.kind== "Empty"){
+        console.log(value)
+        console.log("\n=========\n") 
         return [Empty(), value]
     }
     else if(list.kind == "Cons" && list.tail.kind == "Cons"){
@@ -240,10 +242,6 @@ let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: strin
     let v1 = GetColumnValue(value1, columnName)
     let v2 = GetColumnValue(value2, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
-    // console.log(v1)
-    // console.log(v2)
-    // console.log("t \n\n ")
-
 
     if(o == "DESC"){
         if(vN[0] != NaN && vN[0] == NaN && vN[0] < vN[1]){
