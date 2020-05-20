@@ -18,6 +18,6 @@ var Database_1 = require("./ORM/Database");
 // let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
 // query1.printRows()
 //showing the SELECT and Union
-var query2 = Database_1.dbTables.Students().Select("Id", "Lastname", "Prefix", "Gender").OrderBy("Id", "DESC").Where("Id", "LessThan", "15").Include().SelectGradeStates("Course_Name", "Teacher").Commit();
+var query2 = Database_1.dbTables.Students().Select("Id", "Lastname", "Prefix", "Gender").GroupBy('Prefix').OrderBy("Id", "DESC").Where("Id", "LessThan", "15").Include().SelectGradeStates("Course_Name", "Teacher").Commit();
 query2.printRows();
 // let query3 = dbTables.Grades().Select("Id").Where("O")

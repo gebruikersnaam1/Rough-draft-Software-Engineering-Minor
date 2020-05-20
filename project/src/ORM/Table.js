@@ -65,23 +65,33 @@ var OperationUnit = function () {
     var unit = function (i) { return i; };
     return OperationExecute(unit, unit, unit);
 };
-/*******************************************************************************
-    * @groupby
-    * Note:
-*******************************************************************************/
-//boolean is to say: Hé the values needed to switched!
-// let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
-//     let v1 = GetColumnValue(value1, columnName)
-var GroupByTool = function (l) {
+var GroupByClauses = function (columnName) {
+    return {
+        GroupBy: function (list) { return (GroupByTool(list, columnName)); }
+    };
+};
+var GroupByTool = function (l, columnName) {
     if (l.kind == "Cons") {
+        var searchVal = utils_1.GetColumnValue(l.head, columnName);
+        var result = FilterOut(searchVal, l.tail, columnName);
+        return utils_1.Cons(l.head, GroupByTool(result, columnName));
     }
     else {
+        return utils_1.Empty();
     }
 };
-var FilterOut = function (l) {
+var FilterOut = function (searchVal, l, columnName) {
     if (l.kind == "Cons") {
+        var compareVal = utils_1.GetColumnValue(l.head, columnName);
+        if (compareVal == searchVal) {
+            return FilterOut(searchVal, l.tail, columnName);
+        }
+        else {
+            return utils_1.Cons(l.head, FilterOut(searchVal, l.tail, columnName));
+        }
     }
     else {
+        return utils_1.Empty();
     }
 };
 var WhereClauses = function (columnName, value) {
@@ -292,6 +302,9 @@ var Table = function (dbData, filterData, opType) {
         },
         OrderBy: function (x, option) {
             return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Orderby: OrderByclause(String(x), option).Orderby }));
+        },
+        GroupBy: function (x) {
+            return Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { GroupBy: GroupByClauses(String(x)).GroupBy }));
         },
         Commit: function () {
             var t = this.tbOperations; //to shorten the name

@@ -29,8 +29,7 @@ export interface Operators<T,U extends string,N> extends Execute,dataInterface<T
     Where:<k extends keyof T, z extends keyof WhereClauses>(x:k, operator:z,value:string) => Omit<Operators<T,U | "Where",N>,U | "Where">,
     Include: ()=>IncludeTable<T,U,N>
     OrderBy: <k extends keyof T>(x:k, option:OrderByOptions) => Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">,
-    // GroupBy: null
-    //TODO: implement ^ stuff
+    GroupBy: <k extends keyof T>(x:k) => Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">
 }
 
 
@@ -102,20 +101,35 @@ let OperationUnit = function() : OperationType{
     * Note: 
 *******************************************************************************/
 //boolean is to say: Hé the values needed to switched!
-// let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
-//     let v1 = GetColumnValue(value1, columnName)
-let GroupByTool = function(l:List<Row<Unit>>){
+interface GroupByClauses{
+    GroupBy: (i:List<Row<Unit>>)=> List<Row<Unit>>,
+}
+
+let GroupByClauses = function(columnName:string) : GroupByClauses{
+    return{
+        GroupBy:(list:List<Row<Unit>>) => (GroupByTool(list,columnName))
+        }
+}
+
+let GroupByTool = function(l:List<Row<Unit>>, columnName: string) : List<Row<Unit>> {
     if(l.kind == "Cons"){
-
+        let searchVal = GetColumnValue(l.head, columnName)
+        let result = FilterOut(searchVal,l.tail,columnName)
+        return Cons(l.head,GroupByTool(result,columnName))
     }else{
-
+        return Empty()
     }
 }
-let FilterOut = function(l:List<Row<Unit>>){
+let FilterOut = function(searchVal:string,l:List<Row<Unit>>, columnName: string) : List<Row<Unit>>{
     if(l.kind == "Cons"){
-        
+        let compareVal = GetColumnValue(l.head, columnName)
+        if(compareVal == searchVal){
+            return FilterOut(searchVal,l.tail,columnName)
+        }else{
+            return Cons(l.head,FilterOut(searchVal,l.tail,columnName))
+        }
     }else{
-
+        return Empty()
     }
 }
 /******************************************************************************* 
@@ -347,6 +361,9 @@ let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filterData: F
         },
         OrderBy: function <k extends keyof T>(x:k, option:OrderByOptions) :Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">{
             return Table<T,U | "OrderBy",N>(this.dataDB,filterData,{...this.tbOperations, Orderby: OrderByclause(String(x),option).Orderby  })
+        },
+        GroupBy: function <k extends keyof T>(x:k) : Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">{
+            return Table<T,U | "GroupBy",N>(this.dataDB,filterData,{...this.tbOperations, GroupBy: GroupByClauses(String(x)).GroupBy  })
         },
         Commit: function(this) { //this is to get the list
            let t = this.tbOperations //to shorten the name
