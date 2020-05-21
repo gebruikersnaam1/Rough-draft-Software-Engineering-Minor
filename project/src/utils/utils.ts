@@ -112,8 +112,8 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
     }
   }
 
-  export let ConvertStringsToNumber = function(x :string,v: string) : [number, number]{
-    return [Number(x),Number(v)]
+  export let ConvertStringsToNumber = function(x :string,v: string) : Pair<number, number>{
+    return {fst: Number(x),snd:Number(v)}
   }
 
   export let GetColumnValue =  function(r: Row<Unit>,columnName:string) : string{

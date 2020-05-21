@@ -31,15 +31,15 @@ var PrintHeader = function (title) {
 // PrintHeader("Showing SELECT")
 // let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
 // query1.printRows()
-// PrintHeader("Showing WHERE")
-// let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","LessThan","20").Commit()
-// query2.printRows()
+PrintHeader("Showing WHERE");
+var query2 = Database_1.dbTables.Students().Select("Id", "Firstname", "Grades").Where("Id", "GreaterThan", "20").Commit();
+query2.printRows();
 // PrintHeader("Showing Include")
 // let query3 = dbTables.Students().Select("Id","Firstname","Grades").Include().SelectEducations("Name").Commit()
 // query3.printRows()
-PrintHeader("Showing OrderBy");
-var query5 = Database_1.dbTables.Students().Select("Id", "Firstname", "Gender").OrderBy("Firstname", "ASC").Commit();
-query5.printRows();
+// PrintHeader("Showing OrderBy")
+// let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Firstname","ASC").Commit()
+// query5.printRows()
 // PrintHeader("Showing GroupBy")
 // let query6 = dbTables.Students().Select("Id","Firstname","Grades").GroupBy("Prefix").Commit()
 // query6.printRows()

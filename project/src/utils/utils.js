@@ -69,7 +69,7 @@ exports.PrintQueryValues = function (l) {
     }
 };
 exports.ConvertStringsToNumber = function (x, v) {
-    return [Number(x), Number(v)];
+    return { fst: Number(x), snd: Number(v) };
 };
 exports.GetColumnValue = function (r, columnName) {
     var x = "";

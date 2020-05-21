@@ -84,8 +84,8 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
         GreaterThan:(list:List<Row<Unit>>) => {
             return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringsToNumber(x,value)
-                if(i[0] != NaN && i[1] != NaN){
-                    if(i[0] > i[1]){ //needed a nested if...why???????
+                if(i.fst != NaN && i.snd != NaN){
+                    if(i.fst > i.snd){ //needed a nested if...why???????
                         return true 
                     }else{
                         return false
@@ -101,8 +101,8 @@ export let WhereClauses = function(columnName:string,value:string) : WhereClause
         LessThan:(list:List<Row<Unit>>) => {
             return WhereFun(list,columnName,Fun<string,boolean>(x=>{
                 let i = ConvertStringsToNumber(x,value)
-                if(i[0] != NaN && i[1] != NaN){
-                    if(i[0] < i[1]){ //needed a nested if...why???????
+                if(i.fst != NaN && i.snd != NaN){
+                    if(i.fst < i.snd){ //needed a nested if...why???????
                         return true 
                     }else{
                         return false
@@ -196,9 +196,9 @@ let OrderTwoRowsDESC = function(value1: Row<Unit>, value2: Row<Unit>, columnName
     let v2 = GetColumnValue(value2, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
 
-    if(vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]){
+    if(vN.fst != NaN && vN.snd != NaN && vN.fst < vN.snd){
         return {fst: value2, snd:value1}
-    }else if(vN[0] != NaN && vN[1] != NaN){
+    }else if(vN.fst != NaN && vN.snd != NaN){
         //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
         return {fst: value1, snd:value2}
     }
@@ -213,7 +213,7 @@ let OrderTwoRowsASC = function(value1: Row<Unit>, value2: Row<Unit>, columnName:
     let v2 = GetColumnValue(value2, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
 
-    if(vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]){
+    if(vN.fst != NaN && vN.snd != NaN && vN.fst > vN.snd){
         return {fst: value2, snd:value1}
     }
     if(v1 > v2){   
