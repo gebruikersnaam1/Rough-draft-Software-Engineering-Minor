@@ -13,14 +13,17 @@ let cmi4 = models.Educations("Technische communicatie",4)
 
 export let ListEducations = Cons(cmi1,Cons(cmi2,Cons(cmi3,Cons(cmi4,Empty()))))
 
-//cource names
+/*
+  * Will be used to create data models
+*/
+
 let courceName1 = "SLC"
 let courceName2 = "Skills"
 let courceName3 = "Work Safety - Corona Edition"
 let courceName4 = "Become a Gift For Your Environment"
 
 /*
-  * stuff to generate a Grade
+  * stuff to generate a grade
 */
 const CreateRandomGrades = () : number =>{
   return Math.floor(Math.random() * (10-6 + 1)) + 6 //extra random? 
@@ -32,23 +35,24 @@ const CreateGradeID = () : number => {
   return (gradeID)
 }
 
-//random grades used for 28 students... but doesn't allow include
+/*
+  * Random table. May be removed?
+*/
 const CreateGrades = (): List<models.Grades> => {
   return Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName1),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName2),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName3),
          Cons(models.Grades(CreateGradeID(),CreateRandomGrades(),courceName4),Empty()))))
 }
-
-//may be needed for include
 export let RandomGrades :  List<models.Grades> = CreateGrades()
 
-//grade states to have something to include
+/*
+  * some stats about courses
+*/
 let g1 = models.GradeStats(courceName1,CreateRandomGrades(),"Judith-Lotte van Koopvrouw")
 let g2 = models.GradeStats(courceName2,CreateRandomGrades(),"Gwen-Anouk van Koopman")
 let g3 = models.GradeStats(courceName3,CreateRandomGrades(),"Anne-Barbie van Koopoverig")
 let g4 = models.GradeStats(courceName4,CreateRandomGrades(),"Eibert 'the Gift' Wagenaar")
-
 
 export let ListGrades = Cons(g1,Cons(g2,Cons(g3,Cons(g4,Empty()))))
 

@@ -11,13 +11,15 @@ var cmi2 = models.Educations("Communicatie", 4);
 var cmi3 = models.Educations("Technische Informatica", 4);
 var cmi4 = models.Educations("Technische communicatie", 4);
 exports.ListEducations = utils_1.Cons(cmi1, utils_1.Cons(cmi2, utils_1.Cons(cmi3, utils_1.Cons(cmi4, utils_1.Empty()))));
-//cource names
+/*
+  * Will be used to create data models
+*/
 var courceName1 = "SLC";
 var courceName2 = "Skills";
 var courceName3 = "Work Safety - Corona Edition";
 var courceName4 = "Become a Gift For Your Environment";
 /*
-  * stuff to generate a Grade
+  * stuff to generate a grade
 */
 var CreateRandomGrades = function () {
     return Math.floor(Math.random() * (10 - 6 + 1)) + 6; //extra random? 
@@ -27,13 +29,16 @@ var CreateGradeID = function () {
     gradeID += 1;
     return (gradeID);
 };
-//random grades used for 28 students... but doesn't allow include
+/*
+  * Random table. May be removed?
+*/
 var CreateGrades = function () {
     return utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName1), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName2), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName3), utils_1.Cons(models.Grades(CreateGradeID(), CreateRandomGrades(), courceName4), utils_1.Empty()))));
 };
-//may be needed for include
 exports.RandomGrades = CreateGrades();
-//grade states to have something to include
+/*
+  * some stats about courses
+*/
 var g1 = models.GradeStats(courceName1, CreateRandomGrades(), "Judith-Lotte van Koopvrouw");
 var g2 = models.GradeStats(courceName2, CreateRandomGrades(), "Gwen-Anouk van Koopman");
 var g3 = models.GradeStats(courceName3, CreateRandomGrades(), "Anne-Barbie van Koopoverig");
