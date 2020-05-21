@@ -1,5 +1,5 @@
 import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair, ConvertArrayStringToNumber, CalculateNumbers, GetLowestValue,GetHighestValue} from  "../utils/utils"//import tool
-import { Row} from "../data/models"
+import { Row, Column} from "../data/models"
 /******************************************************************************* 
     * @Operations like where, oderby and groupby
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
@@ -32,18 +32,27 @@ export interface GroupByClauses{
     GroupBy: (i:List<Row<Unit>>)=> List<Row<Unit>>,
 }
 
-export let GroupByClauses = function(columnName:string) : GroupByClauses{
+export let GroupByClauses = function(columnName:string,op: groupbyOptions) : GroupByClauses{
     return{
-        GroupBy:(list:List<Row<Unit>>) => (GroupByTool(list,columnName))
+        GroupBy:(list:List<Row<Unit>>) => (GroupByTool(list,columnName,op))
         }
 }
 
-let GroupByTool = function(l:List<Row<Unit>>, columnName: string) : List<Row<Unit>> {
+let GroupByTool = function(l:List<Row<Unit>>, columnName: string, op: groupbyOptions) : List<Row<Unit>> {
+
     if(l.kind == "Cons"){
         let searchVal = GetColumnValue(l.head, columnName)
         let result = FilterOut(searchVal,l.tail,columnName)
-        //the result contains a list without the search value(l.head), this will be done until no values are left
-        return Cons(l.head,GroupByTool(result,columnName))
+        if(op != ""){
+            let tmp1 = GetAllValuesOnSearch(searchVal,l.tail,columnName,[])
+            console.log(tmp1)
+
+            let tmp2 = AggregateFun(op,l.head,tmp1)
+            return Cons(tmp2,GroupByTool(result,columnName,op))
+        }else{
+            //the result contains a list without the search value(l.head), this will be done until no values are left
+            return Cons(l.head,GroupByTool(result,columnName, op))
+        }
     }else{
         return Empty()
     }
@@ -63,8 +72,18 @@ let FilterOut = function(searchVal:string,l:List<Row<Unit>>, columnName: string)
 }
 
 ///'Aggregate functions' (COUNT, MAX, MIN, SUM, AVG)
-type groupbyFuns = "COUNT" |  "MAX" | "MIN" | "SUM" | "AVG"
+type groupbyFuns = "COUNT" |  "MAX" | "MIN" | "SUM" | "AVG" 
+//gives the option to select just Groupby
+export type groupbyOptions = groupbyFuns | ""
+
+let AggregateFun = function(agFun: groupbyFuns, r: Row<Unit>, value: string[]) : Row<Unit>
+{
+    r.columns.push(Column(agFun, GroupByAggregate(agFun,value)))
+    return r
+}
+
 let GetAllValuesOnSearch = function(searchVal:string,l:List<Row<Unit>>, columnName: string, values: string[]) : string[]{
+    console.log(values)
     if(l.kind == "Cons"){
         let compareVal = GetColumnValue(l.head, columnName)
         if(compareVal == searchVal){
@@ -82,9 +101,11 @@ let GroupByAggregate = function(agFun: groupbyFuns, content: string[]) : string{
         case "COUNT":
             return String(content.length)
         case "SUM":
-        case "AVG":
             let sum = CalculateNumbers(nContent,"+")
             return String(sum)
+        case "AVG":
+            let avgSum = CalculateNumbers(nContent,"+")
+            return String(avgSum)
         case "MAX":
             return String(GetHighestValue(nContent))
         case "MIN":

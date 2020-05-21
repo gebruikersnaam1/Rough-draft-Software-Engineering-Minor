@@ -26,7 +26,7 @@ let PrintHeader = function(title:string){
 
 // PrintHeader("Showing Complete")
 // let query7 = dbTables.Students().Select("Id","Firstname","Grades").
-//                 GroupBy("Prefix").Where("Id","GreaterThan","12")
+//                 GroupBy("Prefix","").Where("Id","GreaterThan","12")
 //                     .OrderBy("Id","DESC").Include()
 //                         .SelectEducations("Name","Study_Duration").Commit()
 // query7.printRows()
@@ -36,9 +36,9 @@ let PrintHeader = function(title:string){
 // let query1 = dbTables.Students().Select("Id","Firstname","Grades").Commit()
 // query1.printRows()
 
-PrintHeader("Showing WHERE")
-let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","GreaterThan","20").Commit()
-query2.printRows()
+// PrintHeader("Showing WHERE")
+// let query2 = dbTables.Students().Select("Id","Firstname","Grades").Where("Id","GreaterThan","20").Commit()
+// query2.printRows()
 
 // PrintHeader("Showing Include")
 // let query3 = dbTables.Students().Select("Id","Firstname","Grades").Include().SelectEducations("Name").Commit()
@@ -48,6 +48,6 @@ query2.printRows()
 // let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Firstname","ASC").Commit()
 // query5.printRows()
 
-// PrintHeader("Showing GroupBy")
-// let query6 = dbTables.Students().Select("Id","Firstname","Grades").GroupBy("Prefix").Commit()
-// query6.printRows()
+PrintHeader("Showing GroupBy")
+let query6 = dbTables.Students().Select("Id","Firstname","Prefix").GroupBy("Id","SUM").Commit()
+query6.printRows()

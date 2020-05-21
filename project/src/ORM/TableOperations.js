@@ -1,6 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var utils_1 = require("../utils/utils"); //import tool
+var models_1 = require("../data/models");
 var OperationExecute = function (w, g, o) {
     return {
         Where: w,
@@ -12,17 +13,25 @@ exports.OperationUnit = function () {
     var unit = function (i) { return i; };
     return OperationExecute(unit, unit, unit);
 };
-exports.GroupByClauses = function (columnName) {
+exports.GroupByClauses = function (columnName, op) {
     return {
-        GroupBy: function (list) { return (GroupByTool(list, columnName)); }
+        GroupBy: function (list) { return (GroupByTool(list, columnName, op)); }
     };
 };
-var GroupByTool = function (l, columnName) {
+var GroupByTool = function (l, columnName, op) {
     if (l.kind == "Cons") {
         var searchVal = utils_1.GetColumnValue(l.head, columnName);
         var result = FilterOut(searchVal, l.tail, columnName);
-        //the result contains a list without the search value(l.head), this will be done until no values are left
-        return utils_1.Cons(l.head, GroupByTool(result, columnName));
+        if (op != "") {
+            var tmp1 = GetAllValuesOnSearch(searchVal, l.tail, columnName, []);
+            console.log(tmp1);
+            var tmp2 = AggregateFun(op, l.head, tmp1);
+            return utils_1.Cons(tmp2, GroupByTool(result, columnName, op));
+        }
+        else {
+            //the result contains a list without the search value(l.head), this will be done until no values are left
+            return utils_1.Cons(l.head, GroupByTool(result, columnName, op));
+        }
     }
     else {
         return utils_1.Empty();
@@ -42,7 +51,12 @@ var FilterOut = function (searchVal, l, columnName) {
         return utils_1.Empty();
     }
 };
+var AggregateFun = function (agFun, r, value) {
+    r.columns.push(models_1.Column(agFun, GroupByAggregate(agFun, value)));
+    return r;
+};
 var GetAllValuesOnSearch = function (searchVal, l, columnName, values) {
+    console.log(values);
     if (l.kind == "Cons") {
         var compareVal = utils_1.GetColumnValue(l.head, columnName);
         if (compareVal == searchVal) {
@@ -60,9 +74,11 @@ var GroupByAggregate = function (agFun, content) {
         case "COUNT":
             return String(content.length);
         case "SUM":
-        case "AVG":
             var sum = utils_1.CalculateNumbers(nContent, "+");
             return String(sum);
+        case "AVG":
+            var avgSum = utils_1.CalculateNumbers(nContent, "+");
+            return String(avgSum);
         case "MAX":
             return String(utils_1.GetHighestValue(nContent));
         case "MIN":

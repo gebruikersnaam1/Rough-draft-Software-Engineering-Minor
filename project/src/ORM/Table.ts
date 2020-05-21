@@ -1,7 +1,7 @@
 import {map_table,Fun,Unit, tableData,FilterPair,List, PlusList, FilterPairUnit,Empty} from  "../utils/utils"//import tool
 import {Column, Row,QueryResult} from "../data/models"
 import {IncludeTable} from "./TableInclude"
-import {OperationType, WhereClauses, OrderByOptions, OrderByclause, GroupByClauses, OperationUnit} from './TableOperations'
+import {OperationType, WhereClauses, OrderByOptions, OrderByclause, GroupByClauses, OperationUnit,groupbyOptions} from './TableOperations'
 //note tools: keyof [], [X in Exclude<keyof I, 'k' | 'l'>] : I[X], Omit<I,X>
 
 /******************************************************************************* 
@@ -29,7 +29,7 @@ export interface Operators<T,U extends string,N> extends Execute,dataInterface<T
     Where:<k extends keyof T, z extends keyof WhereClauses>(x:k, operator:z,value:string) => Omit<Operators<T,U | "Where",N>,U | "Where">,
     Include: ()=>IncludeTable<T,U,N>
     OrderBy: <k extends keyof T>(x:k, option:OrderByOptions) => Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">,
-    GroupBy: <k extends keyof T>(x:k) => Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">
+    GroupBy: <k extends keyof T>(x:k,op: groupbyOptions) => Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">
 }
 
 
@@ -73,8 +73,8 @@ export let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filter
         OrderBy: function <k extends keyof T>(x:k, option:OrderByOptions) :Omit<Operators<T,U | "OrderBy",N>,U | "OrderBy">{
             return Table<T,U | "OrderBy",N>(this.dataDB,filterData,{...this.tbOperations, Orderby: OrderByclause(String(x),option).Orderby  })
         },
-        GroupBy: function <k extends keyof T>(x:k) : Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">{
-            return Table<T,U | "GroupBy",N>(this.dataDB,filterData,{...this.tbOperations, GroupBy: GroupByClauses(String(x)).GroupBy  })
+        GroupBy: function <k extends keyof T>(x:k, op: groupbyOptions) : Omit<Operators<T,U | "GroupBy",N>,U | "GroupBy">{
+            return Table<T,U | "GroupBy",N>(this.dataDB,filterData,{...this.tbOperations, GroupBy: GroupByClauses(String(x),op).GroupBy  })
         },
         Commit: function(this) { //this is to get the list
            let t = this.tbOperations //to shorten the name

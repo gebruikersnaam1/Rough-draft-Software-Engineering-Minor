@@ -56,8 +56,8 @@ exports.Table = function (dbData, filterData, opType) {
         OrderBy: function (x, option) {
             return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { Orderby: TableOperations_1.OrderByclause(String(x), option).Orderby }));
         },
-        GroupBy: function (x) {
-            return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { GroupBy: TableOperations_1.GroupByClauses(String(x)).GroupBy }));
+        GroupBy: function (x, op) {
+            return exports.Table(this.dataDB, filterData, __assign(__assign({}, this.tbOperations), { GroupBy: TableOperations_1.GroupByClauses(String(x), op).GroupBy }));
         },
         Commit: function () {
             var t = this.tbOperations; //to shorten the name
