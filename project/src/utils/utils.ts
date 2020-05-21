@@ -112,6 +112,16 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
     }
   }
 
+  export let ConvertArrayStringToNumber = function(stringArray : string[]) : number[]{
+    let tmp1 : number[] = []
+    stringArray.forEach(e => {
+      tmp1.push(Number(e))
+    });
+    return tmp1
+  }
+ 
+  
+
   export let ConvertStringsToNumber = function(x :string,v: string) : Pair<number, number>{
     return {fst: Number(x),snd:Number(v)}
   }
@@ -124,4 +134,35 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
         }
     })
     return x
+}
+
+//only + maybe added other functions later on
+export let CalculateNumbers = function(array : number[], operator: "+") : number{
+  let tmp1 : number = 0
+  array.forEach(e => {
+      if(operator == "+"){
+        tmp1 += Number(e)
+      }
+  });
+  return tmp1
+}
+
+export let GetLowestValue = function(array : number[]) : number{
+  let tmp1 : number = array.length != 0 ? array[0] : 0
+  array.forEach(e => {
+    if (e < tmp1){
+      tmp1 = e
+    }
+  });
+  return tmp1
+}
+
+export let GetHighestValue = function(array : number[]) : number{
+  let tmp1 : number = array.length != 0 ? array[0] : 0
+  array.forEach(e => {
+    if (e > tmp1){
+      tmp1 = e
+    }
+  });
+  return tmp1
 }

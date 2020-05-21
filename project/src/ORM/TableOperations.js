@@ -42,6 +42,34 @@ var FilterOut = function (searchVal, l, columnName) {
         return utils_1.Empty();
     }
 };
+var GetAllValuesOnSearch = function (searchVal, l, columnName, values) {
+    if (l.kind == "Cons") {
+        var compareVal = utils_1.GetColumnValue(l.head, columnName);
+        if (compareVal == searchVal) {
+            values.push(compareVal);
+        }
+        return GetAllValuesOnSearch(searchVal, l.tail, columnName, values);
+    }
+    else {
+        return values;
+    }
+};
+var GroupByAggregate = function (agFun, content) {
+    var nContent = utils_1.ConvertArrayStringToNumber(content); //if not count, numers are needed (simpely returns NaN if column is not number)
+    switch (agFun) {
+        case "COUNT":
+            return String(content.length);
+        case "SUM":
+        case "AVG":
+            var sum = utils_1.CalculateNumbers(nContent, "+");
+            return String(sum);
+        case "MAX":
+            return String(utils_1.GetHighestValue(nContent));
+        case "MIN":
+        default: //default maybe something different
+            return String(utils_1.GetLowestValue(nContent));
+    }
+};
 exports.WhereClauses = function (columnName, value) {
     return {
         Equal: function (list) {

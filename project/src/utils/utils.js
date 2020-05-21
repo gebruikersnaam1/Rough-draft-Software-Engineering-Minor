@@ -68,6 +68,13 @@ exports.PrintQueryValues = function (l) {
         exports.PrintQueryValues(l.tail);
     }
 };
+exports.ConvertArrayStringToNumber = function (stringArray) {
+    var tmp1 = [];
+    stringArray.forEach(function (e) {
+        tmp1.push(Number(e));
+    });
+    return tmp1;
+};
 exports.ConvertStringsToNumber = function (x, v) {
     return { fst: Number(x), snd: Number(v) };
 };
@@ -79,4 +86,32 @@ exports.GetColumnValue = function (r, columnName) {
         }
     });
     return x;
+};
+//only + maybe added other functions later on
+exports.CalculateNumbers = function (array, operator) {
+    var tmp1 = 0;
+    array.forEach(function (e) {
+        if (operator == "+") {
+            tmp1 += Number(e);
+        }
+    });
+    return tmp1;
+};
+exports.GetLowestValue = function (array) {
+    var tmp1 = array.length != 0 ? array[0] : 0;
+    array.forEach(function (e) {
+        if (e < tmp1) {
+            tmp1 = e;
+        }
+    });
+    return tmp1;
+};
+exports.GetHighestValue = function (array) {
+    var tmp1 = array.length != 0 ? array[0] : 0;
+    array.forEach(function (e) {
+        if (e > tmp1) {
+            tmp1 = e;
+        }
+    });
+    return tmp1;
 };

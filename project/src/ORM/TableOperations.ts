@@ -1,4 +1,4 @@
-import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair} from  "../utils/utils"//import tool
+import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair, ConvertArrayStringToNumber, CalculateNumbers, GetLowestValue,GetHighestValue} from  "../utils/utils"//import tool
 import { Row} from "../data/models"
 /******************************************************************************* 
     * @Operations like where, oderby and groupby
@@ -48,6 +48,7 @@ let GroupByTool = function(l:List<Row<Unit>>, columnName: string) : List<Row<Uni
         return Empty()
     }
 }
+
 let FilterOut = function(searchVal:string,l:List<Row<Unit>>, columnName: string) : List<Row<Unit>>{
     if(l.kind == "Cons"){
         let compareVal = GetColumnValue(l.head, columnName)
@@ -60,6 +61,38 @@ let FilterOut = function(searchVal:string,l:List<Row<Unit>>, columnName: string)
         return Empty()
     }
 }
+
+///'Aggregate functions' (COUNT, MAX, MIN, SUM, AVG)
+type groupbyFuns = "COUNT" |  "MAX" | "MIN" | "SUM" | "AVG"
+let GetAllValuesOnSearch = function(searchVal:string,l:List<Row<Unit>>, columnName: string, values: string[]) : string[]{
+    if(l.kind == "Cons"){
+        let compareVal = GetColumnValue(l.head, columnName)
+        if(compareVal == searchVal){
+           values.push(compareVal)
+        }
+        return GetAllValuesOnSearch(searchVal,l.tail,columnName,values)
+    }else{
+        return values
+    }
+}
+
+let GroupByAggregate = function(agFun: groupbyFuns, content: string[]) : string{
+    let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
+    switch(agFun){
+        case "COUNT":
+            return String(content.length)
+        case "SUM":
+        case "AVG":
+            let sum = CalculateNumbers(nContent,"+")
+            return String(sum)
+        case "MAX":
+            return String(GetHighestValue(nContent))
+        case "MIN":
+        default: //default maybe something different
+            return String(GetLowestValue(nContent))
+    }
+}
+
 /******************************************************************************* 
     * @Whereclause
     * Note: trying to use Fun, but I'm not going to do Fun in Fun
