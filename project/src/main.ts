@@ -49,5 +49,5 @@ let PrintHeader = function(title:string){
 // query5.printRows()
 
 PrintHeader("Showing GroupBy")
-let query6 = dbTables.Students().Select("Id","Firstname","Prefix").GroupBy("Prefix","").Commit()
+let query6 = dbTables.Students().Select("Id","Firstname","Prefix").GroupBy("Prefix","COUNT").Commit()
 query6.printRows()

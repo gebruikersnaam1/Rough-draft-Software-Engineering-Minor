@@ -41,5 +41,5 @@ var PrintHeader = function (title) {
 // let query5 = dbTables.Students().Select("Id","Firstname","Gender").OrderBy("Firstname","ASC").Commit()
 // query5.printRows()
 PrintHeader("Showing GroupBy");
-var query6 = Database_1.dbTables.Students().Select("Id", "Firstname", "Prefix").GroupBy("Prefix", "").Commit();
+var query6 = Database_1.dbTables.Students().Select("Id", "Firstname", "Prefix").GroupBy("Prefix", "COUNT").Commit();
 query6.printRows();

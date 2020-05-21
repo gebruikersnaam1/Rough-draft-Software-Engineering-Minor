@@ -1,4 +1,4 @@
-import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair, ConvertArrayStringToNumber, CalculateNumbers, GetLowestValue,GetHighestValue} from  "../utils/utils"//import tool
+import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair} from  "../utils/utils"//import tool
 import { Row, Column} from "../data/models"
 /******************************************************************************* 
     * @Operations like where, oderby and groupby
@@ -68,8 +68,8 @@ let FilterOut = function(searchVal:string,l:List<Row<Unit>>, columnName: string)
     }
 }
 
-///'Aggregate functions' (COUNT, MAX, MIN, SUM, AVG)
-type groupbyFuns = "COUNT" |  "MAX" | "MIN" | "SUM" | "AVG" 
+///'Aggregate functions' ("COUNT" |  "MAX" | "MIN" | "SUM" | "AVG" )
+type groupbyFuns = "COUNT" 
 //gives the option to select just Groupby
 export type groupbyOptions = groupbyFuns | ""
 
@@ -85,28 +85,18 @@ let GetAllValuesOnSearch = function(searchVal:string,l:List<Row<Unit>>, columnNa
         if(compareVal == searchVal){
            values.push(compareVal)
         }
-        return values.concat(GetAllValuesOnSearch(searchVal,l.tail,columnName,values))
+        return GetAllValuesOnSearch(searchVal,l.tail,columnName,values)
     }else{
         return values
     }
 }
 
 let GroupByAggregate = function(agFun: groupbyFuns, content: string[]) : string{
-    let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
-    switch(agFun){
+    // let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
+    switch(agFun){ //TODO: add other aggregate functions
         case "COUNT":
-            return String(content.length)
-        case "SUM":
-            let sum = CalculateNumbers(nContent,"+")
-            return String(sum)
-        case "AVG":
-            let avgSum = CalculateNumbers(nContent,"+")
-            return String(avgSum)
-        case "MAX":
-            return String(GetHighestValue(nContent))
-        case "MIN":
-        default: //default maybe something different
-            return String(GetLowestValue(nContent))
+        default:
+            return String((content.length+1))
     }
 }
 

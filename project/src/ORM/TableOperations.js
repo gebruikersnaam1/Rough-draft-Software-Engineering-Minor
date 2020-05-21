@@ -60,28 +60,18 @@ var GetAllValuesOnSearch = function (searchVal, l, columnName, values) {
         if (compareVal == searchVal) {
             values.push(compareVal);
         }
-        return values.concat(GetAllValuesOnSearch(searchVal, l.tail, columnName, values));
+        return GetAllValuesOnSearch(searchVal, l.tail, columnName, values);
     }
     else {
         return values;
     }
 };
 var GroupByAggregate = function (agFun, content) {
-    var nContent = utils_1.ConvertArrayStringToNumber(content); //if not count, numers are needed (simpely returns NaN if column is not number)
-    switch (agFun) {
+    // let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
+    switch (agFun) { //TODO: add other aggregate functions
         case "COUNT":
-            return String(content.length);
-        case "SUM":
-            var sum = utils_1.CalculateNumbers(nContent, "+");
-            return String(sum);
-        case "AVG":
-            var avgSum = utils_1.CalculateNumbers(nContent, "+");
-            return String(avgSum);
-        case "MAX":
-            return String(utils_1.GetHighestValue(nContent));
-        case "MIN":
-        default: //default maybe something different
-            return String(utils_1.GetLowestValue(nContent));
+        default:
+            return String((content.length + 1));
     }
 };
 exports.WhereClauses = function (columnName, value) {
