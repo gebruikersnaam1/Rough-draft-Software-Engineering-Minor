@@ -36,9 +36,7 @@ exports.Column = function (name, value) { return ({
 //     rows: Row<T>[]
 // }
 exports.Row = function (columns) { return ({
-    columns: columns,
-    getHeader: columns.map(function (x) { return String(x.name); }),
-    getValues: columns.map(function (x) { return String(x.value); })
+    columns: columns
 }); };
 exports.QueryResult = function (list) { return ({
     data: list,
@@ -60,7 +58,7 @@ exports.QueryResult = function (list) { return ({
     },
     printRows: function () {
         if (list.kind == "Cons") {
-            console.log(list.head.getHeader);
+            console.log(list.head.columns.map(function (x) { return String(x.name); }));
             utils_1.PrintQueryValues(list);
         }
     }

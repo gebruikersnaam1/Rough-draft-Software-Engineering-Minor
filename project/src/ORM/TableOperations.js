@@ -24,7 +24,6 @@ var GroupByTool = function (l, columnName, op) {
         var result = FilterOut(searchVal, l.tail, columnName);
         if (op != "") {
             var tmp1 = GetAllValuesOnSearch(searchVal, l.tail, columnName, []);
-            console.log(tmp1);
             var tmp2 = AggregateFun(op, l.head, tmp1);
             return utils_1.Cons(tmp2, GroupByTool(result, columnName, op));
         }
@@ -56,13 +55,12 @@ var AggregateFun = function (agFun, r, value) {
     return r;
 };
 var GetAllValuesOnSearch = function (searchVal, l, columnName, values) {
-    console.log(values);
     if (l.kind == "Cons") {
         var compareVal = utils_1.GetColumnValue(l.head, columnName);
         if (compareVal == searchVal) {
             values.push(compareVal);
         }
-        return GetAllValuesOnSearch(searchVal, l.tail, columnName, values);
+        return values.concat(GetAllValuesOnSearch(searchVal, l.tail, columnName, values));
     }
     else {
         return values;

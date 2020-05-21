@@ -107,7 +107,7 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
 
   export let PrintQueryValues = function<T>(l : List<Row<T>>){
     if(l.kind == "Cons"){
-        console.log(l.head.getValues)
+        console.log(l.head.columns.map(x => String(x.value)))
         PrintQueryValues(l.tail)
     }
   }

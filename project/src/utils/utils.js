@@ -64,7 +64,7 @@ exports.FilterPair = function (tabledata, includeData) { return ({ fst: tabledat
 exports.FilterPairUnit = exports.FilterPair([], []);
 exports.PrintQueryValues = function (l) {
     if (l.kind == "Cons") {
-        console.log(l.head.getValues);
+        console.log(l.head.columns.map(function (x) { return String(x.value); }));
         exports.PrintQueryValues(l.tail);
     }
 };

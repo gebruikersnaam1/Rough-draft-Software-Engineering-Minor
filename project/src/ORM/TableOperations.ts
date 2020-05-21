@@ -39,14 +39,11 @@ export let GroupByClauses = function(columnName:string,op: groupbyOptions) : Gro
 }
 
 let GroupByTool = function(l:List<Row<Unit>>, columnName: string, op: groupbyOptions) : List<Row<Unit>> {
-
     if(l.kind == "Cons"){
         let searchVal = GetColumnValue(l.head, columnName)
         let result = FilterOut(searchVal,l.tail,columnName)
         if(op != ""){
             let tmp1 = GetAllValuesOnSearch(searchVal,l.tail,columnName,[])
-            console.log(tmp1)
-
             let tmp2 = AggregateFun(op,l.head,tmp1)
             return Cons(tmp2,GroupByTool(result,columnName,op))
         }else{
@@ -83,13 +80,12 @@ let AggregateFun = function(agFun: groupbyFuns, r: Row<Unit>, value: string[]) :
 }
 
 let GetAllValuesOnSearch = function(searchVal:string,l:List<Row<Unit>>, columnName: string, values: string[]) : string[]{
-    console.log(values)
     if(l.kind == "Cons"){
         let compareVal = GetColumnValue(l.head, columnName)
         if(compareVal == searchVal){
            values.push(compareVal)
         }
-        return GetAllValuesOnSearch(searchVal,l.tail,columnName,values)
+        return values.concat(GetAllValuesOnSearch(searchVal,l.tail,columnName,values))
     }else{
         return values
     }
