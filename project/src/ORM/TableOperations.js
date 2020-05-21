@@ -147,37 +147,39 @@ var OrderListTool = function (list, value, columnName, o) {
         return [utils_1.Empty(), value];
     }
     else if (list.kind == "Cons" && list.tail.kind == "Cons") {
-        var x = OrderRows(list.tail.head, value, columnName, o);
-        var tmp1 = OrderListTool(list.tail, x[0], columnName, o);
-        return [utils_1.Cons(x[1], tmp1[0]), tmp1[1]];
+        var x = o == "ASC" ? OrderTwoRowsASC(list.tail.head, value, columnName) : OrderTwoRowsDESC(list.tail.head, value, columnName);
+        var tmp1 = OrderListTool(list.tail, x.fst, columnName, o);
+        return [utils_1.Cons(x.snd, tmp1[0]), tmp1[1]];
     }
     else {
         return [utils_1.Empty(), value];
     }
 };
-var OrderRows = function (value1, value2, columnName, o) {
+var OrderTwoRowsDESC = function (value1, value2, columnName) {
     var v1 = utils_1.GetColumnValue(value1, columnName);
     var v2 = utils_1.GetColumnValue(value2, columnName);
     var vN = utils_1.ConvertStringsToNumber(v1, v2);
-    if (o == "DESC") {
-        if (vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]) {
-            return [value2, value1];
-        }
-        else if (vN[0] != NaN && vN[1] != NaN) {
-            //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
-            return [value1, value2];
-        }
-        if (v1 < v2) {
-            return [value2, value1];
-        }
+    if (vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]) {
+        return { fst: value2, snd: value1 };
     }
-    else {
-        if (vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]) {
-            return [value2, value1];
-        }
-        if (v1 > v2) {
-            return [value2, value1];
-        }
+    else if (vN[0] != NaN && vN[1] != NaN) {
+        //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
+        return { fst: value1, snd: value2 };
     }
-    return [value1, value2];
+    if (v1 < v2) {
+        return { fst: value2, snd: value1 };
+    }
+    return { fst: value1, snd: value2 };
+};
+var OrderTwoRowsASC = function (value1, value2, columnName) {
+    var v1 = utils_1.GetColumnValue(value1, columnName);
+    var v2 = utils_1.GetColumnValue(value2, columnName);
+    var vN = utils_1.ConvertStringsToNumber(v1, v2);
+    if (vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]) {
+        return { fst: value2, snd: value1 };
+    }
+    if (v1 > v2) {
+        return { fst: value2, snd: value1 };
+    }
+    return { fst: value1, snd: value2 };
 };

@@ -1,4 +1,4 @@
-import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue} from  "../utils/utils"//import tool
+import {Fun,Unit,List,Empty,Cons, ConvertStringsToNumber,GetColumnValue, Pair} from  "../utils/utils"//import tool
 import { Row} from "../data/models"
 /******************************************************************************* 
     * @Operations like where, oderby and groupby
@@ -182,37 +182,42 @@ let OrderListTool = function(list:List<Row<Unit>>,value : Row<Unit>,columnName: 
         return [Empty(), value]
     }
     else if(list.kind == "Cons" && list.tail.kind == "Cons"){
-        let x = OrderRows(list.tail.head,value,columnName,o)
-        let tmp1 = OrderListTool(list.tail,x[0],columnName,o)
-        return [Cons(x[1],tmp1[0]),tmp1[1]]
+        let x = o == "ASC" ? OrderTwoRowsASC(list.tail.head,value,columnName) : OrderTwoRowsDESC(list.tail.head,value,columnName)
+        let tmp1 = OrderListTool(list.tail,x.fst,columnName,o)
+        return [Cons(x.snd,tmp1[0]),tmp1[1]]
     }
     else{
         return [Empty(), value]
     }
 }
 
-let OrderRows = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string, o: OrderByOptions) : [Row<Unit>, Row<Unit>]{
+let OrderTwoRowsDESC = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string) : Pair<Row<Unit>, Row<Unit>>{
     let v1 = GetColumnValue(value1, columnName)
     let v2 = GetColumnValue(value2, columnName)
     let vN = ConvertStringsToNumber(v1,v2)
 
-    if(o == "DESC"){
-        if(vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]){
-            return [value2,value1]
-        }else if(vN[0] != NaN && vN[1] != NaN){
-            //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
-            return [value1,value2]
-        }
-        if(v1 < v2){   
-            return [value2,value1]
-        }
-    }else{
-        if(vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]){
-            return [value2,value1]
-        }
-        if(v1 > v2){   
-            return [value2,value1]
-        }
+    if(vN[0] != NaN && vN[1] != NaN && vN[0] < vN[1]){
+        return {fst: value2, snd:value1}
+    }else if(vN[0] != NaN && vN[1] != NaN){
+        //if vN[0] is not bigger than vN[1] return value1,value2 order instead of trusting string (string i.e. 1,11,9)
+        return {fst: value1, snd:value2}
     }
-    return [value1,value2]
+    if(v1 < v2){   
+        return {fst: value2, snd:value1}
+    }
+    return {fst: value1, snd:value2}
+
+}
+let OrderTwoRowsASC = function(value1: Row<Unit>, value2: Row<Unit>, columnName: string) : Pair<Row<Unit>, Row<Unit>>{
+    let v1 = GetColumnValue(value1, columnName)
+    let v2 = GetColumnValue(value2, columnName)
+    let vN = ConvertStringsToNumber(v1,v2)
+
+    if(vN[0] != NaN && vN[1] != NaN && vN[0] > vN[1]){
+        return {fst: value2, snd:value1}
+    }
+    if(v1 > v2){   
+        return {fst: value2,snd:value1}
+    }
+    return {fst: value1, snd:value2}
 }

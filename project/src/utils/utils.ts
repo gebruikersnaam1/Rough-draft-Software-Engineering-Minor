@@ -93,6 +93,7 @@ export let Fun = function<a,b>(f:(i:a)=>b) : Fun<a,b>{
   export type Unit = {}
 
   export type Pair<a,b> = {fst:a, snd: b}
+  
   export type tableData<T,N> = Pair<List<T>,List<N>>
   export type FilterPair = Pair<string[],string[]>
 
