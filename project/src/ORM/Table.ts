@@ -82,7 +82,7 @@ export let Table = function<T,U extends string,N>(dbData: tableData<T,N>, filter
            return QueryResult(
                 t.Orderby(
                     t.GroupBy(
-                        t.Where( 
+                        t.Where(
                             PlusList<Row<Unit>>(
                                     (CreateRows<T>(this.dataDB.fst,filterData.fst,filterData.fst.length)),
                                     (CreateRows<N>(this.dataDB.snd,filterData.snd,filterData.fst.length))

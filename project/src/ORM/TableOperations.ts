@@ -44,7 +44,7 @@ let GroupByTool = function(l:List<Row<Unit>>, columnName: string, op: groupbyOpt
         let result = FilterOut(searchVal,l.tail,columnName)
         if(op != ""){
             let tmp1 = GetAllValuesOnSearch(searchVal,l.tail,columnName,[])
-            let tmp2 = AggregateFun(op,l.head,tmp1)
+            let tmp2 = AggregateTool(op,l.head,tmp1)
             return Cons(tmp2,GroupByTool(result,columnName,op))
         }else{
             //the result contains a list without the search value(l.head), this will be done until no values are left
@@ -73,7 +73,7 @@ type groupbyFuns = "COUNT"
 //gives the option to select just Groupby
 export type groupbyOptions = groupbyFuns | ""
 
-let AggregateFun = function(agFun: groupbyFuns, r: Row<Unit>, value: string[]) : Row<Unit>
+let AggregateTool = function(agFun: groupbyFuns, r: Row<Unit>, value: string[]) : Row<Unit>
 {
     r.columns.push(Column(agFun, GroupByAggregate(agFun,value)))
     return r
@@ -92,7 +92,7 @@ let GetAllValuesOnSearch = function(searchVal:string,l:List<Row<Unit>>, columnNa
 }
 
 let GroupByAggregate = function(agFun: groupbyFuns, content: string[]) : string{
-    // let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
+    // let nContent = ConvertArrayStringToNumber(content) //if not count, numbers are needed (simpely returns NaN if column is not number)
     switch(agFun){ //TODO: add other aggregate functions
         case "COUNT":
         default:

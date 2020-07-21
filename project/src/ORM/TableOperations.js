@@ -24,7 +24,7 @@ var GroupByTool = function (l, columnName, op) {
         var result = FilterOut(searchVal, l.tail, columnName);
         if (op != "") {
             var tmp1 = GetAllValuesOnSearch(searchVal, l.tail, columnName, []);
-            var tmp2 = AggregateFun(op, l.head, tmp1);
+            var tmp2 = AggregateTool(op, l.head, tmp1);
             return utils_1.Cons(tmp2, GroupByTool(result, columnName, op));
         }
         else {
@@ -50,7 +50,7 @@ var FilterOut = function (searchVal, l, columnName) {
         return utils_1.Empty();
     }
 };
-var AggregateFun = function (agFun, r, value) {
+var AggregateTool = function (agFun, r, value) {
     r.columns.push(models_1.Column(agFun, GroupByAggregate(agFun, value)));
     return r;
 };
@@ -67,7 +67,7 @@ var GetAllValuesOnSearch = function (searchVal, l, columnName, values) {
     }
 };
 var GroupByAggregate = function (agFun, content) {
-    // let nContent = ConvertArrayStringToNumber(content) //if not count, numers are needed (simpely returns NaN if column is not number)
+    // let nContent = ConvertArrayStringToNumber(content) //if not count, numbers are needed (simpely returns NaN if column is not number)
     switch (agFun) { //TODO: add other aggregate functions
         case "COUNT":
         default:
